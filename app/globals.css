@@ -1,0 +1,187 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Enhanced color palette with better contrast and balance for both light and dark modes */
+:root {
+  --background: #faf8f3; /* Softer warm cream background */
+  --foreground: #2d3748; /* Darker text for better contrast */
+  --card: #ffffff; /* Pure white for cards */
+  --card-foreground: #2d3748; /* Dark text on cards */
+  --popover: #ffffff; /* White for popovers */
+  --popover-foreground: #2d3748; /* Dark text on popovers */
+  --primary: #8b5a2b; /* Rich brown - primary brand color */
+  --primary-foreground: #ffffff; /* White text on primary */
+  --secondary: #f7fafc; /* Very light gray */
+  --secondary-foreground: #4a5568; /* Medium gray text */
+  --muted: #f7fafc; /* Light muted background */
+  --muted-foreground: #718096; /* Muted text */
+  --accent: #d69e2e; /* Golden accent */
+  --accent-foreground: #ffffff; /* White text on accent */
+  --destructive: #e53e3e; /* Red for errors */
+  --destructive-foreground: #ffffff; /* White text on destructive */
+  --border: #e2e8f0; /* Light border */
+  --input: #ffffff; /* White input background */
+  --ring: #d69e2e; /* Golden focus ring */
+  --chart-1: #8b5a2b; /* Rich brown */
+  --chart-2: #d69e2e; /* Golden */
+  --chart-3: #38a169; /* Green */
+  --chart-4: #3182ce; /* Blue */
+  --chart-5: #805ad5; /* Purple */
+  --radius: 0.5rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #2d3748;
+  --sidebar-primary: #8b5a2b;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f7fafc;
+  --sidebar-accent-foreground: #4a5568;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #d69e2e;
+}
+
+/* Improved dark mode colors with better contrast and African theme */
+.dark {
+  --background: #1a202c; /* Dark blue-gray background */
+  --foreground: #f7fafc; /* Light text */
+  --card: #2d3748; /* Dark card background */
+  --card-foreground: #f7fafc; /* Light text on cards */
+  --popover: #2d3748; /* Dark popover */
+  --popover-foreground: #f7fafc; /* Light text on popover */
+  --primary: #d69e2e; /* Golden primary in dark mode */
+  --primary-foreground: #1a202c; /* Dark text on primary */
+  --secondary: #4a5568; /* Medium gray secondary */
+  --secondary-foreground: #e2e8f0; /* Light text on secondary */
+  --muted: #4a5568; /* Muted background */
+  --muted-foreground: #a0aec0; /* Muted text */
+  --accent: #8b5a2b; /* Brown accent in dark mode */
+  --accent-foreground: #f7fafc; /* Light text on accent */
+  --destructive: #fc8181; /* Lighter red for dark mode */
+  --destructive-foreground: #1a202c; /* Dark text on destructive */
+  --border: #4a5568; /* Dark border */
+  --input: #2d3748; /* Dark input background */
+  --ring: #d69e2e; /* Golden focus ring */
+  --chart-1: #d69e2e; /* Golden */
+  --chart-2: #8b5a2b; /* Brown */
+  --chart-3: #48bb78; /* Light green */
+  --chart-4: #4299e1; /* Light blue */
+  --chart-5: #9f7aea; /* Light purple */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --sidebar: #1a202c;
+  --sidebar-foreground: #f7fafc;
+  --sidebar-primary: #d69e2e;
+  --sidebar-primary-foreground: #1a202c;
+  --sidebar-accent: #2d3748;
+  --sidebar-accent-foreground: #f7fafc;
+  --sidebar-border: #4a5568;
+  --sidebar-ring: #d69e2e;
+}
+
+@theme inline {
+  /* Updated font variables to match new font imports */
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-luxury: var(--font-dancing-script);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    /* Enhanced smooth transitions for theme changes */
+    transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  /* Enhanced African kijiji pattern with better opacity for both themes */
+  .kijiji-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238b5a2b' fill-opacity='0.03'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm0 0c0 11.046 8.954 20 20 20s20-8.954 20-20-8.954-20-20-20-20 8.954-20 20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    transition: background-image 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .dark .kijiji-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d69e2e' fill-opacity='0.05'%3E%3Cpath d='M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm0 0c0 11.046 8.954 20 20 20s20-8.954 20-20-8.954-20-20-20-20 8.954-20 20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .font-luxury {
+    font-family: var(--font-luxury), cursive;
+  }
+
+  /* Enhanced component transitions for theme switching */
+  .transition-theme {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Added smooth animations for tour filtering */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+
+  /* Smooth filter transition effects */
+  .filter-transition {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tour-card-enter {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .tour-card-exit {
+    animation: fadeOut 0.3s ease-in forwards;
+  }
+}
