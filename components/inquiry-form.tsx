@@ -146,10 +146,10 @@ export function InquiryForm() {
                   <Input
                     id="travelDates"
                     name="travelDates"
-                    type="text"
+                    type="date"
                     value={formData.travelDates}
                     onChange={handleChange}
-                    placeholder="e.g., March 2024"
+                    min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
               </div>

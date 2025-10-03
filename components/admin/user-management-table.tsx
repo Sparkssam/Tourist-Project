@@ -21,6 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { 
   MoreHorizontal, 
   Edit, 
@@ -31,7 +32,8 @@ import {
   Phone,
   Calendar,
   RefreshCw,
-  Users
+  Users,
+  Loader2
 } from "lucide-react"
 import { supabase } from "@/lib/supabase/client"
 import Link from "next/link"
@@ -54,6 +56,8 @@ export function UserManagementTable() {
   const [profiles, setProfiles] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null)
+  const [actionLoading, setActionLoading] = useState(false)
+  const [alert, setAlert] = useState<{ type: 'success' | 'error', message: string } | null>(null)
 
   useEffect(() => {
     fetchUsers()
@@ -79,8 +83,14 @@ export function UserManagementTable() {
     }
   }
 
+  const showAlert = (type: 'success' | 'error', message: string) => {
+    setAlert({ type, message })
+    setTimeout(() => setAlert(null), 5000)
+  }
+
   const handleStatusToggle = async (userId: string, currentStatus: string) => {
     try {
+      setActionLoading(true)
       const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
       const { error } = await supabase
         .from('profiles')
@@ -89,16 +99,25 @@ export function UserManagementTable() {
 
       if (error) {
         console.error('Error updating user status:', error)
+        showAlert('error', `Failed to ${newStatus === 'active' ? 'activate' : 'deactivate'} user`)
       } else {
+        showAlert('success', `User ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`)
         fetchUsers() // Refresh the list
       }
     } catch (error) {
       console.error('Error updating user status:', error)
+      showAlert('error', 'An error occurred while updating user status')
+    } finally {
+      setActionLoading(false)
     }
   }
 
   const handleDeleteUser = async (userId: string) => {
     try {
+      setActionLoading(true)
+      
+      // First, try to delete from auth.users (this will cascade to profiles if set up)
+      // Note: This requires service role key, so we'll just delete from profiles
       const { error } = await supabase
         .from('profiles')
         .delete()
@@ -106,13 +125,18 @@ export function UserManagementTable() {
 
       if (error) {
         console.error('Error deleting user:', error)
+        showAlert('error', 'Failed to delete user. Please try again.')
       } else {
+        showAlert('success', 'User deleted successfully!')
         fetchUsers() // Refresh the list
       }
     } catch (error) {
       console.error('Error deleting user:', error)
+      showAlert('error', 'An error occurred while deleting user')
+    } finally {
+      setActionLoading(false)
+      setDeleteUserId(null)
     }
-    setDeleteUserId(null)
   }
 
   const getStatusBadgeVariant = (status: string) => {
@@ -164,6 +188,13 @@ export function UserManagementTable() {
 
   return (
     <>
+      {/* Alert Messages */}
+      {alert && (
+        <Alert variant={alert.type === 'error' ? 'destructive' : 'default'} className="mb-6">
+          <AlertDescription>{alert.message}</AlertDescription>
+        </Alert>
+      )}
+
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
@@ -172,8 +203,8 @@ export function UserManagementTable() {
               <span>All Users ({profiles.length})</span>
             </CardTitle>
           </div>
-          <Button onClick={fetchUsers} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
+          <Button onClick={fetchUsers} variant="outline" size="sm" disabled={loading || actionLoading}>
+            <RefreshCw className={`h-4 w-4 mr-2 ${(loading || actionLoading) ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
         </CardHeader>
@@ -257,8 +288,12 @@ export function UserManagementTable() {
                       <td className="py-4 px-4 text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreHorizontal className="h-4 w-4" />
+                            <Button variant="ghost" size="sm" disabled={actionLoading}>
+                              {actionLoading ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <MoreHorizontal className="h-4 w-4" />
+                              )}
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
@@ -271,23 +306,25 @@ export function UserManagementTable() {
                             <DropdownMenuSeparator />
                             <DropdownMenuItem 
                               onClick={() => handleStatusToggle(profile.id, profile.status)}
+                              disabled={actionLoading}
                             >
                               {profile.status === 'active' ? (
                                 <>
                                   <UserX className="h-4 w-4 mr-2" />
-                                  Deactivate
+                                  Deactivate User
                                 </>
                               ) : (
                                 <>
                                   <UserCheck className="h-4 w-4 mr-2" />
-                                  Activate
+                                  Activate User
                                 </>
                               )}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem 
                               onClick={() => setDeleteUserId(profile.id)}
-                              className="text-red-600"
+                              className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                              disabled={actionLoading}
                             >
                               <Trash2 className="h-4 w-4 mr-2" />
                               Delete User
@@ -305,21 +342,31 @@ export function UserManagementTable() {
       </Card>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteUserId} onOpenChange={() => setDeleteUserId(null)}>
+      <AlertDialog open={!!deleteUserId} onOpenChange={() => !actionLoading && setDeleteUserId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete User</AlertDialogTitle>
+            <AlertDialogTitle>Delete User Permanently</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this user? This action cannot be undone.
+              Are you sure you want to delete this user? This will permanently remove their account and all associated data. This action cannot be undone.
+              <br /><br />
+              <strong className="text-red-600">Note:</strong> If you want to temporarily disable access, consider using "Deactivate" instead.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={actionLoading}>Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={() => deleteUserId && handleDeleteUser(deleteUserId)}
               className="bg-red-600 hover:bg-red-700"
+              disabled={actionLoading}
             >
-              Delete
+              {actionLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete Permanently'
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

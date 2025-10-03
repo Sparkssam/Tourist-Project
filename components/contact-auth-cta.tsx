@@ -43,15 +43,6 @@ export function ContactAuthCTA() {
                 <span>Access Tourist Dashboard</span>
               </Link>
             </Button>
-            {/* Demo toggle - Remove in production */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsLoggedIn(!isLoggedIn)}
-              className="w-full text-xs opacity-50 hover:opacity-100"
-            >
-              Demo: Logout
-            </Button>
           </div>
         ) : (
           <div className="space-y-3">
@@ -69,15 +60,6 @@ export function ContactAuthCTA() {
                 </Link>
               </p>
             </div>
-            {/* Demo toggle - Remove in production */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsLoggedIn(!isLoggedIn)}
-              className="w-full text-xs opacity-50 hover:opacity-100"
-            >
-              Demo: Login
-            </Button>
           </div>
         )}
         
