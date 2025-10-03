@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Star, Send } from "lucide-react"
+import { Star, Send, CheckCircle } from "lucide-react"
+import { supabase } from "@/lib/supabase/client"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export function ReviewForm() {
   const [formData, setFormData] = useState({
@@ -21,6 +23,7 @@ export function ReviewForm() {
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
 
   const handleRatingClick = (rating: number) => {
     setFormData({ ...formData, rating })
@@ -29,10 +32,25 @@ export function ReviewForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setSubmitStatus("idle")
 
     try {
-      console.log("Review submitted:", formData)
-      alert("Thank you for your review! It will be published after moderation.")
+      // Save review to Supabase reviews table with pending status
+      const { error } = await supabase
+        .from('reviews')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          location: formData.location || null,
+          tour: formData.tour || null,
+          rating: formData.rating,
+          review: formData.review,
+          status: 'pending' // Admin must approve before it shows publicly
+        })
+
+      if (error) throw error
+
+      setSubmitStatus("success")
       setFormData({
         name: "",
         email: "",
@@ -41,8 +59,15 @@ export function ReviewForm() {
         rating: 0,
         review: "",
       })
+
+      // Clear success message after 8 seconds
+      setTimeout(() => setSubmitStatus("idle"), 8000)
     } catch (error) {
-      alert("There was an error submitting your review. Please try again.")
+      console.error("Error submitting review:", error)
+      setSubmitStatus("error")
+      
+      // Clear error message after 5 seconds
+      setTimeout(() => setSubmitStatus("idle"), 5000)
     } finally {
       setIsSubmitting(false)
     }
@@ -140,6 +165,23 @@ export function ReviewForm() {
                   rows={5}
                 />
               </div>
+
+              {submitStatus === "success" && (
+                <Alert className="border-green-500 bg-green-50">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <AlertDescription className="text-green-800">
+                    Thank you for your review! It will be published after admin approval.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {submitStatus === "error" && (
+                <Alert variant="destructive">
+                  <AlertDescription>
+                    There was an error submitting your review. Please try again.
+                  </AlertDescription>
+                </Alert>
+              )}
 
               <Button type="submit" className="w-full" size="lg" disabled={isSubmitting || formData.rating === 0}>
                 <Send className="h-4 w-4 mr-2" />

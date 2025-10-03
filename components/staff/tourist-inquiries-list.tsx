@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -32,75 +32,76 @@ import {
   Eye,
   MessageCircle,
   CheckCircle,
-  Clock
+  Clock,
+  Loader2,
+  Inbox
 } from "lucide-react"
 import { TouristInquiry } from "@/lib/types/user"
-
-// Mock inquiry data
-const mockInquiries: TouristInquiry[] = [
-  {
-    id: "1",
-    userId: "101",
-    user: {
-      firstName: "John",
-      lastName: "Doe",
-      email: "john.doe@email.com",
-      phone: "+1 555 123 4567"
-    },
-    tourType: "Serengeti Safari",
-    numberOfPeople: 4,
-    preferredDate: new Date("2024-11-15"),
-    budget: 5000,
-    specialRequests: "Would like to see the Big Five, vegetarian meals required",
-    status: "new",
-    createdAt: new Date("2024-09-30"),
-    updatedAt: new Date("2024-09-30")
-  },
-  {
-    id: "2",
-    userId: "102",
-    user: {
-      firstName: "Sarah",
-      lastName: "Johnson",
-      email: "sarah.j@email.com",
-      phone: "+44 20 7946 0958"
-    },
-    tourType: "Kilimanjaro Trek",
-    numberOfPeople: 2,
-    preferredDate: new Date("2024-12-01"),
-    budget: 3500,
-    specialRequests: "Need guide who speaks German",
-    status: "in_progress",
-    assignedStaffId: "staff1",
-    createdAt: new Date("2024-09-28"),
-    updatedAt: new Date("2024-09-29"),
-    notes: "Contacted client, waiting for final confirmation on dates"
-  },
-  {
-    id: "3",
-    userId: "103",
-    user: {
-      firstName: "Mike",
-      lastName: "Wilson",
-      email: "mike.wilson@email.com",
-      phone: "+61 2 9374 4000"
-    },
-    tourType: "Cultural Village Tour",
-    numberOfPeople: 6,
-    preferredDate: new Date("2024-10-20"),
-    budget: 2000,
-    status: "responded",
-    assignedStaffId: "staff1",
-    createdAt: new Date("2024-09-25"),
-    updatedAt: new Date("2024-09-26"),
-    notes: "Sent detailed itinerary and pricing"
-  }
-]
+import { supabase } from "@/lib/supabase/client"
 
 export function TouristInquiriesList() {
-  const [inquiries, setInquiries] = useState<TouristInquiry[]>(mockInquiries)
+  const [inquiries, setInquiries] = useState<TouristInquiry[]>([])
+  const [loading, setLoading] = useState(true)
   const [selectedInquiry, setSelectedInquiry] = useState<TouristInquiry | null>(null)
   const [response, setResponse] = useState('')
+
+  useEffect(() => {
+    fetchInquiries()
+  }, [])
+
+  const fetchInquiries = async () => {
+    try {
+      setLoading(true)
+      
+      // Fetch inquiries from Supabase
+      const { data, error } = await supabase
+        .from('inquiries')
+        .select(`
+          *,
+          profiles:user_id (
+            id,
+            first_name,
+            last_name,
+            email,
+            phone
+          )
+        `)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Error fetching inquiries:', error)
+        return
+      }
+
+      // Transform data to match TouristInquiry interface
+      const transformedInquiries: TouristInquiry[] = (data || []).map((inquiry: any) => ({
+        id: inquiry.id,
+        userId: inquiry.user_id,
+        user: {
+          firstName: inquiry.profiles?.first_name || 'Unknown',
+          lastName: inquiry.profiles?.last_name || 'User',
+          email: inquiry.profiles?.email || '',
+          phone: inquiry.profiles?.phone || ''
+        },
+        tourType: inquiry.tour_type || inquiry.tour_name || 'General Inquiry',
+        numberOfPeople: inquiry.number_of_people || inquiry.guests || 1,
+        preferredDate: inquiry.preferred_date ? new Date(inquiry.preferred_date) : new Date(),
+        budget: inquiry.budget || 0,
+        specialRequests: inquiry.special_requests || inquiry.message || '',
+        status: inquiry.status || 'new',
+        assignedStaffId: inquiry.assigned_staff_id,
+        createdAt: new Date(inquiry.created_at),
+        updatedAt: new Date(inquiry.updated_at || inquiry.created_at),
+        notes: inquiry.notes || ''
+      }))
+
+      setInquiries(transformedInquiries)
+    } catch (error) {
+      console.error('Error loading inquiries:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const getStatusBadgeVariant = (status: TouristInquiry['status']) => {
     switch (status) {
@@ -144,20 +145,43 @@ export function TouristInquiriesList() {
     )
   }
 
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mr-2" />
+          <span className="text-muted-foreground">Loading inquiries...</span>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <MessageSquare className="h-5 w-5" />
-          <span>Recent Tourist Inquiries</span>
+          <span>Tourist Inquiries</span>
+          {inquiries.length > 0 && (
+            <Badge variant="secondary">{inquiries.length}</Badge>
+          )}
         </CardTitle>
         <CardDescription>
           Manage and respond to tourist inquiries and requests
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {inquiries.map((inquiry) => (
+        {inquiries.length === 0 ? (
+          <div className="text-center py-12">
+            <Inbox className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-lg font-medium mb-2">No Inquiries Yet</h3>
+            <p className="text-sm text-muted-foreground">
+              Tourist inquiries will appear here when they are submitted through the website.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {inquiries.map((inquiry) => (
             <div key={inquiry.id} className="border border-border rounded-lg p-4 hover:bg-muted/50 transition-colors">
               <div className="flex items-start justify-between">
                 <div className="flex-1 space-y-3">
@@ -257,7 +281,8 @@ export function TouristInquiriesList() {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
 
         {/* Inquiry Details Dialog */}
         <Dialog open={!!selectedInquiry} onOpenChange={() => setSelectedInquiry(null)}>

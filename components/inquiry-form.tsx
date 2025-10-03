@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Send } from "lucide-react"
+import { supabase } from "@/lib/supabase/client"
 
 export function InquiryForm() {
   const [formData, setFormData] = useState({
@@ -17,7 +18,8 @@ export function InquiryForm() {
     subject: "",
     message: "",
     travelDates: "",
-    groupSize: "",
+    adults: "1",
+    children: "0",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
@@ -25,32 +27,49 @@ export function InquiryForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setSubmitStatus("idle")
 
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      // Save to Supabase inquiries table
+      const { error } = await supabase
+        .from('inquiries')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          subject: formData.subject,
+          message: formData.message,
+          adults: parseInt(formData.adults) || 1,
+          children: parseInt(formData.children) || 0,
+          travel_dates: formData.travelDates || null,
+          status: 'new'
+        })
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      setSubmitStatus("success")
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+        travelDates: "",
+        adults: "1",
+        children: "0",
       })
 
-      if (response.ok) {
-        setSubmitStatus("success")
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          subject: "",
-          message: "",
-          travelDates: "",
-          groupSize: "",
-        })
-      } else {
-        setSubmitStatus("error")
-      }
+      // Clear success message after 5 seconds
+      setTimeout(() => setSubmitStatus("idle"), 5000)
     } catch (error) {
+      console.error('Error submitting inquiry:', error)
       setSubmitStatus("error")
+      
+      // Clear error message after 5 seconds
+      setTimeout(() => setSubmitStatus("idle"), 5000)
     } finally {
       setIsSubmitting(false)
     }
@@ -121,22 +140,6 @@ export function InquiryForm() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="groupSize" className="block text-sm font-medium text-foreground mb-2">
-                    Group Size
-                  </label>
-                  <Input
-                    id="groupSize"
-                    name="groupSize"
-                    type="text"
-                    value={formData.groupSize}
-                    onChange={handleChange}
-                    placeholder="e.g., 2 adults, 1 child"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
                   <label htmlFor="travelDates" className="block text-sm font-medium text-foreground mb-2">
                     Preferred Travel Dates
                   </label>
@@ -149,20 +152,53 @@ export function InquiryForm() {
                     placeholder="e.g., March 2024"
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-foreground mb-2">
-                    Subject *
+                  <label htmlFor="adults" className="block text-sm font-medium text-foreground mb-2">
+                    Number of Adults *
                   </label>
                   <Input
-                    id="subject"
-                    name="subject"
-                    type="text"
+                    id="adults"
+                    name="adults"
+                    type="number"
+                    min="1"
                     required
-                    value={formData.subject}
+                    value={formData.adults}
                     onChange={handleChange}
-                    placeholder="Safari inquiry"
+                    placeholder="Number of adults"
                   />
                 </div>
+                <div>
+                  <label htmlFor="children" className="block text-sm font-medium text-foreground mb-2">
+                    Number of Children
+                  </label>
+                  <Input
+                    id="children"
+                    name="children"
+                    type="number"
+                    min="0"
+                    value={formData.children}
+                    onChange={handleChange}
+                    placeholder="Number of children"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="subject" className="block text-sm font-medium text-foreground mb-2">
+                  Subject *
+                </label>
+                <Input
+                  id="subject"
+                  name="subject"
+                  type="text"
+                  required
+                  value={formData.subject}
+                  onChange={handleChange}
+                  placeholder="Safari inquiry"
+                />
               </div>
 
               <div>

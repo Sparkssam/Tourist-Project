@@ -23,10 +23,21 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { email, firstName, lastName, phone, role, adminSecret } = body
 
+    console.log('🔐 Admin Secret Validation:')
+    console.log('   Received secret length:', adminSecret?.length)
+    console.log('   Expected secret length:', process.env.SUPER_ADMIN_SECRET?.length)
+    console.log('   Secrets match:', adminSecret === process.env.SUPER_ADMIN_SECRET)
+    
     // Validate admin secret
     if (adminSecret !== process.env.SUPER_ADMIN_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      console.error('❌ Admin secret validation failed!')
+      return NextResponse.json({ 
+        error: 'Unauthorized - Admin secret does not match',
+        hint: 'Check that you entered the SUPER_ADMIN_SECRET from .env.local exactly'
+      }, { status: 401 })
     }
+    
+    console.log('✅ Admin secret validated')
 
     // Validate required fields
     if (!email || !firstName || !lastName || !role) {

@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Mail, Send } from "lucide-react"
+import { Mail, Send, CheckCircle } from "lucide-react"
+import { supabase } from "@/lib/supabase/client"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
@@ -22,16 +24,38 @@ export function ContactForm() {
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setSubmitStatus("idle")
 
-    // Here you would send the form data to samsuya999@gmail.com
-    // For now, we'll simulate the submission
     try {
-      console.log("Contact form submitted:", formData)
-      alert("Thank you for your message! We'll get back to you within 24 hours.")
+      // Build comprehensive message with all details
+      const fullMessage = `${formData.message}
+
+${formData.tourInterest ? `\nTour Interest: ${formData.tourInterest}` : ''}
+${formData.preferredContact ? `Preferred Contact Method: ${formData.preferredContact}` : ''}`
+
+      // Save to Supabase inquiries table
+      const { error } = await supabase
+        .from('inquiries')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          subject: formData.subject || 'General Contact Message',
+          message: fullMessage.trim(),
+          status: 'new'
+        })
+
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+
+      setSubmitStatus("success")
       setFormData({
         name: "",
         email: "",
@@ -41,8 +65,15 @@ export function ContactForm() {
         message: "",
         preferredContact: "",
       })
+
+      // Clear success message after 5 seconds
+      setTimeout(() => setSubmitStatus("idle"), 5000)
     } catch (error) {
-      alert("There was an error sending your message. Please try again.")
+      console.error('Error submitting contact form:', error)
+      setSubmitStatus("error")
+      
+      // Clear error message after 5 seconds
+      setTimeout(() => setSubmitStatus("idle"), 5000)
     } finally {
       setIsSubmitting(false)
     }
@@ -148,6 +179,23 @@ export function ContactForm() {
               rows={5}
             />
           </div>
+
+          {submitStatus === "success" && (
+            <Alert className="border-green-500 bg-green-50">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-green-800">
+                Thank you for your message! We'll get back to you within 24 hours.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {submitStatus === "error" && (
+            <Alert variant="destructive">
+              <AlertDescription>
+                There was an error sending your message. Please try again or contact us directly.
+              </AlertDescription>
+            </Alert>
+          )}
 
           <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
             <Send className="h-4 w-4 mr-2" />

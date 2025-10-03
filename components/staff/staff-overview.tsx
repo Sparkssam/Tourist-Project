@@ -1,24 +1,81 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MessageSquare, Users, Clock, CheckCircle } from "lucide-react"
+import { MessageSquare, Users, Clock, CheckCircle, Loader2 } from "lucide-react"
+import { supabase } from "@/lib/supabase/client"
 
-// Mock staff overview data
-const mockOverview = {
-  totalInquiries: 45,
-  newInquiries: 8,
-  inProgressInquiries: 12,
-  completedInquiries: 25,
-  totalTourists: 134,
-  activeTourists: 98
+interface OverviewData {
+  totalInquiries: number
+  newInquiries: number
+  inProgressInquiries: number
+  completedInquiries: number
+  totalTourists: number
+  activeTourists: number
 }
 
 export function StaffOverview() {
+  const [overview, setOverview] = useState<OverviewData>({
+    totalInquiries: 0,
+    newInquiries: 0,
+    inProgressInquiries: 0,
+    completedInquiries: 0,
+    totalTourists: 0,
+    activeTourists: 0
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchOverviewData()
+  }, [])
+
+  const fetchOverviewData = async () => {
+    try {
+      setLoading(true)
+
+      // Fetch total tourists (users with 'tourist' role)
+      const { count: totalTourists } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('role', 'tourist')
+
+      // Fetch active tourists (status = 'active')
+      const { count: activeTourists } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('role', 'tourist')
+        .eq('status', 'active')
+
+      // Fetch inquiries data
+      const { data: inquiries } = await supabase
+        .from('inquiries')
+        .select('status')
+
+      const totalInquiries = inquiries?.length || 0
+      const newInquiries = inquiries?.filter(i => i.status === 'new' || i.status === 'pending').length || 0
+      const inProgressInquiries = inquiries?.filter(i => i.status === 'in_progress' || i.status === 'processing').length || 0
+      const completedInquiries = inquiries?.filter(i => i.status === 'completed' || i.status === 'resolved').length || 0
+
+      setOverview({
+        totalInquiries,
+        newInquiries,
+        inProgressInquiries,
+        completedInquiries,
+        totalTourists: totalTourists || 0,
+        activeTourists: activeTourists || 0
+      })
+    } catch (error) {
+      console.error('Error fetching overview data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const stats = [
     {
       title: "Total Inquiries",
-      value: mockOverview.totalInquiries,
+      value: overview.totalInquiries,
       description: "All time inquiries",
       icon: MessageSquare,
       color: "text-blue-600",
@@ -26,7 +83,7 @@ export function StaffOverview() {
     },
     {
       title: "New Inquiries",
-      value: mockOverview.newInquiries,
+      value: overview.newInquiries,
       description: "Awaiting response",
       icon: Clock,
       color: "text-orange-600",
@@ -34,7 +91,7 @@ export function StaffOverview() {
     },
     {
       title: "In Progress",
-      value: mockOverview.inProgressInquiries,
+      value: overview.inProgressInquiries,
       description: "Currently handling",
       icon: MessageSquare,
       color: "text-purple-600",
@@ -42,13 +99,26 @@ export function StaffOverview() {
     },
     {
       title: "Completed",
-      value: mockOverview.completedInquiries,
+      value: overview.completedInquiries,
       description: "Successfully resolved",
       icon: CheckCircle,
       color: "text-green-600",
       bgColor: "bg-green-100"
     }
   ]
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="ml-2 text-muted-foreground">Loading dashboard data...</span>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -64,11 +134,11 @@ export function StaffOverview() {
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
             <div className="flex items-center space-x-2">
               <Users className="h-4 w-4" />
-              <span>{mockOverview.totalTourists} Total Tourists</span>
+              <span>{overview.totalTourists} Total Tourists</span>
             </div>
             <div className="flex items-center space-x-2">
               <CheckCircle className="h-4 w-4" />
-              <span>{mockOverview.activeTourists} Active Accounts</span>
+              <span>{overview.activeTourists} Active Accounts</span>
             </div>
           </div>
         </CardContent>
@@ -107,7 +177,7 @@ export function StaffOverview() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {mockOverview.newInquiries > 0 && (
+            {overview.newInquiries > 0 ? (
               <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
                 <div className="flex items-center space-x-3">
                   <div className="bg-orange-100 p-2 rounded-full">
@@ -116,17 +186,17 @@ export function StaffOverview() {
                   <div>
                     <div className="font-medium">New Inquiries Pending</div>
                     <div className="text-sm text-muted-foreground">
-                      {mockOverview.newInquiries} inquiries need your response
+                      {overview.newInquiries} inquiries need your response
                     </div>
                   </div>
                 </div>
                 <Badge variant="secondary" className="bg-orange-100 text-orange-800">
-                  {mockOverview.newInquiries}
+                  {overview.newInquiries}
                 </Badge>
               </div>
-            )}
+            ) : null}
             
-            {mockOverview.inProgressInquiries > 0 && (
+            {overview.inProgressInquiries > 0 ? (
               <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-200">
                 <div className="flex items-center space-x-3">
                   <div className="bg-purple-100 p-2 rounded-full">
@@ -135,13 +205,21 @@ export function StaffOverview() {
                   <div>
                     <div className="font-medium">In Progress Inquiries</div>
                     <div className="text-sm text-muted-foreground">
-                      Follow up on {mockOverview.inProgressInquiries} ongoing conversations
+                      Follow up on {overview.inProgressInquiries} ongoing conversations
                     </div>
                   </div>
                 </div>
                 <Badge variant="secondary" className="bg-purple-100 text-purple-800">
-                  {mockOverview.inProgressInquiries}
+                  {overview.inProgressInquiries}
                 </Badge>
+              </div>
+            ) : null}
+            
+            {overview.newInquiries === 0 && overview.inProgressInquiries === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                <CheckCircle className="h-12 w-12 mx-auto mb-2 text-green-500" />
+                <p className="font-medium">All caught up!</p>
+                <p className="text-sm">No pending actions at the moment.</p>
               </div>
             )}
           </div>

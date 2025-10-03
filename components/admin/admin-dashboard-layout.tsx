@@ -31,12 +31,13 @@ import {
   Shield,
   Loader2,
   Database,
-  Activity
+  Activity,
+  Star
 } from "lucide-react"
 
 interface AdminDashboardLayoutProps {
   children: React.ReactNode
-  currentPage?: 'overview' | 'users' | 'revenue' | 'inquiries' | 'settings' | 'database' | 'progress'
+  currentPage?: 'overview' | 'users' | 'revenue' | 'inquiries' | 'settings' | 'database' | 'progress' | 'reviews'
 }
 
 export function AdminDashboardLayout({ children, currentPage = 'overview' }: AdminDashboardLayoutProps) {
@@ -76,6 +77,13 @@ export function AdminDashboardLayout({ children, currentPage = 'overview' }: Adm
       description: 'Monitor all tourist inquiries'
     },
     {
+      id: 'reviews',
+      label: 'Review Management',
+      href: '/admin/reviews',
+      icon: Star,
+      description: 'Moderate tourist reviews and testimonials'
+    },
+    {
       id: 'database',
       label: 'Database Viewer',
       href: '/admin/database',
@@ -102,11 +110,34 @@ export function AdminDashboardLayout({ children, currentPage = 'overview' }: Adm
     setLoggingOut(true)
     setShowLogoutDialog(false)
     try {
-      await signOut()
-      // Redirect to login page
+      // Try normal logout with timeout
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Logout timeout')), 3000)
+      )
+      
+      await Promise.race([signOut(), timeoutPromise])
+      
+      // If successful, redirect
       router.push('/login')
     } catch (error) {
-      console.error('Logout failed:', error)
+      console.error('Logout failed or timed out, forcing local logout:', error)
+      
+      // Force logout locally if network logout fails
+      if (typeof window !== 'undefined') {
+        // Clear all auth storage
+        localStorage.clear()
+        sessionStorage.clear()
+        
+        // Clear all cookies
+        document.cookie.split(";").forEach((c) => {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/")
+        })
+        
+        // Redirect to login
+        window.location.href = '/login'
+      }
     } finally {
       setLoggingOut(false)
     }

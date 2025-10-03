@@ -2,9 +2,21 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useAuth } from "@/lib/auth/auth-context"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { 
   Users, 
   MessageSquare, 
@@ -12,7 +24,8 @@ import {
   LogOut,
   Home,
   Eye,
-  Calendar
+  Calendar,
+  Loader2
 } from "lucide-react"
 
 interface StaffDashboardLayoutProps {
@@ -22,6 +35,10 @@ interface StaffDashboardLayoutProps {
 
 export function StaffDashboardLayout({ children, currentPage = 'overview' }: StaffDashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [loggingOut, setLoggingOut] = useState(false)
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
+  const { signOut, profile } = useAuth()
+  const router = useRouter()
 
   const navigationItems = [
     {
@@ -53,6 +70,43 @@ export function StaffDashboardLayout({ children, currentPage = 'overview' }: Sta
       description: 'Update your profile'
     }
   ]
+
+  const confirmLogout = async () => {
+    setLoggingOut(true)
+    setShowLogoutDialog(false)
+    try {
+      // Try normal logout with timeout
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Logout timeout')), 3000)
+      )
+      
+      await Promise.race([signOut(), timeoutPromise])
+      
+      // If successful, redirect
+      router.push('/login')
+    } catch (error) {
+      console.error('Logout failed or timed out, forcing local logout:', error)
+      
+      // Force logout locally if network logout fails
+      if (typeof window !== 'undefined') {
+        // Clear all auth storage
+        localStorage.clear()
+        sessionStorage.clear()
+        
+        // Clear all cookies
+        document.cookie.split(";").forEach((c) => {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/")
+        })
+        
+        // Redirect to login
+        window.location.href = '/login'
+      }
+    } finally {
+      setLoggingOut(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -116,14 +170,42 @@ export function StaffDashboardLayout({ children, currentPage = 'overview' }: Sta
             {sidebarOpen && <span className="ml-2">Toggle Sidebar</span>}
           </Button>
           
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
-          >
-            <LogOut className="h-4 w-4" />
-            {sidebarOpen && <span className="ml-2">Logout</span>}
-          </Button>
+          <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowLogoutDialog(true)}
+              disabled={loggingOut}
+              className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+            >
+              {loggingOut ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {sidebarOpen && <span className="ml-2">Logging out...</span>}
+                </>
+              ) : (
+                <>
+                  <LogOut className="h-4 w-4" />
+                  {sidebarOpen && <span className="ml-2">Logout</span>}
+                </>
+              )}
+            </Button>
+            
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to log out of your staff account?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={confirmLogout}>
+                  Logout
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </aside>
 
