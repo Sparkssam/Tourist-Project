@@ -29,12 +29,14 @@ import {
   MessageSquare,
   BarChart3,
   Shield,
-  Loader2
+  Loader2,
+  Database,
+  Activity
 } from "lucide-react"
 
 interface AdminDashboardLayoutProps {
   children: React.ReactNode
-  currentPage?: 'overview' | 'users' | 'revenue' | 'inquiries' | 'settings'
+  currentPage?: 'overview' | 'users' | 'revenue' | 'inquiries' | 'settings' | 'database' | 'progress'
 }
 
 export function AdminDashboardLayout({ children, currentPage = 'overview' }: AdminDashboardLayoutProps) {
@@ -72,6 +74,20 @@ export function AdminDashboardLayout({ children, currentPage = 'overview' }: Adm
       href: '/admin/inquiries',
       icon: MessageSquare,
       description: 'Monitor all tourist inquiries'
+    },
+    {
+      id: 'database',
+      label: 'Database Viewer',
+      href: '/admin/database',
+      icon: Database,
+      description: 'View all database tables and data'
+    },
+    {
+      id: 'progress',
+      label: 'Progress Monitor',
+      href: '/admin/progress',
+      icon: Activity,
+      description: 'Track API calls and system responses'
     },
     {
       id: 'settings',
