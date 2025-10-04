@@ -102,6 +102,9 @@ export function BlogPost({ slug }: BlogPostProps) {
         {/* Article Content */}
         <Card>
           <CardContent className="p-8">
+            {/* XSS Protection: Only render blog content from trusted admin sources */}
+            {/* In production, ensure blog posts are only created/edited by admins */}
+            {/* and consider using a markdown parser instead of raw HTML */}
             <div
               className="prose prose-lg max-w-none prose-headings:text-primary prose-headings:font-luxury prose-p:text-muted-foreground prose-p:text-pretty prose-li:text-muted-foreground"
               dangerouslySetInnerHTML={{ __html: post.content }}
