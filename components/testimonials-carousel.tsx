@@ -3,49 +3,58 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Star, ChevronLeft, ChevronRight } from "lucide-react"
+import { Star, ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { supabase } from "@/lib/supabase/client"
+
+interface Review {
+  id: string
+  name: string
+  location?: string
+  rating: number
+  review: string
+}
 
 export function TestimonialsCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [testimonials, setTestimonials] = useState<Review[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      location: "New York, USA",
-      rating: 5,
-      text: "KEKEOsafari's provided the most incredible safari experience! Our guide was knowledgeable and we saw all the Big Five. The accommodations were perfect and the cultural visit was truly authentic.",
-      avatar: "/woman-smiling-safari-hat.png",
-    },
-    {
-      name: "Marcus Weber",
-      location: "Berlin, Germany",
-      rating: 5,
-      text: "Outstanding service from start to finish. The Kilimanjaro trek was challenging but our guides made it safe and enjoyable. The wildlife photography opportunities were endless!",
-      avatar: "/man-hiking-gear-mountain.png",
-    },
-    {
-      name: "Emma Thompson",
-      location: "London, UK",
-      rating: 5,
-      text: "A life-changing experience! The Maasai cultural tour opened our eyes to a beautiful way of life. The safari was expertly organized and we felt completely safe throughout.",
-      avatar: "/woman-cultural-dress-smiling.png",
-    },
-    {
-      name: "David Chen",
-      location: "Sydney, Australia",
-      rating: 5,
-      text: "Best safari company in Tanzania! Professional, reliable, and passionate about wildlife conservation. The Serengeti migration was absolutely breathtaking.",
-      avatar: "/man-binoculars-safari-vest.png",
-    },
-  ]
+  useEffect(() => {
+    fetchTestimonials()
+  }, [])
+
+  const fetchTestimonials = async () => {
+    try {
+      setLoading(true)
+      // Fetch only approved reviews, limit to 6 for carousel
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('status', 'approved')
+        .order('approved_at', { ascending: false })
+        .limit(6)
+
+      if (error) {
+        console.error('Error fetching testimonials:', error)
+      } else {
+        setTestimonials(data || [])
+      }
+    } catch (error) {
+      console.error('Error fetching testimonials:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   // Auto-slide functionality
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length)
-    }, 5000)
-    return () => clearInterval(timer)
+    if (testimonials.length > 0) {
+      const timer = setInterval(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length)
+      }, 5000)
+      return () => clearInterval(timer)
+    }
   }, [testimonials.length])
 
   const nextTestimonial = () => {
@@ -66,76 +75,85 @@ export function TestimonialsCarousel() {
           </p>
         </div>
 
-        <div className="relative">
-          <Card className="overflow-hidden">
-            <CardContent className="p-8 md:p-12">
-              <div className="text-center">
-                {/* Stars */}
-                <div className="flex justify-center mb-6">
-                  {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
-                    <Star key={i} className="h-6 w-6 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="ml-2 text-muted-foreground">Loading testimonials...</span>
+          </div>
+        ) : testimonials.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground text-lg">No testimonials yet. Be the first to share your experience!</p>
+          </div>
+        ) : (
+          <div className="relative">
+            <Card className="overflow-hidden">
+              <CardContent className="p-8 md:p-12">
+                <div className="text-center">
+                  {/* Stars */}
+                  <div className="flex justify-center mb-6">
+                    {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
+                      <Star key={i} className="h-6 w-6 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
 
-                {/* Testimonial Text */}
-                <blockquote className="text-lg md:text-xl text-card-foreground mb-8 text-pretty">
-                  "{testimonials[currentIndex].text}"
-                </blockquote>
+                  {/* Testimonial Text */}
+                  <blockquote className="text-lg md:text-xl text-card-foreground mb-8 text-pretty">
+                    "{testimonials[currentIndex].review}"
+                  </blockquote>
 
-                {/* Author */}
-                <div className="flex items-center justify-center space-x-4">
-                  <Avatar className="h-16 w-16">
-                    <AvatarImage
-                      src={testimonials[currentIndex].avatar || "/placeholder.svg"}
-                      alt={testimonials[currentIndex].name}
-                    />
-                    <AvatarFallback>
-                      {testimonials[currentIndex].name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="text-left">
-                    <div className="font-semibold text-card-foreground">{testimonials[currentIndex].name}</div>
-                    <div className="text-muted-foreground">{testimonials[currentIndex].location}</div>
+                  {/* Author */}
+                  <div className="flex items-center justify-center space-x-4">
+                    <Avatar className="h-16 w-16">
+                      <AvatarFallback className="bg-primary/10 text-primary text-lg">
+                        {testimonials[currentIndex].name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="text-left">
+                      <div className="font-semibold text-card-foreground">{testimonials[currentIndex].name}</div>
+                      {testimonials[currentIndex].location && (
+                        <div className="text-muted-foreground">{testimonials[currentIndex].location}</div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Navigation Buttons */}
-          <Button
-            variant="outline"
-            size="sm"
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 rounded-full p-2 bg-transparent"
-            onClick={prevTestimonial}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 rounded-full p-2 bg-transparent"
-            onClick={nextTestimonial}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+            {/* Navigation Buttons */}
+            <Button
+              variant="outline"
+              size="sm"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 rounded-full p-2 bg-transparent"
+              onClick={prevTestimonial}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 rounded-full p-2 bg-transparent"
+              onClick={nextTestimonial}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
 
-          {/* Dots Indicator */}
-          <div className="flex justify-center mt-6 space-x-2">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  index === currentIndex ? "bg-primary" : "bg-muted-foreground/30"
-                }`}
-                onClick={() => setCurrentIndex(index)}
-              />
-            ))}
+            {/* Dots Indicator */}
+            <div className="flex justify-center mt-6 space-x-2">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-3 h-3 rounded-full transition-colors ${
+                    index === currentIndex ? "bg-primary" : "bg-muted-foreground/30"
+                  }`}
+                  onClick={() => setCurrentIndex(index)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   )
