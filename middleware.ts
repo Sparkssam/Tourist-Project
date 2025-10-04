@@ -28,6 +28,78 @@ export async function middleware(request: NextRequest) {
   // Get user and profile
   const { data: { user } } = await supabase.auth.getUser()
   
+  // SECURITY: Protect admin routes
+  if (url.pathname.startsWith('/admin')) {
+    if (!user) {
+      // Not logged in - redirect to login
+      url.pathname = '/login'
+      url.searchParams.set('redirect', request.nextUrl.pathname)
+      return NextResponse.redirect(url)
+    }
+    
+    // Fetch user profile to check role
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    
+    if (profile?.role !== 'admin') {
+      // Not an admin - redirect to home with error
+      url.pathname = '/'
+      url.searchParams.set('error', 'unauthorized')
+      return NextResponse.redirect(url)
+    }
+  }
+  
+  // SECURITY: Protect staff routes
+  if (url.pathname.startsWith('/staff')) {
+    if (!user) {
+      // Not logged in - redirect to login
+      url.pathname = '/login'
+      url.searchParams.set('redirect', request.nextUrl.pathname)
+      return NextResponse.redirect(url)
+    }
+    
+    // Fetch user profile to check role
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    
+    if (profile?.role !== 'staff' && profile?.role !== 'admin') {
+      // Not staff or admin - redirect to home with error
+      url.pathname = '/'
+      url.searchParams.set('error', 'unauthorized')
+      return NextResponse.redirect(url)
+    }
+  }
+  
+  // SECURITY: Protect tourist dashboard (if you have one)
+  if (url.pathname.startsWith('/tourist')) {
+    if (!user) {
+      // Not logged in - redirect to login
+      url.pathname = '/login'
+      url.searchParams.set('redirect', request.nextUrl.pathname)
+      return NextResponse.redirect(url)
+    }
+    
+    // Fetch user profile to check role
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    
+    if (profile?.role !== 'tourist' && profile?.role !== 'admin') {
+      // Not tourist or admin - redirect to home with error
+      url.pathname = '/'
+      url.searchParams.set('error', 'unauthorized')
+      return NextResponse.redirect(url)
+    }
+  }
+  
   // Handle dashboard redirects based on user role
   if (url.pathname === '/dashboard' && user) {
     // Fetch user profile to get role
@@ -44,8 +116,11 @@ export async function middleware(request: NextRequest) {
     } else if (profile?.role === 'staff') {
       url.pathname = '/staff'
       return NextResponse.redirect(url)
+    } else if (profile?.role === 'tourist') {
+      url.pathname = '/tourist'
+      return NextResponse.redirect(url)
     }
-    // For tourists or no profile, stay on dashboard or redirect to home
+    // No profile, redirect to home
     url.pathname = '/'
     return NextResponse.redirect(url)
   }
