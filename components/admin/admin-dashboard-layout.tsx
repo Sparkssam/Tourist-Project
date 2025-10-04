@@ -32,12 +32,13 @@ import {
   Loader2,
   Database,
   Activity,
-  Star
+  Star,
+  Mail
 } from "lucide-react"
 
 interface AdminDashboardLayoutProps {
   children: React.ReactNode
-  currentPage?: 'overview' | 'users' | 'revenue' | 'inquiries' | 'settings' | 'database' | 'progress' | 'reviews'
+  currentPage?: 'overview' | 'users' | 'revenue' | 'inquiries' | 'settings' | 'database' | 'progress' | 'reviews' | 'safari-subscribers'
 }
 
 export function AdminDashboardLayout({ children, currentPage = 'overview' }: AdminDashboardLayoutProps) {
@@ -82,6 +83,13 @@ export function AdminDashboardLayout({ children, currentPage = 'overview' }: Adm
       href: '/admin/reviews',
       icon: Star,
       description: 'Moderate tourist reviews and testimonials'
+    },
+    {
+      id: 'safari-subscribers',
+      label: 'Safari Subscribers',
+      href: '/admin/safari-subscribers',
+      icon: Mail,
+      description: 'View safari guide email subscribers'
     },
     {
       id: 'database',

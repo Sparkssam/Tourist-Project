@@ -6,18 +6,43 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Download, Mail } from "lucide-react"
+import { Download, Mail, Loader2, CheckCircle, AlertCircle } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export function EmailLeadMagnet() {
   const [email, setEmail] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would typically send the email to your backend
-    console.log("Email submitted:", email)
-    setIsSubmitted(true)
-    setEmail("")
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch('/api/send-safari-guide', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send guide')
+      }
+
+      setIsSubmitted(true)
+      setEmail("")
+    } catch (err) {
+      console.error('Error sending safari guide:', err)
+      setError(err instanceof Error ? err.message : 'Failed to send guide. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -42,6 +67,13 @@ export function EmailLeadMagnet() {
           <CardContent className="max-w-md mx-auto">
             {!isSubmitted ? (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Input
                     type="email"
@@ -49,11 +81,21 @@ export function EmailLeadMagnet() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    disabled={isLoading}
                     className="flex-1"
                   />
-                  <Button type="submit" className="sm:w-auto">
-                    <Mail className="h-4 w-4 mr-2" />
-                    Get Free Guide
+                  <Button type="submit" className="sm:w-auto" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="h-4 w-4 mr-2" />
+                        Get Free Guide
+                      </>
+                    )}
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground text-center">
@@ -63,12 +105,19 @@ export function EmailLeadMagnet() {
             ) : (
               <div className="text-center py-8">
                 <div className="text-green-600 mb-4">
-                  <Mail className="h-12 w-12 mx-auto" />
+                  <CheckCircle className="h-12 w-12 mx-auto" />
                 </div>
                 <h3 className="text-xl font-semibold text-card-foreground mb-2">Check Your Email!</h3>
-                <p className="text-muted-foreground">
-                  Your free Safari Planning Guide is on its way. Don't forget to check your spam folder.
+                <p className="text-muted-foreground mb-4">
+                  Your free Safari Planning Guide is on its way to your inbox. Don't forget to check your spam folder.
                 </p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsSubmitted(false)}
+                  className="mt-2"
+                >
+                  Send Another Guide
+                </Button>
               </div>
             )}
           </CardContent>
