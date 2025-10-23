@@ -48,7 +48,7 @@ export function DashboardStats() {
       const adminCount = profiles?.filter(p => p.role === 'admin').length || 0
 
       // Fetch inquiry stats
-      const { data: inquiries } = await supabase.from('tourist_inquiries').select('status')
+      const { data: inquiries } = await supabase.from('inquiries').select('status')
       const totalInquiries = inquiries?.length || 0
       const pendingInquiries = inquiries?.filter(i => i.status === 'new' || i.status === 'in_progress').length || 0
 

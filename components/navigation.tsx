@@ -2,8 +2,10 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useAuth } from "@/lib/auth/auth-context"
 
 const MenuIcon = () => (
   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -25,6 +27,23 @@ const SendIcon = () => (
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
+  const { user, loading } = useAuth()
+  const pathname = usePathname()
+
+  // Hide navigation if user is logged in OR on dashboard pages
+  const isDashboardRoute = pathname?.startsWith('/admin') || 
+                           pathname?.startsWith('/staff') || 
+                           pathname?.startsWith('/tourist')
+
+  // Don't show navigation during loading to prevent flash
+  if (loading) {
+    return null
+  }
+
+  // Hide navigation if user is logged in or on dashboard pages
+  if (user || isDashboardRoute) {
+    return null
+  }
 
   const navItems = [
     { href: "/", label: "Home" },

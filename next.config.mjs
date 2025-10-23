@@ -9,6 +9,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Disable x-powered-by header for security
+  poweredByHeader: false,
+  // Compress responses
+  compress: true,
   // Security Headers
   async headers() {
     return [

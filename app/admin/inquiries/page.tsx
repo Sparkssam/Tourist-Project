@@ -20,7 +20,8 @@ import {
   Filter,
   Loader2,
   Users,
-  UserCheck
+  UserCheck,
+  Trash2
 } from "lucide-react"
 import {
   Select,
@@ -171,6 +172,32 @@ export default function AdminInquiriesPage() {
     } catch (error) {
       console.error('Error reassigning inquiry:', error)
       showAlert('error', 'Failed to reassign inquiry')
+    }
+  }
+
+  const deleteInquiry = async (inquiryId: string) => {
+    const confirmDelete = confirm('Are you sure you want to permanently delete this inquiry? This action cannot be undone.')
+    if (!confirmDelete) return
+
+    try {
+      const { error } = await supabase
+        .from('inquiries')
+        .delete()
+        .eq('id', inquiryId)
+
+      if (error) throw error
+
+      // Remove from local state
+      setInquiries(inquiries.filter(inq => inq.id !== inquiryId))
+      
+      if (selectedInquiry?.id === inquiryId) {
+        setSelectedInquiry(null)
+      }
+
+      showAlert('success', 'Inquiry deleted successfully!')
+    } catch (error) {
+      console.error('Error deleting inquiry:', error)
+      showAlert('error', 'Failed to delete inquiry')
     }
   }
 
@@ -498,6 +525,25 @@ export default function AdminInquiriesPage() {
                         <SelectItem value="completed">Completed</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+
+                  {/* Delete Inquiry */}
+                  <div className="border-t pt-4">
+                    <h4 className="font-semibold mb-2 text-destructive flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4" />
+                      Danger Zone
+                    </h4>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Permanently delete this inquiry. This action cannot be undone.
+                    </p>
+                    <Button
+                      onClick={() => deleteInquiry(selectedInquiry.id)}
+                      variant="destructive"
+                      className="w-full"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete Inquiry
+                    </Button>
                   </div>
                 </div>
               )}

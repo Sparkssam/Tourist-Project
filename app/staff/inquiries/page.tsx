@@ -21,8 +21,7 @@ import {
   Filter,
   Loader2,
   Users,
-  UserCheck,
-  Trash2
+  UserCheck
 } from "lucide-react"
 import {
   Select,
@@ -71,14 +70,24 @@ export default function StaffInquiriesPage() {
   const fetchInquiries = async () => {
     try {
       setLoading(true)
+      
+      // Fetch all inquiries first
       const { data, error } = await supabase
         .from('inquiries')
         .select('*')
-        .in('deletion_status', ['active', null]) // Only show active inquiries, hide pending_deletion
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      setInquiries(data || [])
+      
+      // Filter out pending_deletion inquiries (if column exists)
+      // This handles the case where deletion_status column might not exist yet
+      const filteredData = (data || []).filter(inq => {
+        // If deletion_status doesn't exist or is null/active, show it
+        // Hide if deletion_status is 'pending_deletion'
+        return !inq.deletion_status || inq.deletion_status === 'active'
+      })
+      
+      setInquiries(filteredData)
     } catch (error) {
       console.error('Error fetching inquiries:', error)
     } finally {
@@ -176,68 +185,6 @@ export default function StaffInquiriesPage() {
     } catch (error) {
       console.error('Error assigning inquiry:', error)
       alert('Failed to assign inquiry')
-    }
-  }
-
-  const requestDeletion = async (inquiryId: string, reason: string) => {
-    if (!reason || reason.trim() === '') {
-      alert('Please provide a reason for deletion')
-      return
-    }
-
-    try {
-      // Get current user ID
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        alert('You must be logged in to delete inquiries')
-        return
-      }
-
-      // Mark inquiry as pending deletion
-      const { error: updateError } = await supabase
-        .from('inquiries')
-        .update({ deletion_status: 'pending_deletion' })
-        .eq('id', inquiryId)
-
-      if (updateError) throw updateError
-
-      // Create deletion request
-      const { error: insertError } = await supabase
-        .from('deletion_requests')
-        .insert({
-          inquiry_id: inquiryId,
-          deleted_by: user.id,
-          reason: reason,
-          status: 'pending'
-        })
-
-      if (insertError) throw insertError
-
-      alert('Inquiry marked for deletion. Waiting for admin approval.\n\nThe inquiry will be hidden from your view until admin makes a decision.')
-      setSelectedInquiry(null)
-      await fetchInquiries() // Refresh the list
-    } catch (error: any) {
-      console.error('Error deleting inquiry:', error)
-      alert(`Failed to delete inquiry: ${error.message}`)
-    }
-  }
-
-  const isPastDate = (travelDates?: string) => {
-    if (!travelDates) return false
-    
-    try {
-      // Parse the travel_dates field - it could be in various formats
-      // Example: "2024-10-20 to 2024-10-25" or "2024-10-20"
-      const dateMatch = travelDates.match(/\d{4}-\d{2}-\d{2}/)
-      if (!dateMatch) return false
-      
-      const travelDate = new Date(dateMatch[0])
-      const today = new Date()
-      today.setHours(0, 0, 0, 0) // Reset time to beginning of day
-      
-      return travelDate < today
-    } catch {
-      return false
     }
   }
 
@@ -569,34 +516,6 @@ export default function StaffInquiriesPage() {
                       )}
                     </Button>
                   </div>
-
-                  {/* Delete Button for Past Date Inquiries */}
-                  {isPastDate(selectedInquiry.travel_dates) && (
-                    <div className="border-t pt-4">
-                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-3">
-                        <p className="text-sm text-amber-800 mb-2">
-                          <AlertCircle className="h-4 w-4 inline mr-1" />
-                          This inquiry's travel date has passed. You can delete it.
-                        </p>
-                        <p className="text-xs text-amber-700">
-                          Note: Admin must approve the deletion. The inquiry will be hidden from your view until admin decides.
-                        </p>
-                      </div>
-                      <Button
-                        onClick={() => {
-                          const reason = prompt('Please provide a reason for deletion:\n(e.g., "Travel date has passed, customer did not proceed")')
-                          if (reason && reason.trim()) {
-                            requestDeletion(selectedInquiry.id, reason)
-                          }
-                        }}
-                        variant="destructive"
-                        className="w-full"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete Inquiry
-                      </Button>
-                    </div>
-                  )}
                 </div>
               )}
             </CardContent>

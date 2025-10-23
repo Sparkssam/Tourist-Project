@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { MessageSquare, Users, Clock, CheckCircle, Loader2 } from "lucide-react"
 import { supabase } from "@/lib/supabase/client"
+import { useAuth } from "@/lib/auth/auth-context"
 
 interface OverviewData {
   totalInquiries: number
@@ -16,6 +17,7 @@ interface OverviewData {
 }
 
 export function StaffOverview() {
+  const { profile, user } = useAuth()
   const [overview, setOverview] = useState<OverviewData>({
     totalInquiries: 0,
     newInquiries: 0,
@@ -25,6 +27,15 @@ export function StaffOverview() {
     activeTourists: 0
   })
   const [loading, setLoading] = useState(true)
+
+  // Get display name with fallbacks
+  const getDisplayName = () => {
+    if (profile?.first_name) return profile.first_name
+    if (user?.user_metadata?.first_name) return user.user_metadata.first_name
+    if (profile?.email) return profile.email.split('@')[0]
+    if (user?.email) return user.email.split('@')[0]
+    return 'Staff Member'
+  }
 
   useEffect(() => {
     fetchOverviewData()
@@ -125,7 +136,9 @@ export function StaffOverview() {
       {/* Welcome Card */}
       <Card>
         <CardHeader>
-          <CardTitle>Welcome back, Staff Member!</CardTitle>
+          <CardTitle>
+            Welcome back, {getDisplayName()}!
+          </CardTitle>
           <CardDescription>
             Here's an overview of tourist inquiries and activities that need your attention.
           </CardDescription>

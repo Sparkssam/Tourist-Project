@@ -1,26 +1,124 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { DollarSign, TrendingUp, CreditCard, Users } from "lucide-react"
+import { DollarSign, TrendingUp, CreditCard, Users, Loader2 } from "lucide-react"
+import { supabase } from "@/lib/supabase/client"
 
-// Mock revenue data
-const mockRevenueData = {
-  totalRevenue: 125600,
-  monthlyRevenue: 18500,
-  yearlyRevenue: 98000,
-  pendingPayments: 5,
-  completedPayments: 89,
-  averageBookingValue: 1410,
-  topPaymentMethod: 'Pesapal',
-  growthRate: 12.5
+interface RevenueData {
+  totalRevenue: number
+  monthlyRevenue: number
+  yearlyRevenue: number
+  pendingPayments: number
+  completedPayments: number
+  averageBookingValue: number
+  growthRate: number
 }
 
 export function RevenueOverview() {
+  const [revenueData, setRevenueData] = useState<RevenueData>({
+    totalRevenue: 0,
+    monthlyRevenue: 0,
+    yearlyRevenue: 0,
+    pendingPayments: 0,
+    completedPayments: 0,
+    averageBookingValue: 0,
+    growthRate: 0
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchRevenueData()
+  }, [])
+
+  const fetchRevenueData = async () => {
+    try {
+      setLoading(true)
+
+      // Fetch all payments
+      const { data: payments, error } = await supabase
+        .from('payments')
+        .select('amount, status, created_at')
+
+      if (error) {
+        console.error('Error fetching payments:', error)
+        return
+      }
+
+      if (!payments || payments.length === 0) {
+        setRevenueData({
+          totalRevenue: 0,
+          monthlyRevenue: 0,
+          yearlyRevenue: 0,
+          pendingPayments: 0,
+          completedPayments: 0,
+          averageBookingValue: 0,
+          growthRate: 0
+        })
+        return
+      }
+
+      // Calculate total revenue (completed payments only)
+      const completedPayments = payments.filter(p => p.status === 'completed')
+      const totalRevenue = completedPayments.reduce((sum, p) => sum + (p.amount || 0), 0)
+
+      // Calculate monthly revenue (current month)
+      const now = new Date()
+      const currentMonth = now.getMonth()
+      const currentYear = now.getFullYear()
+      const monthlyPayments = completedPayments.filter(p => {
+        const paymentDate = new Date(p.created_at)
+        return paymentDate.getMonth() === currentMonth && paymentDate.getFullYear() === currentYear
+      })
+      const monthlyRevenue = monthlyPayments.reduce((sum, p) => sum + (p.amount || 0), 0)
+
+      // Calculate yearly revenue (current year)
+      const yearlyPayments = completedPayments.filter(p => {
+        const paymentDate = new Date(p.created_at)
+        return paymentDate.getFullYear() === currentYear
+      })
+      const yearlyRevenue = yearlyPayments.reduce((sum, p) => sum + (p.amount || 0), 0)
+
+      // Calculate previous month revenue for growth rate
+      const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1
+      const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear
+      const lastMonthPayments = completedPayments.filter(p => {
+        const paymentDate = new Date(p.created_at)
+        return paymentDate.getMonth() === lastMonth && paymentDate.getFullYear() === lastMonthYear
+      })
+      const lastMonthRevenue = lastMonthPayments.reduce((sum, p) => sum + (p.amount || 0), 0)
+      
+      const growthRate = lastMonthRevenue > 0 
+        ? ((monthlyRevenue - lastMonthRevenue) / lastMonthRevenue) * 100 
+        : 0
+
+      // Count payment statuses
+      const pendingCount = payments.filter(p => p.status === 'pending').length
+      const completedCount = completedPayments.length
+
+      // Calculate average booking value
+      const averageBookingValue = completedCount > 0 ? totalRevenue / completedCount : 0
+
+      setRevenueData({
+        totalRevenue,
+        monthlyRevenue,
+        yearlyRevenue,
+        pendingPayments: pendingCount,
+        completedPayments: completedCount,
+        averageBookingValue,
+        growthRate
+      })
+    } catch (error) {
+      console.error('Error calculating revenue:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
   const stats = [
     {
       title: "Total Revenue",
-      value: `$${mockRevenueData.totalRevenue.toLocaleString()}`,
+      value: `$${revenueData.totalRevenue.toLocaleString()}`,
       description: "All time revenue",
       icon: DollarSign,
       color: "text-green-600",
@@ -28,29 +126,40 @@ export function RevenueOverview() {
     },
     {
       title: "Monthly Revenue",
-      value: `$${mockRevenueData.monthlyRevenue.toLocaleString()}`,
-      description: `+${mockRevenueData.growthRate}% from last month`,
+      value: `$${revenueData.monthlyRevenue.toLocaleString()}`,
+      description: revenueData.growthRate !== 0 
+        ? `${revenueData.growthRate > 0 ? '+' : ''}${revenueData.growthRate.toFixed(1)}% from last month`
+        : "No previous month data",
       icon: TrendingUp,
       color: "text-blue-600",
       bgColor: "bg-blue-100"
     },
     {
       title: "Completed Payments",
-      value: mockRevenueData.completedPayments,
-      description: `${mockRevenueData.pendingPayments} pending`,
+      value: revenueData.completedPayments,
+      description: `${revenueData.pendingPayments} pending`,
       icon: CreditCard,
       color: "text-purple-600",
       bgColor: "bg-purple-100"
     },
     {
       title: "Average Booking",
-      value: `$${mockRevenueData.averageBookingValue}`,
+      value: `$${revenueData.averageBookingValue.toFixed(0)}`,
       description: "Per customer value",
       icon: Users,
       color: "text-orange-600",
       bgColor: "bg-orange-100"
     }
   ]
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2 text-muted-foreground">Loading revenue data...</span>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -79,88 +188,17 @@ export function RevenueOverview() {
         })}
       </div>
 
-      {/* Payment Methods Breakdown */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Payment Methods Distribution</CardTitle>
-          <CardDescription>
-            Revenue breakdown by payment method this month
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 bg-blue-500 rounded"></div>
-                <span>Pesapal (Online Payment)</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="font-medium">$11,100</span>
-                <Badge variant="secondary">60%</Badge>
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 bg-green-500 rounded"></div>
-                <span>Bank Transfer</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="font-medium">$5,550</span>
-                <Badge variant="secondary">30%</Badge>
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 bg-orange-500 rounded"></div>
-                <span>Cash Payment</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="font-medium">$1,850</span>
-                <Badge variant="secondary">10%</Badge>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Revenue Trends */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Revenue Trends</CardTitle>
-          <CardDescription>
-            Monthly revenue performance over the last 6 months
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-sm text-muted-foreground mb-4">
-            Showing monthly totals in USD
-          </div>
-          <div className="space-y-3">
-            {[
-              { month: 'May 2024', amount: 18500, growth: 12.5 },
-              { month: 'Apr 2024', amount: 16200, growth: -2.3 },
-              { month: 'Mar 2024', amount: 13800, growth: 8.1 },
-              { month: 'Feb 2024', amount: 14500, growth: 15.2 },
-              { month: 'Jan 2024', amount: 12000, growth: 5.5 },
-            ].map((item) => (
-              <div key={item.month} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                <div>
-                  <div className="font-medium">{item.month}</div>
-                  <div className="text-sm text-muted-foreground">
-                    ${item.amount.toLocaleString()}
-                  </div>
-                </div>
-                <Badge 
-                  variant="secondary" 
-                  className={item.growth > 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
-                >
-                  {item.growth > 0 ? '+' : ''}{item.growth}%
-                </Badge>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {revenueData.totalRevenue === 0 && (
+        <Card>
+          <CardContent className="py-12 text-center">
+            <DollarSign className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-lg font-medium mb-2">No Payment Data Yet</h3>
+            <p className="text-sm text-muted-foreground">
+              Revenue statistics will appear here once payments are recorded in the system.
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

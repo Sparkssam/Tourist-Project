@@ -23,7 +23,6 @@ import {
   UserPlus, 
   DollarSign, 
   TrendingUp, 
-  Settings, 
   LogOut,
   Home,
   MessageSquare,
@@ -31,15 +30,12 @@ import {
   Shield,
   Loader2,
   Database,
-  Activity,
-  Star,
-  Mail,
-  Trash2
+  Star
 } from "lucide-react"
 
 interface AdminDashboardLayoutProps {
   children: React.ReactNode
-  currentPage?: 'overview' | 'users' | 'revenue' | 'inquiries' | 'settings' | 'database' | 'progress' | 'reviews' | 'safari-subscribers' | 'deletion-requests'
+  currentPage?: 'overview' | 'users' | 'revenue' | 'inquiries' | 'database' | 'reviews'
 }
 
 export function AdminDashboardLayout({ children, currentPage = 'overview' }: AdminDashboardLayoutProps) {
@@ -48,6 +44,33 @@ export function AdminDashboardLayout({ children, currentPage = 'overview' }: Adm
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const { signOut, profile, user } = useAuth()
   const router = useRouter()
+
+  // Get user display information with fallbacks
+  const getUserDisplayName = () => {
+    if (profile?.first_name && profile?.last_name) {
+      return `${profile.first_name} ${profile.last_name}`
+    }
+    if (profile?.first_name) {
+      return profile.first_name
+    }
+    if (user?.user_metadata?.first_name && user?.user_metadata?.last_name) {
+      return `${user.user_metadata.first_name} ${user.user_metadata.last_name}`
+    }
+    if (user?.user_metadata?.first_name) {
+      return user.user_metadata.first_name
+    }
+    if (profile?.email) {
+      return profile.email.split('@')[0]
+    }
+    if (user?.email) {
+      return user.email.split('@')[0]
+    }
+    return 'User'
+  }
+
+  const getUserEmail = () => {
+    return profile?.email || user?.email || 'user@kekeosafaris.com'
+  }
 
   const navigationItems = [
     {
@@ -79,13 +102,6 @@ export function AdminDashboardLayout({ children, currentPage = 'overview' }: Adm
       description: 'Monitor all tourist inquiries'
     },
     {
-      id: 'deletion-requests',
-      label: 'Deletion Requests',
-      href: '/admin/deletion-requests',
-      icon: Trash2,
-      description: 'Review staff deletion requests'
-    },
-    {
       id: 'reviews',
       label: 'Review Management',
       href: '/admin/reviews',
@@ -93,32 +109,11 @@ export function AdminDashboardLayout({ children, currentPage = 'overview' }: Adm
       description: 'Moderate tourist reviews and testimonials'
     },
     {
-      id: 'safari-subscribers',
-      label: 'Safari Subscribers',
-      href: '/admin/safari-subscribers',
-      icon: Mail,
-      description: 'View safari guide email subscribers'
-    },
-    {
       id: 'database',
       label: 'Database Viewer',
       href: '/admin/database',
       icon: Database,
       description: 'View all database tables and data'
-    },
-    {
-      id: 'progress',
-      label: 'Progress Monitor',
-      href: '/admin/progress',
-      icon: Activity,
-      description: 'Track API calls and system responses'
-    },
-    {
-      id: 'settings',
-      label: 'System Settings',
-      href: '/admin/settings',
-      icon: Settings,
-      description: 'Configure system settings'
     }
   ]
 
@@ -290,13 +285,10 @@ export function AdminDashboardLayout({ children, currentPage = 'overview' }: Adm
               
               <div className="text-right">
                 <div className="font-medium">
-                  {profile?.first_name && profile?.last_name 
-                    ? `${profile.first_name} ${profile.last_name}` 
-                    : user?.email?.split('@')[0] || 'User'
-                  }
+                  {getUserDisplayName()}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  {user?.email || 'user@kekeosafaris.com'}
+                  {getUserEmail()}
                 </div>
               </div>
               

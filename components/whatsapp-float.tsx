@@ -1,6 +1,8 @@
 "use client"
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useAuth } from "@/lib/auth/auth-context"
 
 const MessageCircleIcon = () => (
   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -14,6 +16,19 @@ const MessageCircleIcon = () => (
 )
 
 export function WhatsAppFloat() {
+  const { user, loading } = useAuth()
+  const pathname = usePathname()
+
+  // Hide WhatsApp float on dashboard pages
+  const isDashboardRoute = pathname?.startsWith('/admin') || 
+                           pathname?.startsWith('/staff') || 
+                           pathname?.startsWith('/tourist')
+
+  // Hide during loading or if user is logged in or on dashboard pages
+  if (loading || user || isDashboardRoute) {
+    return null
+  }
+
   return (
     <Link
       href="https://wa.me/255760309999"

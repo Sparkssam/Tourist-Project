@@ -1,7 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/lib/auth/auth-context"
 
 const ArrowUpIcon = () => (
   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -11,6 +13,13 @@ const ArrowUpIcon = () => (
 
 export function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false)
+  const { user, loading } = useAuth()
+  const pathname = usePathname()
+
+  // Hide on dashboard pages
+  const isDashboardRoute = pathname?.startsWith('/admin') || 
+                           pathname?.startsWith('/staff') || 
+                           pathname?.startsWith('/tourist')
 
   useEffect(() => {
     const toggleVisibility = () => {
@@ -32,7 +41,8 @@ export function ScrollToTop() {
     })
   }
 
-  if (!isVisible) {
+  // Hide scroll to top if loading, user is logged in, on dashboard pages, or not scrolled down
+  if (loading || user || isDashboardRoute || !isVisible) {
     return null
   }
 

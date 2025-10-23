@@ -2,7 +2,6 @@
 
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 
 export async function loginAction(email: string, password: string) {
   const cookieStore = await cookies()
@@ -36,37 +35,67 @@ export async function loginAction(email: string, password: string) {
     password,
   })
 
+  // Return 401 for invalid credentials
   if (signInError) {
+    // Log error only in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Login failed:', signInError.message)
+    }
+    
     return { 
-      success: false, 
-      error: signInError.message 
+      success: false,
+      statusCode: 401, // Unauthorized - invalid credentials
+      error: 'Invalid email or password' // Generic message for security
     }
   }
 
   if (!authData.user) {
     return { 
-      success: false, 
-      error: 'Login failed - no user returned' 
+      success: false,
+      statusCode: 401, // Unauthorized
+      error: 'Invalid email or password' // Generic message
     }
   }
 
   // Fetch user profile to determine role
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
-    .select('role')
+    .select('role, status')
     .eq('id', authData.user.id)
     .single()
 
   if (profileError || !profile) {
+    // Log error only in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Profile fetch error:', profileError)
+    }
+    
     return { 
-      success: false, 
-      error: 'Could not load user profile' 
+      success: false,
+      statusCode: 500, // Internal server error
+      error: 'Could not load user profile. Please try again.' 
     }
   }
 
+  // Check if user account is active
+  if (profile.status !== 'active') {
+    return {
+      success: false,
+      statusCode: 403, // Forbidden - account inactive
+      error: 'Your account is inactive. Please contact support.'
+    }
+  }
+
+  // Update last login timestamp
+  await supabase
+    .from('profiles')
+    .update({ last_login_at: new Date().toISOString() })
+    .eq('id', authData.user.id)
+
   // Return success with role - let the client handle redirect
   return { 
-    success: true, 
+    success: true,
+    statusCode: 200, // OK
     role: profile.role,
     user: authData.user 
   }

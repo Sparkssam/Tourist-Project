@@ -11,6 +11,7 @@ interface RevenueData {
   lastMonth: number
   growth: number
   monthlyData: Array<{ month: string; revenue: number }>
+  paymentMethods: Array<{ method: string; percentage: number; count: number }>
 }
 
 export function RevenueChart() {
@@ -18,7 +19,8 @@ export function RevenueChart() {
     currentMonth: 0,
     lastMonth: 0,
     growth: 0,
-    monthlyData: []
+    monthlyData: [],
+    paymentMethods: []
   })
   const [loading, setLoading] = useState(true)
 
@@ -30,7 +32,7 @@ export function RevenueChart() {
     try {
       const { data: payments } = await supabase
         .from('payments')
-        .select('amount, created_at, status')
+        .select('amount, created_at, status, payment_method')
         .eq('status', 'completed')
         .order('created_at', { ascending: false })
 
@@ -42,12 +44,14 @@ export function RevenueChart() {
       const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1
       const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear
 
+      // Calculate current month payments
+      const currentMonthPayments = payments.filter(p => {
+        const paymentDate = new Date(p.created_at)
+        return paymentDate.getMonth() === currentMonth && paymentDate.getFullYear() === currentYear
+      })
+
       // Calculate current and last month revenue
-      const currentMonthRevenue = payments
-        .filter(p => {
-          const paymentDate = new Date(p.created_at)
-          return paymentDate.getMonth() === currentMonth && paymentDate.getFullYear() === currentYear
-        })
+      const currentMonthRevenue = currentMonthPayments
         .reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
 
       const lastMonthRevenue = payments
@@ -58,6 +62,20 @@ export function RevenueChart() {
         .reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
 
       const growth = lastMonthRevenue > 0 ? ((currentMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100 : 0
+
+      // Calculate payment method distribution for current month
+      const methodCounts: Record<string, number> = {}
+      currentMonthPayments.forEach(p => {
+        const method = p.payment_method || 'other'
+        methodCounts[method] = (methodCounts[method] || 0) + 1
+      })
+
+      const totalPayments = currentMonthPayments.length
+      const paymentMethods = Object.entries(methodCounts).map(([method, count]) => ({
+        method: method.replace('_', ' ').toUpperCase(),
+        percentage: totalPayments > 0 ? Math.round((count / totalPayments) * 100) : 0,
+        count
+      })).sort((a, b) => b.percentage - a.percentage)
 
       // Generate last 6 months data
       const monthlyData: Array<{ month: string; revenue: number }> = []
@@ -84,7 +102,8 @@ export function RevenueChart() {
         currentMonth: currentMonthRevenue,
         lastMonth: lastMonthRevenue,
         growth: Math.round(growth * 10) / 10,
-        monthlyData
+        monthlyData,
+        paymentMethods
       })
     } catch (error) {
       console.error('Error fetching revenue data:', error)
@@ -158,17 +177,26 @@ export function RevenueChart() {
             {/* Payment Methods Breakdown */}
             <div className="mt-6 pt-4 border-t border-border">
               <h4 className="font-medium text-sm mb-3">Payment Methods (This Month)</h4>
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                  Pesapal: 60%
-                </Badge>
-                <Badge variant="secondary" className="bg-green-100 text-green-800">
-                  Bank Transfer: 30%
-                </Badge>
-                <Badge variant="secondary" className="bg-orange-100 text-orange-800">
-                  Cash: 10%
-                </Badge>
-              </div>
+              {revenueData.paymentMethods.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {revenueData.paymentMethods.map((method) => (
+                    <Badge 
+                      key={method.method}
+                      variant="secondary" 
+                      className={
+                        method.method.toLowerCase().includes('pesapal') ? "bg-blue-100 text-blue-800" :
+                        method.method.toLowerCase().includes('bank') ? "bg-green-100 text-green-800" :
+                        method.method.toLowerCase().includes('cash') ? "bg-orange-100 text-orange-800" :
+                        "bg-gray-100 text-gray-800"
+                      }
+                    >
+                      {method.method}: {method.percentage}% ({method.count})
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">No payments this month</p>
+              )}
             </div>
           </>
         )}

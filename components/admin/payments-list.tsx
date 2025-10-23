@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -27,112 +27,73 @@ import {
   MoreHorizontal,
   Download,
   Eye,
-  RefreshCw
+  RefreshCw,
+  Loader2
 } from "lucide-react"
-import { PaymentRecord } from "@/lib/types/user"
+import { supabase } from "@/lib/supabase/client"
 
-// Mock payment data
-const mockPayments: PaymentRecord[] = [
-  {
-    id: "pay_001",
-    userId: "user_101",
-    user: {
-      firstName: "John",
-      lastName: "Doe",
-      email: "john.doe@email.com"
-    },
-    tourId: "tour_serengeti_001",
-    tourName: "5-Day Serengeti Safari",
-    amount: 2500,
-    currency: "USD",
-    paymentMethod: "pesapal",
-    status: "completed",
-    transactionId: "TXN_ABC123",
-    createdAt: new Date("2024-09-28"),
-    completedAt: new Date("2024-09-28"),
-    description: "Full payment for Serengeti Safari package"
-  },
-  {
-    id: "pay_002",
-    userId: "user_102",
-    user: {
-      firstName: "Sarah",
-      lastName: "Johnson",
-      email: "sarah.j@email.com"
-    },
-    tourId: "tour_kilimanjaro_001",
-    tourName: "7-Day Kilimanjaro Trek",
-    amount: 1800,
-    currency: "USD",
-    paymentMethod: "bank_transfer",
-    status: "pending",
-    createdAt: new Date("2024-09-30"),
-    description: "Deposit payment for Kilimanjaro trek"
-  },
-  {
-    id: "pay_003",
-    userId: "user_103",
-    user: {
-      firstName: "Mike",
-      lastName: "Wilson",
-      email: "mike.wilson@email.com"
-    },
-    tourId: "tour_cultural_001",
-    tourName: "3-Day Cultural Village Tour",
-    amount: 800,
-    currency: "USD",
-    paymentMethod: "pesapal",
-    status: "completed",
-    transactionId: "TXN_DEF456",
-    createdAt: new Date("2024-09-25"),
-    completedAt: new Date("2024-09-25"),
-    description: "Full payment for cultural tour"
-  },
-  {
-    id: "pay_004",
-    userId: "user_104",
-    user: {
-      firstName: "Emma",
-      lastName: "Davis",
-      email: "emma.davis@email.com"
-    },
-    tourId: "tour_ngorongoro_001",
-    tourName: "4-Day Ngorongoro Crater Safari",
-    amount: 1950,
-    currency: "USD",
-    paymentMethod: "cash",
-    status: "completed",
-    createdAt: new Date("2024-09-20"),
-    completedAt: new Date("2024-09-22"),
-    description: "Cash payment at office"
-  },
-  {
-    id: "pay_005",
-    userId: "user_105",
-    user: {
-      firstName: "David",
-      lastName: "Brown",
-      email: "david.brown@email.com"
-    },
-    tourId: "tour_zanzibar_001",
-    tourName: "5-Day Zanzibar Beach & Culture",
-    amount: 1200,
-    currency: "USD",
-    paymentMethod: "pesapal",
-    status: "failed",
-    createdAt: new Date("2024-09-18"),
-    description: "Payment failed - insufficient funds"
+interface Payment {
+  id: string
+  user_id: string
+  tour_id?: string
+  tour_name?: string
+  amount: number
+  currency: string
+  payment_method: string
+  status: string
+  transaction_id?: string
+  description?: string
+  created_at: string
+  completed_at?: string
+  profiles?: {
+    first_name: string
+    last_name: string
+    email: string
   }
-]
+}
 
 export function PaymentsList() {
-  const [payments, setPayments] = useState<PaymentRecord[]>(mockPayments)
+  const [payments, setPayments] = useState<Payment[]>([])
+  const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [searchTerm, setSearchTerm] = useState('')
 
-  const getStatusBadgeVariant = (status: PaymentRecord['status']) => {
-    switch (status) {
+  useEffect(() => {
+    fetchPayments()
+  }, [])
+
+  const fetchPayments = async () => {
+    try {
+      setLoading(true)
+      const { data, error } = await supabase
+        .from('payments')
+        .select(`
+          *,
+          profiles:user_id (
+            first_name,
+            last_name,
+            email
+          )
+        `)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Error fetching payments:', error)
+        return
+      }
+
+      setPayments(data || [])
+    } catch (error) {
+      console.error('Error loading payments:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status?.toLowerCase()) {
       case 'completed':
+      case 'success':
         return "bg-green-100 text-green-800"
       case 'pending':
         return "bg-yellow-100 text-yellow-800"
@@ -145,30 +106,67 @@ export function PaymentsList() {
     }
   }
 
-  const getPaymentMethodBadge = (method: PaymentRecord['paymentMethod']) => {
-    const colors = {
-      pesapal: "bg-blue-100 text-blue-800",
-      bank_transfer: "bg-purple-100 text-purple-800",
-      cash: "bg-green-100 text-green-800",
-      other: "bg-gray-100 text-gray-800"
-    }
-    return colors[method] || colors.other
+  const getPaymentMethodBadge = (method: string) => {
+    const methodLower = method?.toLowerCase() || ''
+    if (methodLower.includes('pesapal')) return "bg-blue-100 text-blue-800"
+    if (methodLower.includes('bank') || methodLower.includes('transfer')) return "bg-purple-100 text-purple-800"
+    if (methodLower.includes('cash')) return "bg-green-100 text-green-800"
+    return "bg-gray-100 text-gray-800"
   }
 
   const filteredPayments = payments.filter(payment => {
-    const matchesStatus = statusFilter === 'all' || payment.status === statusFilter
+    const matchesStatus = statusFilter === 'all' || payment.status?.toLowerCase() === statusFilter.toLowerCase()
+    const firstName = payment.profiles?.first_name || ''
+    const lastName = payment.profiles?.last_name || ''
+    const email = payment.profiles?.email || ''
+    const tourName = payment.tour_name || ''
+    
     const matchesSearch = searchTerm === '' || 
-      payment.user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.tourName?.toLowerCase().includes(searchTerm.toLowerCase())
+      firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tourName.toLowerCase().includes(searchTerm.toLowerCase())
     
     return matchesStatus && matchesSearch
   })
 
   const totalAmount = filteredPayments.reduce((sum, payment) => 
-    payment.status === 'completed' ? sum + payment.amount : sum, 0
+    payment.status?.toLowerCase() === 'completed' ? sum + (payment.amount || 0) : sum, 0
   )
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="py-12 text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Loading payments...</p>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (payments.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <DollarSign className="h-5 w-5" />
+            <span>All Payments</span>
+          </CardTitle>
+          <CardDescription>
+            Complete payment history and transaction details
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="py-12 text-center">
+          <DollarSign className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="text-lg font-medium mb-2">No Payments Yet</h3>
+          <p className="text-sm text-muted-foreground">
+            Payment records will appear here once transactions are processed.
+          </p>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card>
@@ -188,7 +186,7 @@ export function PaymentsList() {
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={fetchPayments}>
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
             </Button>
@@ -233,9 +231,9 @@ export function PaymentsList() {
                 Total completed: ${totalAmount.toLocaleString()}
               </div>
             </div>
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
-              {filteredPayments.filter(p => p.status === 'completed').length} Completed
-            </Badge>
+              <Badge variant="secondary" className="bg-green-100 text-green-800">
+                {filteredPayments.filter(p => p.status?.toLowerCase() === 'completed').length} Completed
+              </Badge>
           </div>
 
           {/* Payments Table */}
@@ -259,16 +257,16 @@ export function PaymentsList() {
                       <td className="p-4">
                         <div className="flex flex-col">
                           <div className="font-medium">
-                            {payment.user.firstName} {payment.user.lastName}
+                            {payment.profiles?.first_name || 'N/A'} {payment.profiles?.last_name || ''}
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            {payment.user.email}
+                            {payment.profiles?.email || 'N/A'}
                           </div>
                         </div>
                       </td>
                       <td className="p-4">
                         <div className="font-medium text-sm">
-                          {payment.tourName || 'N/A'}
+                          {payment.tour_name || 'N/A'}
                         </div>
                         {payment.description && (
                           <div className="text-xs text-muted-foreground">
@@ -278,27 +276,27 @@ export function PaymentsList() {
                       </td>
                       <td className="p-4">
                         <div className="font-medium">
-                          ${payment.amount.toLocaleString()} {payment.currency}
+                          ${(payment.amount || 0).toLocaleString()} {payment.currency || 'USD'}
                         </div>
                       </td>
                       <td className="p-4">
-                        <Badge variant="secondary" className={getPaymentMethodBadge(payment.paymentMethod)}>
-                          {payment.paymentMethod.replace('_', ' ').toUpperCase()}
+                        <Badge variant="secondary" className={getPaymentMethodBadge(payment.payment_method)}>
+                          {(payment.payment_method || 'OTHER').replace('_', ' ').toUpperCase()}
                         </Badge>
                       </td>
                       <td className="p-4">
                         <Badge variant="secondary" className={getStatusBadgeVariant(payment.status)}>
-                          {payment.status.toUpperCase()}
+                          {(payment.status || 'UNKNOWN').toUpperCase()}
                         </Badge>
                       </td>
                       <td className="p-4">
                         <div className="flex items-center text-sm text-muted-foreground">
                           <Calendar className="h-3 w-3 mr-1" />
-                          {payment.createdAt.toLocaleDateString()}
+                          {new Date(payment.created_at).toLocaleDateString()}
                         </div>
-                        {payment.completedAt && (
+                        {payment.completed_at && (
                           <div className="text-xs text-muted-foreground">
-                            Completed: {payment.completedAt.toLocaleDateString()}
+                            Completed: {new Date(payment.completed_at).toLocaleDateString()}
                           </div>
                         )}
                       </td>
@@ -318,7 +316,7 @@ export function PaymentsList() {
                               <Download className="h-4 w-4 mr-2" />
                               Download Receipt
                             </DropdownMenuItem>
-                            {payment.status === 'completed' && (
+                            {payment.status?.toLowerCase() === 'completed' && (
                               <DropdownMenuItem>
                                 <RefreshCw className="h-4 w-4 mr-2" />
                                 Process Refund

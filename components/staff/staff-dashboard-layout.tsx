@@ -37,8 +37,32 @@ export function StaffDashboardLayout({ children, currentPage = 'overview' }: Sta
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [loggingOut, setLoggingOut] = useState(false)
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
-  const { signOut, profile } = useAuth()
+  const { signOut, profile, user } = useAuth()
   const router = useRouter()
+
+  // Get user display information
+  const getUserDisplayName = () => {
+    if (profile?.first_name && profile?.last_name) {
+      return `${profile.first_name} ${profile.last_name}`
+    }
+    if (profile?.first_name) {
+      return profile.first_name
+    }
+    if (user?.user_metadata?.first_name) {
+      return user.user_metadata.first_name
+    }
+    if (profile?.email) {
+      return profile.email.split('@')[0]
+    }
+    if (user?.email) {
+      return user.email.split('@')[0]
+    }
+    return 'Staff User'
+  }
+
+  const getUserEmail = () => {
+    return profile?.email || user?.email || 'staff@kekeosafaris.com'
+  }
 
   const navigationItems = [
     {
@@ -218,12 +242,16 @@ export function StaffDashboardLayout({ children, currentPage = 'overview' }: Sta
             
             <div className="flex items-center space-x-4">
               <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                Staff Member
+                {profile?.role ? profile.role.charAt(0).toUpperCase() + profile.role.slice(1) : 'Staff Member'}
               </Badge>
               
               <div className="text-right">
-                <div className="font-medium">Staff User</div>
-                <div className="text-sm text-muted-foreground">staff@kekeosafaris.com</div>
+                <div className="font-medium">
+                  {getUserDisplayName()}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {getUserEmail()}
+                </div>
               </div>
             </div>
           </div>
