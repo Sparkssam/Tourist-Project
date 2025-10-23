@@ -39,10 +39,14 @@ export function CreateUserForm() {
       
       // Import supabase client
       const { supabase } = await import('@/lib/supabase/client')
-      console.log('✅ Supabase client loaded')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Supabase client loaded')
+      }
 
       // Check if email already exists with timeout
-      console.log('🔍 Checking if email exists...')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Checking email availability')
+      }
       const emailCheckPromise = supabase
         .from('profiles')
         .select('email')
@@ -60,12 +64,18 @@ export function CreateUserForm() {
           setError('A user with this email already exists!')
           return
         }
-        console.log('✅ Email is available')
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Email is available')
+        }
       } catch (emailError: any) {
         if (emailError.message === 'Email check timeout') {
-          console.log('⏱️ Email check timed out, continuing anyway...')
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Email check timed out, continuing')
+          }
         } else if (emailError.code === 'PGRST116') {
-          console.log('✅ Email not found (good - available for use)')
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Email not found (available for use)')
+          }
         } else {
           console.error('Email check error:', emailError)
           // Continue anyway if it's just a check error
@@ -74,10 +84,14 @@ export function CreateUserForm() {
 
       // Generate a UUID for the profile
       const userId = crypto.randomUUID()
-      console.log('🆔 Generated user ID:', userId)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Generated user ID')
+      }
 
       // Create the profile directly with timeout
-      console.log('💾 Creating profile in database...')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Creating profile in database')
+      }
       const createProfilePromise = supabase
         .from('profiles')
         .insert({
@@ -97,11 +111,13 @@ export function CreateUserForm() {
       const { error: profileError } = await Promise.race([createProfilePromise, createTimeoutPromise]) as any
 
       if (profileError) {
-        console.error('❌ Profile creation error:', profileError)
+        console.error('Profile creation error:', profileError)
         throw profileError
       }
 
-      console.log('✅ User profile created successfully!')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('User profile created successfully')
+      }
 
       setMessage(`✅ User profile created successfully! 
                  👤 ${formData.firstName} ${formData.lastName}

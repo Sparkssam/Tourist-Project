@@ -34,7 +34,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    console.log('📝 Creating auth user:', email)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Creating auth user')
+    }
 
     // Try creating the auth user with minimal metadata
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
@@ -49,7 +51,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (authError) {
-      console.error('❌ Auth creation error:', authError)
+      console.error('Auth creation error:', authError)
       return NextResponse.json({ 
         error: 'Failed to create auth user: ' + authError.message,
         details: authError
@@ -62,10 +64,14 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    console.log('✅ Auth user created:', authData.user.id)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Auth user created successfully')
+    }
 
     // Now create/update the profile
-    console.log('📝 Creating profile...')
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Creating profile')
+    }
     
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
@@ -100,7 +106,9 @@ export async function POST(request: NextRequest) {
       }, { status: 201 })
     }
 
-    console.log('✅ Profile created successfully')
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Profile created successfully')
+    }
 
     return NextResponse.json({
       success: true,

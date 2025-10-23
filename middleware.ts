@@ -9,8 +9,21 @@ export async function middleware(request: NextRequest) {
     const response = await updateSession(request)
     
     const url = request.nextUrl.clone()
+    const pathname = url.pathname
     
-    // Create Supabase client to check auth
+    // Define protected routes that require authentication
+    const isProtectedRoute = 
+      pathname.startsWith('/admin') ||
+      pathname.startsWith('/staff') ||
+      pathname.startsWith('/tourist') ||
+      pathname === '/dashboard'
+    
+    // If not a protected route, skip authentication checks
+    if (!isProtectedRoute) {
+      return response
+    }
+    
+    // Create Supabase client to check auth for protected routes only
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -75,7 +88,7 @@ export async function middleware(request: NextRequest) {
     // Check 4: Verify account is active
     if (profile.status !== 'active') {
       if (process.env.NODE_ENV === 'development') {
-        console.log('Admin route access denied: Account inactive', profile.status)
+        console.log('Admin route access denied: Account inactive')
       }
       url.pathname = '/login'
       url.searchParams.set('error', 'account_inactive')
@@ -86,7 +99,7 @@ export async function middleware(request: NextRequest) {
     if (profile.role !== 'admin') {
       // Not an admin - redirect to appropriate dashboard or home
       if (process.env.NODE_ENV === 'development') {
-        console.log('Admin route access denied: Insufficient permissions', profile.role)
+        console.log('Admin route access denied: Insufficient permissions')
       }
       
       // Redirect to user's appropriate dashboard
@@ -103,7 +116,7 @@ export async function middleware(request: NextRequest) {
     
     // All checks passed - allow access to admin route
     if (process.env.NODE_ENV === 'development') {
-      console.log('Admin route access granted:', user.email)
+      console.log('Admin route access granted')
     }
   }  // SECURITY: Protect staff routes with enhanced authentication
   if (url.pathname.startsWith('/staff')) {
@@ -264,4 +277,23 @@ export async function middleware(request: NextRequest) {
     // Return the response without exposing error details
     return NextResponse.next()
   }
+}
+
+export const config = {
+  matcher: [
+    /*
+     * Match protected routes and API routes:
+     * - /admin and all subroutes
+     * - /staff and all subroutes
+     * - /tourist and all subroutes
+     * - /dashboard (exact match)
+     * - /api routes for session management
+     * Exclude: _next/static, _next/image, favicon.ico, and other static files
+     */
+    '/admin/:path*',
+    '/staff/:path*',
+    '/tourist/:path*',
+    '/dashboard',
+    '/api/:path*',
+  ],
 }

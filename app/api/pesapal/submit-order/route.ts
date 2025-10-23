@@ -10,7 +10,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { amount, currency, description, customerEmail, customerPhone, customerName } = body
 
-    console.log("[v0] Order submission request:", { amount, currency, description, customerEmail })
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Order submission request received")
+    }
 
     if (!amount || !customerEmail || !customerName) {
       return NextResponse.json(

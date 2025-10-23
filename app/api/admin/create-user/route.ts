@@ -75,10 +75,14 @@ export async function POST(request: NextRequest) {
         throw new Error('No user ID returned from service role creation')
       }
 
-      console.log('✅ Auth user created with service role:', authData.user.id)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Auth user created with service role')
+      }
 
       // Create profile
-      console.log('📝 Creating profile...')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Creating profile')
+      }
       const { error: profileError } = await supabaseAdmin
         .from('profiles')
         .upsert({
@@ -134,11 +138,13 @@ export async function POST(request: NextRequest) {
         })
 
       if (profileError) {
-        console.error('❌ Fallback profile creation failed:', profileError)
+        console.error('Fallback profile creation failed:', profileError)
         throw profileError
       }
 
-      console.log('✅ Fallback profile created successfully')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Fallback profile created successfully')
+      }
 
       return NextResponse.json({
         success: true,

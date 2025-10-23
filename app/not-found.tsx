@@ -21,6 +21,9 @@ const SearchIcon = () => (
 )
 
 export default function NotFound() {
+  // Detect if this is a file request (has file extension)
+  const isFileRequest = typeof window !== 'undefined' && /\.[a-z0-9]+$/i.test(window.location.pathname)
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-muted/20 p-4">
       <Card className="max-w-2xl w-full shadow-lg">
@@ -29,16 +32,24 @@ export default function NotFound() {
             <CompassIcon />
           </div>
           <div>
-            <CardTitle className="text-4xl font-bold mb-2">404 - Page Not Found</CardTitle>
+            <CardTitle className="text-4xl font-bold mb-2">
+              {isFileRequest ? '404 - File Not Found' : '404 - Page Not Found'}
+            </CardTitle>
             <CardDescription className="text-lg">
-              Oops! Looks like you've wandered off the safari trail
+              {isFileRequest 
+                ? "The requested file doesn't exist on our server"
+                : "Oops! Looks like you've wandered off the safari trail"
+              }
             </CardDescription>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="text-center text-muted-foreground">
             <p className="mb-4">
-              The page you're looking for doesn't exist or has been moved to a new location.
+              {isFileRequest
+                ? "The file you're looking for is missing or has been removed."
+                : "The page you're looking for doesn't exist or has been moved to a new location."
+              }
             </p>
             <p className="text-sm">
               Don't worry, even the best explorers get lost sometimes!

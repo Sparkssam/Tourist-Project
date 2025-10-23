@@ -24,19 +24,25 @@ export default function LoginPage() {
     setError('')
 
     try {
-      console.log('Attempting sign in...')
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Login attempt initiated')
+      }
       
       // Use server action for login
       const result = await loginAction(formData.email, formData.password)
 
       if (!result.success) {
-        console.error('Sign in error:', result.error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Login failed:', result.statusCode)
+        }
         setError(result.error || 'Login failed')
         setLoading(false)
         return
       }
 
-      console.log('Sign in successful! Role:', result.role)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Login successful')
+      }
       
       // Use window.location for full page refresh to ensure cookies are properly set
       // This fixes the timing issue where middleware doesn't see the session yet
@@ -52,7 +58,9 @@ export default function LoginPage() {
       
       // Don't set loading to false - let the page refresh happen
     } catch (error: any) {
-      console.error('Login error:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Login error:', error.message)
+      }
       setError(error.message || 'An unexpected error occurred')
       setLoading(false)
     }
