@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,8 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
-import { useAuth } from "@/lib/auth/auth-context"
-import { UserRole } from "@/lib/types/user"
+import { loginAction } from "./actions"
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -19,9 +17,6 @@ export default function LoginPage() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  
-  const { signIn } = useAuth()
-  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,48 +25,35 @@ export default function LoginPage() {
 
     try {
       console.log('Attempting sign in...')
-      const { error: signInError } = await signIn(formData.email, formData.password)
+      
+      // Use server action for login
+      const result = await loginAction(formData.email, formData.password)
 
-      if (signInError) {
-        console.error('Sign in error:', signInError)
-        setError(signInError.message)
+      if (!result.success) {
+        console.error('Sign in error:', result.error)
+        setError(result.error || 'Login failed')
         setLoading(false)
         return
       }
 
-      console.log('Sign in successful, waiting for profile...')
+      console.log('Sign in successful! Role:', result.role)
       
-      // Wait a moment for profile to load
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Manually fetch profile to check role
-      const { supabase } = await import('@/lib/supabase/client')
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single()
-        
-        console.log('User profile:', profile)
-        
-        // Redirect based on role
-        if (profile?.role === 'admin') {
-          router.push('/admin')
-        } else if (profile?.role === 'staff') {
-          router.push('/staff')
-        } else {
-          router.push('/dashboard')
-        }
+      // Use window.location for full page refresh to ensure cookies are properly set
+      // This fixes the timing issue where middleware doesn't see the session yet
+      if (result.role === 'admin') {
+        window.location.href = '/admin'
+      } else if (result.role === 'staff') {
+        window.location.href = '/staff'
+      } else if (result.role === 'tourist') {
+        window.location.href = '/tourist'
       } else {
-        setError('Login succeeded but could not load user profile')
+        window.location.href = '/dashboard'
       }
+      
+      // Don't set loading to false - let the page refresh happen
     } catch (error: any) {
       console.error('Login error:', error)
       setError(error.message || 'An unexpected error occurred')
-    } finally {
       setLoading(false)
     }
   }
@@ -82,6 +64,7 @@ export default function LoginPage() {
       [field]: value
     }))
   }
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background/50 to-primary/5 px-4">
       <Card className="w-full max-w-md shadow-xl">

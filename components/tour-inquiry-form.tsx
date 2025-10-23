@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Mail, Phone, MessageSquare } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Mail, Phone, MessageSquare, Loader2, CheckCircle, AlertCircle } from "lucide-react"
 
 interface TourInquiryFormProps {
   tourName: string
@@ -20,16 +21,69 @@ export function TourInquiryForm({ tourName }: TourInquiryFormProps) {
     email: "",
     phone: "",
     preferredContact: "",
-    dates: "",
-    travelers: "",
+    travelDates: "",
+    adults: "2",
+    children: "0",
     specialRequests: "",
   })
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would send the inquiry to samsuya999@gmail.com
-    console.log("Tour inquiry submitted:", { ...formData, tourName })
-    alert("Thank you for your inquiry! We'll get back to you within 24 hours.")
+    setLoading(true)
+    setError("")
+    setSuccess(false)
+
+    try {
+      const { supabase } = await import('@/lib/supabase/client')
+      
+      const inquiryData = {
+        full_name: formData.name,
+        email: formData.email,
+        phone: formData.phone || null,
+        tour_type: tourName,
+        travel_dates: formData.travelDates || null,
+        adults: parseInt(formData.adults) || 2,
+        children: parseInt(formData.children) || 0,
+        message: formData.specialRequests ? 
+          `Preferred Contact: ${formData.preferredContact}\n\n${formData.specialRequests}` : 
+          `Preferred Contact: ${formData.preferredContact}`,
+        status: 'new',
+        source: 'tour_inquiry_form'
+      }
+
+      const { error: dbError } = await supabase
+        .from('inquiries')
+        .insert(inquiryData)
+
+      if (dbError) {
+        console.error('Database error:', dbError)
+        throw new Error('Failed to submit inquiry. Please try again.')
+      }
+
+      setSuccess(true)
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        preferredContact: "",
+        travelDates: "",
+        adults: "2",
+        children: "0",
+        specialRequests: "",
+      })
+
+      // Hide success message after 5 seconds
+      setTimeout(() => setSuccess(false), 5000)
+
+    } catch (err: any) {
+      console.error('Error submitting inquiry:', err)
+      setError(err.message || 'Failed to submit inquiry. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -43,6 +97,22 @@ export function TourInquiryForm({ tourName }: TourInquiryFormProps) {
             </p>
           </CardHeader>
           <CardContent>
+            {success && (
+              <Alert className="mb-6 border-green-500 bg-green-50">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <AlertDescription className="text-green-800">
+                  Thank you for your inquiry! Our team will contact you within 24 hours.
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            {error && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
@@ -72,12 +142,26 @@ export function TourInquiryForm({ tourName }: TourInquiryFormProps) {
                   <Input
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+1 (555) 123-4567"
+                    placeholder="+255 XXX XXX XXX"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Preferred Contact Method</label>
+                  <label className="block text-sm font-medium mb-2">Preferred Travel Dates</label>
+                  <Input
+                    type="date"
+                    value={formData.travelDates}
+                    onChange={(e) => setFormData({ ...formData, travelDates: e.target.value })}
+                    min={new Date().toISOString().split('T')[0]}
+                    placeholder="Select travel date"
+                  />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Preferred Contact Method *</label>
                   <Select
+                    required
                     value={formData.preferredContact}
                     onValueChange={(value) => setFormData({ ...formData, preferredContact: value })}
                   >
@@ -91,34 +175,34 @@ export function TourInquiryForm({ tourName }: TourInquiryFormProps) {
                     </SelectContent>
                   </Select>
                 </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Number of Adults *</label>
+                  <Input
+                    type="number"
+                    required
+                    min="1"
+                    max="50"
+                    value={formData.adults}
+                    onChange={(e) => setFormData({ ...formData, adults: e.target.value })}
+                    placeholder="Number of adults"
+                  />
+                </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Preferred Travel Dates</label>
+                  <label className="block text-sm font-medium mb-2">Number of Children</label>
                   <Input
-                    value={formData.dates}
-                    onChange={(e) => setFormData({ ...formData, dates: e.target.value })}
-                    placeholder="e.g., March 2024 or flexible"
+                    type="number"
+                    min="0"
+                    max="50"
+                    value={formData.children}
+                    onChange={(e) => setFormData({ ...formData, children: e.target.value })}
+                    placeholder="Number of children"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Number of Travelers</label>
-                  <Select
-                    value={formData.travelers}
-                    onValueChange={(value) => setFormData({ ...formData, travelers: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select number" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">1 Person</SelectItem>
-                      <SelectItem value="2">2 People</SelectItem>
-                      <SelectItem value="3-4">3-4 People</SelectItem>
-                      <SelectItem value="5-8">5-8 People</SelectItem>
-                      <SelectItem value="8+">8+ People</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  {/* Empty div for grid alignment */}
                 </div>
               </div>
 
@@ -133,17 +217,30 @@ export function TourInquiryForm({ tourName }: TourInquiryFormProps) {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button type="submit" className="flex-1">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Send Inquiry
+                <Button type="submit" className="flex-1" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="h-4 w-4 mr-2" />
+                      Send Inquiry
+                    </>
+                  )}
                 </Button>
-                <Button type="button" variant="outline" className="flex-1 bg-transparent">
-                  <Phone className="h-4 w-4 mr-2" />
-                  Call +255760309999
+                <Button type="button" variant="outline" className="flex-1 bg-transparent" asChild>
+                  <a href="tel:+255760309999">
+                    <Phone className="h-4 w-4 mr-2" />
+                    Call +255760309999
+                  </a>
                 </Button>
-                <Button type="button" variant="outline" className="flex-1 bg-transparent">
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  WhatsApp
+                <Button type="button" variant="outline" className="flex-1 bg-transparent" asChild>
+                  <a href="https://wa.me/255760309999" target="_blank" rel="noopener noreferrer">
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    WhatsApp
+                  </a>
                 </Button>
               </div>
             </form>

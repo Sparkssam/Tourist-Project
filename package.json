@@ -11,7 +11,8 @@
     "test-connection": "node scripts/test-connection.js",
     "create-super-admin": "node scripts/create-super-admin.js",
     "create-admin": "node scripts/create-admin-simple.js",
-    "verify": "node scripts/verify-local-setup.js"
+    "verify": "node scripts/verify-local-setup.js",
+    "fix-login": "node scripts/fix-login.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
