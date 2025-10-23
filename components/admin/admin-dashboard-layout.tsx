@@ -33,12 +33,13 @@ import {
   Database,
   Activity,
   Star,
-  Mail
+  Mail,
+  Trash2
 } from "lucide-react"
 
 interface AdminDashboardLayoutProps {
   children: React.ReactNode
-  currentPage?: 'overview' | 'users' | 'revenue' | 'inquiries' | 'settings' | 'database' | 'progress' | 'reviews' | 'safari-subscribers'
+  currentPage?: 'overview' | 'users' | 'revenue' | 'inquiries' | 'settings' | 'database' | 'progress' | 'reviews' | 'safari-subscribers' | 'deletion-requests'
 }
 
 export function AdminDashboardLayout({ children, currentPage = 'overview' }: AdminDashboardLayoutProps) {
@@ -76,6 +77,13 @@ export function AdminDashboardLayout({ children, currentPage = 'overview' }: Adm
       href: '/admin/inquiries',
       icon: MessageSquare,
       description: 'Monitor all tourist inquiries'
+    },
+    {
+      id: 'deletion-requests',
+      label: 'Deletion Requests',
+      href: '/admin/deletion-requests',
+      icon: Trash2,
+      description: 'Review staff deletion requests'
     },
     {
       id: 'reviews',

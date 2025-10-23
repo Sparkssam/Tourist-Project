@@ -1,5 +1,3 @@
-import { Navigation } from "@/components/navigation"
-import { WhatsAppFloat } from "@/components/whatsapp-float"
 import { BlogPost } from "@/components/blog-post"
 
 interface BlogPostPageProps {
@@ -11,11 +9,7 @@ interface BlogPostPageProps {
 export default function BlogPostPage({ params }: BlogPostPageProps) {
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
-      <main>
-        <BlogPost slug={params.slug} />
-      </main>
-      <WhatsAppFloat />
+      <BlogPost slug={params.slug} />
     </div>
   )
 }

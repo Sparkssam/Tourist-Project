@@ -21,7 +21,8 @@ import {
   Filter,
   Loader2,
   Users,
-  UserCheck
+  UserCheck,
+  Trash2
 } from "lucide-react"
 import {
   Select,
@@ -174,6 +175,53 @@ export default function StaffInquiriesPage() {
     } catch (error) {
       console.error('Error assigning inquiry:', error)
       alert('Failed to assign inquiry')
+    }
+  }
+
+  const requestDeletion = async (inquiryId: string, reason: string) => {
+    try {
+      // Get current user ID
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        alert('You must be logged in to request deletion')
+        return
+      }
+
+      const { error } = await supabase
+        .from('deletion_requests')
+        .insert({
+          inquiry_id: inquiryId,
+          requested_by: user.id,
+          reason: reason,
+          status: 'pending'
+        })
+
+      if (error) throw error
+
+      alert('Deletion request submitted successfully! An admin will review it.')
+      await fetchInquiries() // Refresh the list
+    } catch (error: any) {
+      console.error('Error requesting deletion:', error)
+      alert(`Failed to request deletion: ${error.message}`)
+    }
+  }
+
+  const isPastDate = (travelDates?: string) => {
+    if (!travelDates) return false
+    
+    try {
+      // Parse the travel_dates field - it could be in various formats
+      // Example: "2024-10-20 to 2024-10-25" or "2024-10-20"
+      const dateMatch = travelDates.match(/\d{4}-\d{2}-\d{2}/)
+      if (!dateMatch) return false
+      
+      const travelDate = new Date(dateMatch[0])
+      const today = new Date()
+      today.setHours(0, 0, 0, 0) // Reset time to beginning of day
+      
+      return travelDate < today
+    } catch {
+      return false
     }
   }
 
@@ -505,6 +553,34 @@ export default function StaffInquiriesPage() {
                       )}
                     </Button>
                   </div>
+
+                  {/* Delete Button for Past Date Inquiries */}
+                  {isPastDate(selectedInquiry.travel_dates) && (
+                    <div className="border-t pt-4">
+                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-3">
+                        <p className="text-sm text-amber-800 mb-2">
+                          <AlertCircle className="h-4 w-4 inline mr-1" />
+                          This inquiry's travel date has passed. You can request deletion.
+                        </p>
+                      </div>
+                      <Button
+                        onClick={() => {
+                          const reason = prompt('Please provide a reason for deletion:')
+                          if (reason) {
+                            requestDeletion(selectedInquiry.id, reason)
+                          }
+                        }}
+                        variant="destructive"
+                        className="w-full"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Request Deletion
+                      </Button>
+                      <p className="text-xs text-muted-foreground mt-2 text-center">
+                        An admin must approve this deletion request
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>
