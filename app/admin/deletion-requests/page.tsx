@@ -25,11 +25,12 @@ import {
 interface DeletionRequest {
   id: string
   inquiry_id: string
-  requested_by: string
+  deleted_by: string
   reason: string
-  status: 'pending' | 'approved' | 'rejected'
+  status: 'pending' | 'approved' | 'denied'
   reviewed_by?: string
   reviewed_at?: string
+  denial_reason?: string
   created_at: string
   updated_at: string
   inquiry?: {
@@ -40,7 +41,7 @@ interface DeletionRequest {
     travel_dates?: string
     created_at: string
   }
-  requester?: {
+  deleter?: {
     email: string
   }
 }
@@ -49,7 +50,7 @@ export default function AdminDeletionRequestsPage() {
   const [requests, setRequests] = useState<DeletionRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState<string | null>(null)
-  const [filter, setFilter] = useState<'pending' | 'approved' | 'rejected' | 'all'>('pending')
+  const [filter, setFilter] = useState<'pending' | 'approved' | 'denied' | 'all'>('pending')
 
   useEffect(() => {
     fetchDeletionRequests()
@@ -76,12 +77,12 @@ export default function AdminDeletionRequestsPage() {
           const { data: profile } = await supabase
             .from('profiles')
             .select('email')
-            .eq('id', request.requested_by)
+            .eq('id', request.deleted_by)
             .single()
           
           return {
             ...request,
-            requester: profile || { email: 'Unknown' }
+            deleter: profile || { email: 'Unknown' }
           }
         })
       )
@@ -96,7 +97,7 @@ export default function AdminDeletionRequestsPage() {
   }
 
   const handleApprove = async (requestId: string, inquiryId: string) => {
-    if (!confirm('Are you sure you want to approve this deletion? The inquiry will be permanently deleted.')) {
+    if (!confirm('Are you sure you want to approve this deletion? The inquiry will be permanently deleted and cannot be recovered.')) {
       return
     }
 
@@ -104,6 +105,14 @@ export default function AdminDeletionRequestsPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
+
+      // Delete the inquiry first
+      const { error: deleteError } = await supabase
+        .from('inquiries')
+        .delete()
+        .eq('id', inquiryId)
+
+      if (deleteError) throw deleteError
 
       // Update the deletion request status
       const { error: updateError } = await supabase
@@ -117,15 +126,7 @@ export default function AdminDeletionRequestsPage() {
 
       if (updateError) throw updateError
 
-      // Delete the inquiry
-      const { error: deleteError } = await supabase
-        .from('inquiries')
-        .delete()
-        .eq('id', inquiryId)
-
-      if (deleteError) throw deleteError
-
-      alert('Deletion request approved and inquiry deleted successfully!')
+      alert('Deletion approved! The inquiry has been permanently deleted.')
       await fetchDeletionRequests()
     } catch (error: any) {
       console.error('Error approving deletion:', error)
@@ -135,32 +136,41 @@ export default function AdminDeletionRequestsPage() {
     }
   }
 
-  const handleReject = async (requestId: string) => {
-    const reason = prompt('Please provide a reason for rejecting this deletion request:')
-    if (!reason) return
+  const handleDeny = async (requestId: string, inquiryId: string) => {
+    const denialReason = prompt('Please provide a reason for denying this deletion:\n(The staff member will need to deal with this inquiry)')
+    if (!denialReason || denialReason.trim() === '') return
 
     setProcessing(requestId)
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 
-      const { error } = await supabase
+      // Restore inquiry to active status
+      const { error: restoreError } = await supabase
+        .from('inquiries')
+        .update({ deletion_status: 'active' })
+        .eq('id', inquiryId)
+
+      if (restoreError) throw restoreError
+
+      // Update deletion request with denial
+      const { error: updateError } = await supabase
         .from('deletion_requests')
         .update({
-          status: 'rejected',
+          status: 'denied',
           reviewed_by: user.id,
           reviewed_at: new Date().toISOString(),
-          reason: reason // Update reason with rejection reason
+          denial_reason: denialReason
         })
         .eq('id', requestId)
 
-      if (error) throw error
+      if (updateError) throw updateError
 
-      alert('Deletion request rejected successfully!')
+      alert('Deletion denied. The inquiry has been restored and the staff member must deal with it.')
       await fetchDeletionRequests()
     } catch (error: any) {
-      console.error('Error rejecting deletion:', error)
-      alert(`Failed to reject deletion: ${error.message}`)
+      console.error('Error denying deletion:', error)
+      alert(`Failed to deny deletion: ${error.message}`)
     } finally {
       setProcessing(null)
     }
@@ -172,8 +182,8 @@ export default function AdminDeletionRequestsPage() {
         return <Badge className="bg-yellow-500"><Clock className="h-3 w-3 mr-1" />Pending</Badge>
       case 'approved':
         return <Badge className="bg-green-500"><CheckCircle className="h-3 w-3 mr-1" />Approved</Badge>
-      case 'rejected':
-        return <Badge className="bg-red-500"><XCircle className="h-3 w-3 mr-1" />Rejected</Badge>
+      case 'denied':
+        return <Badge className="bg-red-500"><XCircle className="h-3 w-3 mr-1" />Denied</Badge>
       default:
         return <Badge>{status}</Badge>
     }
@@ -187,7 +197,7 @@ export default function AdminDeletionRequestsPage() {
     total: requests.length,
     pending: requests.filter(r => r.status === 'pending').length,
     approved: requests.filter(r => r.status === 'approved').length,
-    rejected: requests.filter(r => r.status === 'rejected').length,
+    denied: requests.filter(r => r.status === 'denied').length,
   }
 
   return (
@@ -220,8 +230,8 @@ export default function AdminDeletionRequestsPage() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Rejected</CardDescription>
-              <CardTitle className="text-3xl text-red-600">{stats.rejected}</CardTitle>
+              <CardDescription>Denied</CardDescription>
+              <CardTitle className="text-3xl text-red-600">{stats.denied}</CardTitle>
             </CardHeader>
           </Card>
         </div>
@@ -241,10 +251,10 @@ export default function AdminDeletionRequestsPage() {
             Approved ({stats.approved})
           </Button>
           <Button 
-            variant={filter === 'rejected' ? 'default' : 'outline'}
-            onClick={() => setFilter('rejected')}
+            variant={filter === 'denied' ? 'default' : 'outline'}
+            onClick={() => setFilter('denied')}
           >
-            Rejected ({stats.rejected})
+            Denied ({stats.denied})
           </Button>
           <Button 
             variant={filter === 'all' ? 'default' : 'outline'}
@@ -332,8 +342,8 @@ export default function AdminDeletionRequestsPage() {
                         <div className="flex items-start gap-2">
                           <User className="h-4 w-4 text-muted-foreground mt-0.5" />
                           <div>
-                            <p className="text-sm text-muted-foreground">Requested by</p>
-                            <p className="font-medium">{request.requester?.email}</p>
+                            <p className="text-sm text-muted-foreground">Deleted by</p>
+                            <p className="font-medium">{request.deleter?.email}</p>
                           </div>
                         </div>
                         
@@ -379,13 +389,13 @@ export default function AdminDeletionRequestsPage() {
                             )}
                           </Button>
                           <Button
-                            onClick={() => handleReject(request.id)}
+                            onClick={() => handleDeny(request.id, request.inquiry_id)}
                             disabled={processing === request.id}
                             variant="destructive"
                             className="flex-1"
                           >
                             <XCircle className="h-4 w-4 mr-2" />
-                            Reject
+                            Deny
                           </Button>
                         </div>
                       )}
@@ -394,16 +404,18 @@ export default function AdminDeletionRequestsPage() {
                         <Alert className="mt-4 bg-green-50 border-green-200">
                           <CheckCircle className="h-4 w-4 text-green-600" />
                           <AlertDescription className="text-green-800">
-                            This deletion request was approved and the inquiry has been deleted.
+                            This deletion was approved and the inquiry has been permanently deleted.
                           </AlertDescription>
                         </Alert>
                       )}
 
-                      {request.status === 'rejected' && (
+                      {request.status === 'denied' && (
                         <Alert className="mt-4 bg-red-50 border-red-200">
                           <XCircle className="h-4 w-4 text-red-600" />
                           <AlertDescription className="text-red-800">
-                            This deletion request was rejected.
+                            This deletion was denied. Reason: {request.denial_reason || 'No reason provided'}
+                            <br />
+                            <span className="text-xs">The inquiry has been restored and staff must deal with it.</span>
                           </AlertDescription>
                         </Alert>
                       )}

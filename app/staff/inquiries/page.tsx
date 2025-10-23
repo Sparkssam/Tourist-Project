@@ -74,6 +74,7 @@ export default function StaffInquiriesPage() {
       const { data, error } = await supabase
         .from('inquiries')
         .select('*')
+        .in('deletion_status', ['active', null]) // Only show active inquiries, hide pending_deletion
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -179,30 +180,45 @@ export default function StaffInquiriesPage() {
   }
 
   const requestDeletion = async (inquiryId: string, reason: string) => {
+    if (!reason || reason.trim() === '') {
+      alert('Please provide a reason for deletion')
+      return
+    }
+
     try {
       // Get current user ID
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
-        alert('You must be logged in to request deletion')
+        alert('You must be logged in to delete inquiries')
         return
       }
 
-      const { error } = await supabase
+      // Mark inquiry as pending deletion
+      const { error: updateError } = await supabase
+        .from('inquiries')
+        .update({ deletion_status: 'pending_deletion' })
+        .eq('id', inquiryId)
+
+      if (updateError) throw updateError
+
+      // Create deletion request
+      const { error: insertError } = await supabase
         .from('deletion_requests')
         .insert({
           inquiry_id: inquiryId,
-          requested_by: user.id,
+          deleted_by: user.id,
           reason: reason,
           status: 'pending'
         })
 
-      if (error) throw error
+      if (insertError) throw insertError
 
-      alert('Deletion request submitted successfully! An admin will review it.')
+      alert('Inquiry marked for deletion. Waiting for admin approval.\n\nThe inquiry will be hidden from your view until admin makes a decision.')
+      setSelectedInquiry(null)
       await fetchInquiries() // Refresh the list
     } catch (error: any) {
-      console.error('Error requesting deletion:', error)
-      alert(`Failed to request deletion: ${error.message}`)
+      console.error('Error deleting inquiry:', error)
+      alert(`Failed to delete inquiry: ${error.message}`)
     }
   }
 
@@ -560,13 +576,16 @@ export default function StaffInquiriesPage() {
                       <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-3">
                         <p className="text-sm text-amber-800 mb-2">
                           <AlertCircle className="h-4 w-4 inline mr-1" />
-                          This inquiry's travel date has passed. You can request deletion.
+                          This inquiry's travel date has passed. You can delete it.
+                        </p>
+                        <p className="text-xs text-amber-700">
+                          Note: Admin must approve the deletion. The inquiry will be hidden from your view until admin decides.
                         </p>
                       </div>
                       <Button
                         onClick={() => {
-                          const reason = prompt('Please provide a reason for deletion:')
-                          if (reason) {
+                          const reason = prompt('Please provide a reason for deletion:\n(e.g., "Travel date has passed, customer did not proceed")')
+                          if (reason && reason.trim()) {
                             requestDeletion(selectedInquiry.id, reason)
                           }
                         }}
@@ -574,11 +593,8 @@ export default function StaffInquiriesPage() {
                         className="w-full"
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
-                        Request Deletion
+                        Delete Inquiry
                       </Button>
-                      <p className="text-xs text-muted-foreground mt-2 text-center">
-                        An admin must approve this deletion request
-                      </p>
                     </div>
                   )}
                 </div>

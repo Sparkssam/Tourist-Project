@@ -1,93 +1,80 @@
-# Deletion Request System - Setup Guide
+# Inquiry Deletion System - Complete Setup Guide
 
 ## Overview
-Staff can now request deletion of inquiries with past travel dates. Admins must review and approve these requests before the inquiries are actually deleted.
+Staff can delete inquiries with past travel dates. The inquiry is immediately marked as "pending_deletion" and hidden from staff view. Admin must either approve the deletion (permanently deletes) or deny it (restores the inquiry, and staff must deal with it).
 
 ## Features Implemented
 
-### 1. **Tourists Details Section Removed**
-- ✅ Removed `TouristInquiriesList` component from staff dashboard (`/app/staff/page.tsx`)
-- Staff dashboard now shows only the overview section
+### 1. **Tourist Details Page Removed** ✅
+- ✅ Deleted entire `/app/staff/tourists/` directory
+- ✅ Removed "Tourist Details" from staff navigation
+- Staff dashboard now shows only: Overview, Tourist Inquiries, My Profile
 
-### 2. **Staff Deletion Request Feature**
-- ✅ Staff can see a "Request Deletion" button for inquiries where travel_dates have passed
-- ✅ System automatically checks if travel date is before today's date
-- ✅ Staff must provide a reason for deletion
-- ✅ Deletion request is sent to admin for approval (inquiry is NOT deleted immediately)
-- ✅ Warning message shows: "An admin must approve this deletion request"
+### 2. **Staff Direct Deletion** ✅
+- ✅ Staff can DELETE inquiries with past travel dates (not just "request")
+- ✅ Inquiry is immediately marked as `deletion_status: 'pending_deletion'`
+- ✅ Inquiry is hidden from staff view until admin decides
+- ✅ Staff must provide deletion reason
+- ✅ Warning: "Admin must approve. Inquiry will be hidden until admin decides."
 
-### 3. **Admin Approval System**
-- ✅ Created new admin page: `/admin/deletion-requests`
-- ✅ Admins can view all deletion requests (pending, approved, rejected)
-- ✅ Shows inquiry details: client name, email, travel dates, message
-- ✅ Shows who requested deletion and why
-- ✅ Admins can:
-  - **Approve**: Deletes the inquiry permanently
-  - **Reject**: Keeps the inquiry, request is marked as rejected
-- ✅ Statistics dashboard showing total, pending, approved, and rejected requests
-- ✅ Filter buttons to view requests by status
+### 3. **Admin Approval/Denial System** ✅
+- ✅ Admin page: `/admin/deletion-requests`
+- ✅ Admin can see all deletion requests with full inquiry details
+- ✅ Admin can:
+  - **Approve**: Permanently deletes inquiry from database
+  - **Deny**: Restores inquiry to `active` status, staff must deal with it
+- ✅ Denial reason required and shown to staff
+- ✅ Statistics: Total, Pending, Approved, Denied
 
-### 4. **Database Table Created**
-- ✅ Created `deletion_requests` table with:
-  - Inquiry ID reference
-  - Requested by (staff user ID)
-  - Reason for deletion
-  - Status (pending/approved/rejected)
-  - Reviewed by (admin user ID)
-  - Reviewed at (timestamp)
-  - Created/updated timestamps
-- ✅ Row Level Security (RLS) policies:
-  - Staff can create deletion requests
-  - Staff can view their own requests
-  - Admins can view all requests
-  - Only admins can approve/reject requests
-- ✅ Automatic cascade deletion when inquiry is deleted
-
-## Database Setup
-
-### Run this SQL in Supabase:
-```sql
--- File: create-deletion-requests-table.sql
--- Run this in your Supabase SQL Editor
-```
-
-1. Go to Supabase Dashboard
-2. Click on "SQL Editor"
-3. Open the file: `create-deletion-requests-table.sql`
-4. Copy all the SQL code
-5. Paste and run it in Supabase SQL Editor
-6. Verify the table was created under "Database" → "Tables"
+### 4. **Database Schema** ✅
+- ✅ `deletion_requests` table created
+- ✅ `inquiries.deletion_status` column added (active, pending_deletion, deleted)
+- ✅ Row Level Security (RLS) policies
+- ✅ Only admins can approve/deny
 
 ## How It Works
 
 ### Staff Workflow:
-1. **View Inquiries**: Go to `/staff/inquiries`
-2. **Check Past Dates**: System automatically identifies inquiries with past travel dates
-3. **Request Deletion**:
-   - Click on an inquiry with past travel date
-   - See amber warning: "This inquiry's travel date has passed"
-   - Click "Request Deletion" button
-   - Enter reason (e.g., "Travel date has passed, no longer relevant")
-   - Submit request
-4. **Wait for Admin**: Request goes to admin for approval
+1. **View Inquiry**: Go to `/staff/inquiries`
+2. **See Past Date**: System detects past travel_dates
+3. **Delete Inquiry**:
+   - Click "Delete Inquiry" button
+   - Enter reason (e.g., "Travel date passed, customer cancelled")
+   - Confirm
+4. **Inquiry Hidden**: Inquiry disappears from staff view immediately
+5. **Wait for Admin**: Admin must approve or deny
 
 ### Admin Workflow:
-1. **Access Page**: Go to `/admin/deletion-requests`
-2. **View Statistics**: See total, pending, approved, rejected counts
-3. **Filter Requests**: Click filter buttons (Pending, Approved, Rejected, All)
-4. **Review Request**:
-   - See full inquiry details
-   - See who requested deletion and why
-   - See travel dates to verify they are past
-5. **Make Decision**:
-   - **Approve & Delete**: 
-     - Confirms with popup
-     - Deletes inquiry permanently
-     - Marks request as approved
-   - **Reject**:
-     - Enter rejection reason
-     - Keeps inquiry intact
-     - Marks request as rejected
+1. **Access Page**: `/admin/deletion-requests`
+2. **View Request**: See inquiry details, who deleted it, and why
+3. **Make Decision**:
+   - **Approve**: 
+     - Inquiry permanently deleted from database
+     - Cannot be recovered
+     - Request marked "Approved"
+   - **Deny**:
+     - Inquiry restored to active status
+     - Staff will see it again in their inquiries list
+     - Must provide denial reason
+     - Staff must deal with the inquiry
+     - Request marked "Denied"
+
+### If Admin Denies:
+- Inquiry returns to staff inquiries list
+- Status: Active (no longer pending_deletion)
+- Staff sees it and must handle it
+- Denial reason visible to admin (for records)
+
+## Database Setup
+
+### Run this SQL in Supabase:
+1. Open file: `create-deletion-requests-table.sql`
+2. Go to Supabase Dashboard → SQL Editor
+3. Copy and paste all SQL code
+4. Run it
+5. Verify tables:
+   - `deletion_requests` table created
+   - `inquiries` table has new `deletion_status` column
 
 ## File Changes
 

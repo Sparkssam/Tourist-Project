@@ -1,32 +1,39 @@
--- Create deletion_requests table for staff to request inquiry deletions
--- Admin must approve before actual deletion occurs
+-- Create deletion_requests table for staff deletion approvals
+-- When staff deletes an inquiry, it's marked for deletion and admin must approve
+-- If admin denies, the inquiry remains active and staff must deal with it
 
 CREATE TABLE IF NOT EXISTS public.deletion_requests (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   inquiry_id UUID NOT NULL REFERENCES public.inquiries(id) ON DELETE CASCADE,
-  requested_by UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  reason TEXT,
-  status TEXT NOT NULL DEFAULT 'pending', -- pending, approved, rejected
+  deleted_by UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  reason TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending', -- pending, approved, denied
   reviewed_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
   reviewed_at TIMESTAMP WITH TIME ZONE,
+  denial_reason TEXT, -- Reason why admin denied the deletion
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Add a status column to inquiries to track pending deletions
+ALTER TABLE public.inquiries 
+  ADD COLUMN IF NOT EXISTS deletion_status TEXT DEFAULT 'active'; -- active, pending_deletion, deleted
+
 -- Create index for faster queries
 CREATE INDEX IF NOT EXISTS idx_deletion_requests_status ON public.deletion_requests(status);
 CREATE INDEX IF NOT EXISTS idx_deletion_requests_inquiry_id ON public.deletion_requests(inquiry_id);
-CREATE INDEX IF NOT EXISTS idx_deletion_requests_requested_by ON public.deletion_requests(requested_by);
+CREATE INDEX IF NOT EXISTS idx_deletion_requests_deleted_by ON public.deletion_requests(deleted_by);
+CREATE INDEX IF NOT EXISTS idx_inquiries_deletion_status ON public.inquiries(deletion_status);
 
 -- Enable RLS
 ALTER TABLE public.deletion_requests ENABLE ROW LEVEL SECURITY;
 
--- Staff can view their own deletion requests
-CREATE POLICY "Staff can view their own deletion requests"
+-- Staff can view their own deletion requests and pending ones
+CREATE POLICY "Staff can view deletion requests"
   ON public.deletion_requests
   FOR SELECT
   USING (
-    auth.uid() = requested_by
+    auth.uid() = deleted_by
     OR
     EXISTS (
       SELECT 1 FROM public.profiles
@@ -40,7 +47,7 @@ CREATE POLICY "Staff can create deletion requests"
   ON public.deletion_requests
   FOR INSERT
   WITH CHECK (
-    auth.uid() = requested_by
+    auth.uid() = deleted_by
     AND
     EXISTS (
       SELECT 1 FROM public.profiles
@@ -49,7 +56,7 @@ CREATE POLICY "Staff can create deletion requests"
     )
   );
 
--- Only admins can update deletion requests (approve/reject)
+-- Only admins can update deletion requests (approve/deny)
 CREATE POLICY "Admins can update deletion requests"
   ON public.deletion_requests
   FOR UPDATE

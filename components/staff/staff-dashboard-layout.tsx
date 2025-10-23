@@ -30,7 +30,7 @@ import {
 
 interface StaffDashboardLayoutProps {
   children: React.ReactNode
-  currentPage?: 'overview' | 'inquiries' | 'tourists' | 'profile'
+  currentPage?: 'overview' | 'inquiries' | 'profile'
 }
 
 export function StaffDashboardLayout({ children, currentPage = 'overview' }: StaffDashboardLayoutProps) {
@@ -54,13 +54,6 @@ export function StaffDashboardLayout({ children, currentPage = 'overview' }: Sta
       href: '/staff/inquiries',
       icon: MessageSquare,
       description: 'View and respond to inquiries'
-    },
-    {
-      id: 'tourists',
-      label: 'Tourist Details',
-      href: '/staff/tourists',
-      icon: Users,
-      description: 'View registered tourists'
     },
     {
       id: 'profile',
