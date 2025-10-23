@@ -40,18 +40,17 @@ export function TourInquiryForm({ tourName }: TourInquiryFormProps) {
       const { supabase } = await import('@/lib/supabase/client')
       
       const inquiryData = {
-        full_name: formData.name,
+        name: formData.name,
         email: formData.email,
         phone: formData.phone || null,
-        tour_type: tourName,
+        subject: `Tour Inquiry: ${tourName}`,
+        message: formData.specialRequests ? 
+          `Tour: ${tourName}\nPreferred Contact: ${formData.preferredContact}\nAdults: ${formData.adults}\nChildren: ${formData.children}\n\n${formData.specialRequests}` : 
+          `Tour: ${tourName}\nPreferred Contact: ${formData.preferredContact}\nAdults: ${formData.adults}\nChildren: ${formData.children}`,
         travel_dates: formData.travelDates || null,
         adults: parseInt(formData.adults) || 2,
         children: parseInt(formData.children) || 0,
-        message: formData.specialRequests ? 
-          `Preferred Contact: ${formData.preferredContact}\n\n${formData.specialRequests}` : 
-          `Preferred Contact: ${formData.preferredContact}`,
-        status: 'new',
-        source: 'tour_inquiry_form'
+        status: 'new'
       }
 
       const { error: dbError } = await supabase

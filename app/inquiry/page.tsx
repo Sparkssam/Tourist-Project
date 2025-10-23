@@ -9,6 +9,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useState, useEffect } from "react"
+import { supabase } from "@/lib/supabase/client"
+import { Loader2 } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 const CalendarIcon = () => (
   <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,6 +47,9 @@ export default function InquiryPage() {
     phone: "",
     message: "",
   })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
 
   useEffect(() => {
     const data = searchParams.get("data")
@@ -57,11 +63,62 @@ export default function InquiryPage() {
     }
   }, [searchParams.get("data")]) // Use the actual parameter value instead of the searchParams object
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would typically send the inquiry to your backend
-    console.log("Inquiry submitted:", { ...formData, ...inquiryData })
-    alert("Thank you for your inquiry! We will contact you soon.")
+    setLoading(true)
+    setError(null)
+    setSuccess(false)
+
+    try {
+      // Prepare inquiry data for database
+      const inquiryToSubmit = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || null,
+        subject: `Tour Inquiry: ${inquiryData.tourTitle}`,
+        message: `Tour: ${inquiryData.tourTitle}
+Start Date: ${new Date(inquiryData.startDate).toLocaleDateString()}
+End Date: ${new Date(inquiryData.endDate).toLocaleDateString()}
+Duration: ${inquiryData.numberOfDays} days
+Adults: ${inquiryData.adults}
+Children: ${inquiryData.children}
+Total Price: $${inquiryData.totalPrice.toLocaleString()}
+
+Additional Message:
+${formData.message || 'No additional message'}`,
+        travel_dates: `${inquiryData.startDate} to ${inquiryData.endDate}`,
+        adults: inquiryData.adults,
+        children: inquiryData.children,
+        status: 'new'
+      }
+
+      const { error: insertError } = await supabase
+        .from('inquiries')
+        .insert(inquiryToSubmit)
+
+      if (insertError) {
+        throw insertError
+      }
+
+      setSuccess(true)
+      // Clear form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+      })
+      
+      // Show success message
+      setTimeout(() => {
+        setSuccess(false)
+      }, 5000)
+    } catch (err: any) {
+      console.error("Error submitting inquiry:", err)
+      setError(err.message || "Failed to submit inquiry. Please try again.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (!inquiryData) {
@@ -134,6 +191,22 @@ export default function InquiryPage() {
               <CardTitle>Your Information</CardTitle>
             </CardHeader>
             <CardContent>
+              {success && (
+                <Alert className="mb-4 bg-green-50 border-green-200">
+                  <AlertDescription className="text-green-800">
+                    ✓ Thank you for your inquiry! We will contact you soon.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {error && (
+                <Alert className="mb-4 bg-red-50 border-red-200">
+                  <AlertDescription className="text-red-800">
+                    {error}
+                  </AlertDescription>
+                </Alert>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <Label htmlFor="name">Full Name *</Label>
@@ -177,8 +250,15 @@ export default function InquiryPage() {
                   />
                 </div>
 
-                <Button type="submit" className="w-full">
-                  Send Inquiry
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    'Send Inquiry'
+                  )}
                 </Button>
               </form>
             </CardContent>
