@@ -4,10 +4,10 @@ import { createClient } from '@/lib/supabase/server';
 import { sanitizeInput, isValidEmail } from '@/lib/security/xss-protection';
 import SafariGuideEmail from '@/lib/email-templates/safari-guide';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request: NextRequest) {
   try {
+    // Initialize Resend client inside the function to avoid build-time errors
+    const resend = new Resend(process.env.RESEND_API_KEY);
     const { email } = await request.json();
 
     // Validate email
