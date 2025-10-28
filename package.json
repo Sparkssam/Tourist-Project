@@ -12,7 +12,8 @@
     "create-super-admin": "node scripts/create-super-admin.js",
     "create-admin": "node scripts/create-admin-simple.js",
     "verify": "node scripts/verify-local-setup.js",
-    "fix-login": "node scripts/fix-login.js"
+    "fix-login": "node scripts/fix-login.js",
+    "test-pesapal": "node scripts/test-pesapal.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
