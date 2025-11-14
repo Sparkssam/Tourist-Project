@@ -20,7 +20,7 @@ export function HeroSection() {
           loop
           playsInline
           className="w-full h-full object-cover"
-          poster="/african-safari-landscape-with-acacia-trees-and-wil.png"
+          poster="/Home1.png"
         >
           <source src="/placeholder.mp4" type="video/mp4" />
         </video>

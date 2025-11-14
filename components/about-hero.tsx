@@ -3,7 +3,7 @@ export function AboutHero() {
     <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
         <img
-          src="/african-safari-landscape-with-acacia-trees-and-wil.png"
+          src="/Home1.png"
           alt="African landscape"
           className="w-full h-full object-cover"
         />
