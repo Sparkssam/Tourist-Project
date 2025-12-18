@@ -68,15 +68,24 @@ const askPassword = (question) => {
 async function createAdmin() {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     const superAdminSecret = process.env.SUPER_ADMIN_SECRET
 
-    if (!supabaseUrl || !supabaseKey || !superAdminSecret) {
+    if (!supabaseUrl || !supabaseServiceKey || !superAdminSecret) {
       console.log('❌ Missing environment variables!')
+      console.log('URL:', supabaseUrl ? '✅' : '❌')
+      console.log('Service Key:', supabaseServiceKey ? '✅' : '❌')
+      console.log('Secret:', superAdminSecret ? '✅' : '❌')
       process.exit(1)
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey)
+    // Use service role key for admin operations
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    })
 
     console.log('\n🦁 KEKEO SAFARIS - Quick Super Admin Creation')
     console.log('===============================================\n')
@@ -107,17 +116,16 @@ async function createAdmin() {
 
     console.log('\n🔄 Creating admin account...')
 
-    // Create user with minimal data first
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    // Create user with admin auth API (requires service role key)
+    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email: email.trim(),
       password,
-      options: {
-        data: {
-          first_name: firstName.trim(),
-          last_name: lastName.trim(),
-          phone: phone.trim(),
-          role: 'admin'
-        }
+      email_confirm: true,
+      user_metadata: {
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        phone: phone.trim(),
+        role: 'admin'
       }
     })
 
