@@ -14,7 +14,7 @@ export default function HomePage() {
         <HeroSection />
         <WhyChooseUs />
         <FeaturedTours />
-        <SafariEssentials />
+        <SafariEssentials /> 
         <TestimonialsCarousel />
         <EmailLeadMagnet />
         <BlogPreviews />
