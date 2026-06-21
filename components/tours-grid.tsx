@@ -42,7 +42,7 @@ export function ToursGrid({ activeFilter }: ToursGridProps) {
   const filteredTours = activeFilter === "All" ? tours : tours.filter((tour) => tour.category === activeFilter)
 
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
       {filteredTours.length === 0 && (
         <div className="col-span-full text-center py-12">
           <p className="text-muted-foreground text-lg">No routes found for the selected category.</p>
@@ -65,7 +65,7 @@ export function ToursGrid({ activeFilter }: ToursGridProps) {
             <img
               src={tour.image || "/placeholder.svg"}
               alt={tour.title}
-              className="w-full h-72 object-cover transition-transform duration-500 group-hover:scale-110"
+              className="w-full h-56 md:h-72 object-cover transition-transform duration-500 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             <Badge className="absolute top-6 left-6 bg-primary text-primary-foreground text-base px-4 py-2 shadow-lg">
@@ -73,12 +73,11 @@ export function ToursGrid({ activeFilter }: ToursGridProps) {
             </Badge>
           </div>
 
-          <CardHeader className="pb-3 space-y-3">
-            <h3 className="text-2xl font-semibold text-card-foreground text-balance leading-tight">{tour.title}</h3>
+          <CardHeader className="pb-3 space-y-2">
+            <h3 className="text-xl md:text-2xl font-semibold text-card-foreground text-balance leading-tight">{tour.title}</h3>
 
-            <p className="text-muted-foreground text-base leading-relaxed text-pretty">{tour.highlight}</p>
+            <p className="text-muted-foreground text-sm md:text-base leading-relaxed text-pretty">{tour.highlight}</p>
           </CardHeader>
-
           <CardContent className="pt-0 space-y-5">
             <div className="flex items-start space-x-2 text-sm text-muted-foreground">
               <MapPinIcon />

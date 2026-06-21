@@ -26,7 +26,7 @@ export default function manifest(): MetadataRoute.Manifest {
         src: "/placeholder-logo.png",
         sizes: "512x512",
         type: "image/png",
-        purpose: "any maskable",
+        purpose: "any",
       },
     ],
     categories: ["travel", "tourism", "safari", "adventure"],

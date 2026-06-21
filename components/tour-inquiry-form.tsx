@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import { useState, type FormEvent } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -24,12 +22,34 @@ export function TourInquiryForm({ tourName }: TourInquiryFormProps) {
     travelers: "",
     specialRequests: "",
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // Here you would send the inquiry to samsuya999@gmail.com
-    console.log("Tour inquiry submitted:", { ...formData, tourName })
-    alert("Thank you for your inquiry! We'll get back to you within 24 hours.")
+    setIsSubmitting(true)
+    setError("")
+    try {
+      const payload = { ...formData, tourName }
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data?.message || res.statusText || "Failed to send enquiry")
+      }
+
+      setSuccess(true)
+      setFormData({ name: "", email: "", phone: "", preferredContact: "", dates: "", travelers: "", specialRequests: "" })
+    } catch (err: any) {
+      setError(err?.message || "Unexpected error sending enquiry")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -43,7 +63,13 @@ export function TourInquiryForm({ tourName }: TourInquiryFormProps) {
             </p>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            {success ? (
+              <div className="p-6 bg-green-50 border-2 border-green-200 rounded-lg text-green-800">
+                <h3 className="font-semibold text-lg mb-2">Enquiry Received!</h3>
+                <p>Thanks — we've received your enquiry for "{tourName}". We'll be in touch within 24 hours.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium mb-2">Full Name *</label>
@@ -133,9 +159,18 @@ export function TourInquiryForm({ tourName }: TourInquiryFormProps) {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button type="submit" className="flex-1">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Send Enquiry
+                <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="h-4 w-4 mr-2" />
+                      Send Enquiry
+                    </>
+                  )}
                 </Button>
                 <Button type="button" variant="outline" className="flex-1 bg-transparent">
                   <Phone className="h-4 w-4 mr-2" />
@@ -147,6 +182,7 @@ export function TourInquiryForm({ tourName }: TourInquiryFormProps) {
                 </Button>
               </div>
             </form>
+            )}
           </CardContent>
         </Card>
       </div>
