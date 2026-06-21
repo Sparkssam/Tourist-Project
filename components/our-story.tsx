@@ -15,13 +15,13 @@ export function OurStory() {
           {/* Story Image */}
           <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
             <img
-              src="/african-safari-guide-with-binoculars-in-tanzania-w.jpg"
-              alt="KEKEOsafari's founder Samuel Suya on safari"
+              src="/african-safari-guide-with-binoculars-in-tanzania-w.jpeg"
+              alt="KEKEOsafari's founder Samuel Msuya on safari"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             <div className="absolute bottom-8 left-8 right-8 text-white">
-              <p className="text-2xl font-luxury mb-2">Samuel Suya</p>
+              <p className="text-2xl font-luxury mb-2">Elibariki Basso</p>
               <p className="text-sm opacity-90">Founder & Lead Safari Guide</p>
             </div>
           </div>
@@ -30,7 +30,7 @@ export function OurStory() {
           <div className="space-y-6">
             <p className="text-lg leading-relaxed text-foreground">
               KEKEOsafari's was born from a deep passion for Tanzania's incredible wildlife and landscapes. Founded in
-              2015 by Samuel Suya, a local Tanzanian guide with over 15 years of experience, our company started with a
+              2015 by Samuel Msuya, a local Tanzanian guide with over 15 years of experience, our company started with a
               simple mission: to share the magic of East Africa with travelers from around the world.
             </p>
             <p className="text-lg leading-relaxed text-muted-foreground">

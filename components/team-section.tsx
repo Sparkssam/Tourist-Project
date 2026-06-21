@@ -3,31 +3,31 @@ import { Card, CardContent } from "@/components/ui/card"
 export function TeamSection() {
   const teamMembers = [
     {
-      name: "Samuel Suya",
+      name: "ELIBARIKI BASSO",
       role: "Founder & Lead Guide",
-      image: "/samuel-suya-founder-portrait.png",
-      bio: "With over 15 years of guiding experience, Samuel founded KEKEOsafaris to share his deep knowledge of Tanzania's wildlife and culture with the world.",
+      image: "/african-safari-guide-with-binoculars-in-tanzania-w.jpeg",
+      bio: "With over 15 years of guiding experience, ELIBARIKI founded KEKEOsafaris to share his deep knowledge of Tanzania's wildlife and culture with the world.",
       specialties: ["Wildlife Photography", "Cultural Tours", "Mount Kilimanjaro"],
     },
     {
-      name: "Grace Mwangi",
+      name: "Agricola Basso",
       role: "Operations Manager",
       image: "/grace-operations-manager-portrait.png",
-      bio: "Grace ensures every detail of your safari is perfectly planned. Her attention to detail and warm hospitality make every journey seamless.",
+      bio: "Agricola ensures every detail of your safari is perfectly planned. Her attention to detail and warm hospitality make every journey seamless.",
       specialties: ["Trip Planning", "Guest Relations", "Logistics"],
     },
     {
-      name: "Joseph Kimani",
+      name: "Samuel Msuya",
       role: "Senior Safari Guide",
-      image: "/joseph-senior-guide-portrait.png",
-      bio: "Born and raised near the Serengeti, Joseph has an incredible eye for spotting wildlife and sharing the stories of the African bush.",
+      image: "/samuel-suya-founder.jpeg",
+      bio: "Born and raised near the Serengeti, Samuel has an incredible eye for spotting wildlife and sharing the stories of the African bush.",
       specialties: ["Big Five Tracking", "Bird Watching", "Conservation"],
     },
     {
-      name: "Maria Temba",
+      name: "Imran Abdallah",
       role: "Cultural Experience Coordinator",
-      image: "/maria-cultural-coordinator-portrait.png",
-      bio: "Maria bridges the gap between visitors and local Maasai communities, creating authentic cultural exchanges that benefit everyone.",
+      image: "/marias-cultural-coordinator-portrait.png",
+      bio: "Imran bridges the gap between visitors and local Maasai communities, creating authentic cultural exchanges that benefit everyone.",
       specialties: ["Maasai Culture", "Community Tourism", "Traditional Crafts"],
     },
   ]

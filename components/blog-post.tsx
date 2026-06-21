@@ -40,9 +40,9 @@ export function BlogPost({ slug }: BlogPostProps) {
       
       <p>At KEKEOsafaris, we monitor the migration year-round and can help you plan the perfect timing for your visit. Contact us to discuss your migration safari dreams!</p>
     `,
-    image: "/serengeti-lions-and-wildebeest-migration.png",
+    image: "/serengeti-lions-and-wildebeest-migration.jpeg",
     category: "Wildlife",
-    author: "Samuel Suya",
+    author: "Samuel Msuya",
     date: "March 15, 2024",
     readTime: "5 min read",
   }

@@ -3,7 +3,7 @@ export function ReviewsHero() {
     <section className="relative h-[50vh] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
         <img
-          src="/serengeti-lions-and-wildebeest-migration.png"
+          src="/serengeti-lions-and-wildebeest-migration.jpeg"
           alt="Customer reviews"
           className="w-full h-full object-cover"
         />

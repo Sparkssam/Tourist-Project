@@ -31,7 +31,7 @@ export function BlogPreviews() {
       title: "Walking with Warriors: Honoring Maasai Traditions",
       excerpt:
         "Cultural immersion begins with humility and deep respect. Learn how to be a gracious guest in communities whose wisdom predates written history.",
-      image: "/maasai-elder-traditional-beads-jewelry.png",
+      image: "/maasai-elder-traditional-beads-jewelry.jpeg",
       date: "March 5, 2024",
       category: "Cultural Connections",
       readTime: "8 min read",

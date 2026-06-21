@@ -14,7 +14,7 @@ const getTourData = (slug: string) => {
       rating: 4.9,
       reviews: 127,
       images: [
-        "/serengeti-lions-and-wildebeest-migration.png",
+        "/serengeti-lions-and-wildebeest-migration.jpeg",
         "/ngorongoro-crater-elephants.png",
         "/serengeti-cheetah-hunting.png",
       ],
@@ -82,7 +82,7 @@ const getTourData = (slug: string) => {
       rating: 4.8,
       reviews: 89,
       images: [
-        "/mount-kilimanjaro-snow-peak-with-hikers.png",
+        "/mount-kilimanjaro-snow-peak-with-hikers.jpeg",
         "/kilimanjaro-machame-route.jpg",
         "/kilimanjaro-summit-sunrise.jpg",
       ],
@@ -160,9 +160,9 @@ const getTourData = (slug: string) => {
       rating: 4.7,
       reviews: 156,
       images: [
-        "/maasai-warriors-in-traditional-dress-with-village.png",
-        "/maasai-traditional-dance.jpg",
-        "/maasai-cattle-herding.jpg",
+        "/maasai-warriors-in-traditional-dress-with-village.jpeg",
+        "/maasai-traditional-dance.jpeg",
+        "/maasai-cattle-herding.jpeg",
       ],
       description:
         "Immerse yourself in authentic Maasai culture and traditional way of life. Stay in a traditional boma, participate in daily activities, and learn about ancient customs and traditions.",
@@ -217,9 +217,9 @@ const getTourData = (slug: string) => {
       rating: 4.6,
       reviews: 203,
       images: [
-        "/zanzibar-white-sand-beach-with-dhow-boats.png",
-        "/stone-town-architecture.jpg",
-        "/zanzibar-spice-market.jpg",
+        "/zanzibar-white-sand-beach-with-dhow-boats.jpeg",
+        "/stone-town-architecture.jpeg",
+        "/zanzibar-spice-market.jpeg",
       ],
       description:
         "Relax on pristine beaches and explore Stone Town's rich history and spice markets. Perfect extension to any safari adventure with cultural tours and beach relaxation.",

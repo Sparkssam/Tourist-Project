@@ -34,7 +34,7 @@ export function HeroSection() {
           loop
           playsInline
           className="w-full h-full object-cover"
-          poster="/african-safari-landscape-with-acacia-trees-and-wil.png"
+          poster="/african-safari-landscape-with-acacia-trees-and-wil.jpeg"
         >
           <source src="/placeholder.mp4" type="video/mp4" />
         </video>
@@ -44,7 +44,7 @@ export function HeroSection() {
 
       {/* Hero Content with staggered animations */}
       <div className="relative z-10 text-center text-white px-4 max-w-4xl">
-        <h1 className="text-responsive-xl font-luxury mb-6 text-balance fade-in-down">
+        <h1 className="text-5xl md:text-7xl font-luxury leading-tight mb-6 text-balance fade-in-down">
           Where Earth's Ancient Rhythms Still Echo
         </h1>
         <p

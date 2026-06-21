@@ -113,7 +113,7 @@ export function getAllTours() {
     {
       id: "serengeti-ngorongoro-safari",
       title: "Serengeti & Ngorongoro Safari",
-      image: "/serengeti-lions-and-wildebeest-migration.png",
+      image: "/serengeti-lions-and-wildebeest-migration.jpeg",
       duration: "5 Days",
       itineraries: "Serengeti • Ngorongoro Crater • Lake Manyara",
       highlight: "Witness the Great Migration and explore Africa's wildlife paradise",
@@ -124,7 +124,7 @@ export function getAllTours() {
     {
       id: "kilimanjaro-trekking-adventure",
       title: "Kilimanjaro Summit Experience",
-      image: "/mount-kilimanjaro-snow-peak-with-hikers.png",
+      image: "/mount-kilimanjaro-snow-peak-with-hikers.jpeg",
       duration: "7 Days",
       itineraries: "Mount Kilimanjaro • Machame Route • Rainforest Zones",
       highlight: "Conquer Africa's highest peak with expert mountain guides",
@@ -135,7 +135,7 @@ export function getAllTours() {
     {
       id: "cultural-maasai-experience",
       title: "Cultural Maasai Immersion",
-      image: "/maasai-warriors-in-traditional-dress-with-village.png",
+      image: "/maasai-warriors-in-traditional-dress-with-village.jpeg",
       duration: "3 Days",
       itineraries: "Maasai Villages • Ngorongoro Highlands • Cultural Sites",
       highlight: "Live alongside Maasai communities in authentic cultural exchange",
@@ -146,7 +146,7 @@ export function getAllTours() {
     {
       id: "zanzibar-beach-extension",
       title: "Zanzibar Island Escape",
-      image: "/zanzibar-white-sand-beach-with-dhow-boats.png",
+      image: "/zanzibar-white-sand-beach-with-dhow-boats.jpeg",
       duration: "4 Days",
       itineraries: "Stone Town • Spice Plantations • Pristine Beaches",
       highlight: "Unwind on powder-white sands after your safari adventure",

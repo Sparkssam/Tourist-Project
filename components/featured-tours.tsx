@@ -36,7 +36,7 @@ export function FeaturedTours() {
     {
       id: "serengeti-ngorongoro-safari",
       title: "The Migration Odyssey",
-      image: "/serengeti-lions-and-wildebeest-migration.png",
+      image: "/serengeti-lions-and-wildebeest-migration.jpeg",
       duration: "5-7 Days",
       groupSize: "Max 6 Travelers",
       location: "Serengeti & Ngorongoro",
@@ -48,7 +48,7 @@ export function FeaturedTours() {
     {
       id: "kilimanjaro-trekking-adventure",
       title: "Roof of Africa Ascent",
-      image: "/mount-kilimanjaro-snow-peak-with-hikers.png",
+      image: "/mount-kilimanjaro-snow-peak-with-hikers.jpeg",
       duration: "6-9 Days",
       groupSize: "Max 8 Climbers",
       location: "Mount Kilimanjaro",
@@ -60,7 +60,7 @@ export function FeaturedTours() {
     {
       id: "cultural-maasai-experience",
       title: "Maasai Soul Connection",
-      image: "/maasai-warriors-in-traditional-dress-with-village.png",
+      image: "/maasai-warriors-in-traditional-dress-with-village.jpeg",
       duration: "2-4 Days",
       groupSize: "Intimate Groups",
       location: "Maasai Heartlands",
@@ -72,7 +72,7 @@ export function FeaturedTours() {
     {
       id: "zanzibar-beach-extension",
       title: "Spice Islands Sanctuary",
-      image: "/zanzibar-white-sand-beach-with-dhow-boats.png",
+      image: "/zanzibar-white-sand-beach-with-dhow-boats.jpeg",
       duration: "3-7 Days",
       groupSize: "Max 6 Guests",
       location: "Zanzibar Archipelago",
