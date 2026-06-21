@@ -11,8 +11,8 @@ export function AboutHero() {
       </div>
 
       <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-4">
-        <h1 className="text-5xl md:text-6xl font-luxury mb-6 text-balance">Our Pride, Your Legacy</h1>
-        <p className="text-xl md:text-2xl text-balance opacity-90 font-serif">
+        <h1 className="text-4xl md:text-5xl font-luxury mb-4 text-balance">Our Pride, Your Legacy</h1>
+        <p className="text-base md:text-lg text-balance opacity-90 font-serif">
           Three generations of Tanzanian guides, one unwavering mission: to share Africa's soul with reverence,
           authenticity, and a commitment to conservation that outlasts every footprint.
         </p>

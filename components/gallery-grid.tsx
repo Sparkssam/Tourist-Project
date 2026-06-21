@@ -116,7 +116,7 @@ export function GalleryGrid({ activeCategory }: GalleryGridProps) {
     },
     {
       id: 13,
-      src: "/arusha-tanzania-city-skyline-with-mount-meru-backg.jpg",
+      src: "/arusha-tanzania-city.jpeg",
       caption: "Arusha city with Mount Meru in the background",
       category: "Landscapes",
       size: "medium",
@@ -340,7 +340,7 @@ export function GalleryGrid({ activeCategory }: GalleryGridProps) {
     },
     {
       id: 45,
-      src: "/arusha-tanzania-city-skyline-with-mount-meru-backg.jpg",
+      src: "/arusha-tanzania-city.jpeg",
       caption: "Gateway city to Tanzania's northern safari circuit",
       category: "Landscapes",
       size: "medium",

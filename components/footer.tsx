@@ -113,11 +113,11 @@ export function Footer() {
   return (
     <>
       <footer className="bg-muted/50 border-t border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Company Info */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-luxury text-primary font-bold">KEKEOsafari's</h3>
+            <div className="space-y-3">
+              <h3 className="text-lg font-luxury text-primary font-bold">KEKEOsafari's</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 Your trusted partner for authentic African safari adventures in Tanzania. Experience the wild beauty of
                 Africa with our expert guides.

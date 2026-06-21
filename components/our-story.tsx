@@ -2,11 +2,11 @@ import { Card, CardContent } from "@/components/ui/card"
 
 export function OurStory() {
   return (
-    <section className="py-24 px-4">
+    <section className="py-16 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-5xl font-luxury text-primary mb-4">Our Story</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-luxury text-primary mb-3">Our Story</h2>
+          <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
             Born from passion, guided by purpose, committed to conservation
           </p>
         </div>
@@ -46,7 +46,7 @@ export function OurStory() {
         </div>
 
         {/* Mission, Vision, Values Cards */}
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-6">
           <Card className="hover:shadow-xl transition-shadow duration-300">
             <CardContent className="p-8">
               <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">

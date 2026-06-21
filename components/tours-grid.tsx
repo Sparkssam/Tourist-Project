@@ -99,7 +99,7 @@ export function ToursGrid({ activeFilter }: ToursGridProps) {
             </div>
 
             <Button asChild className="w-full" size="lg">
-              <Link href={`/inquiry?tour=${tour.id}`}>Enquiry</Link>
+              <Link href={`/inquiry?tour=${tour.id}`}>Send Enquiry</Link>
             </Button>
           </CardContent>
         </Card>
@@ -179,7 +179,7 @@ export function getAllTours() {
     {
       id: "arusha-national-park-day-trip",
       title: "Arusha National Park Discovery",
-      image: "/arusha-tanzania-city-skyline-with-mount-meru-backg.jpg",
+      image: "/arusha-tanzania-city.jpeg",
       duration: "1 Day",
       itineraries: "Arusha National Park • Mount Meru • Momella Lakes",
       highlight: "Perfect introduction to Tanzania's diverse ecosystems",

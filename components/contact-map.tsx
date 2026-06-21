@@ -28,7 +28,7 @@ export function ContactMap() {
         {/* Location Image with Overlay */}
         <div className="relative h-80 overflow-hidden">
           <img
-            src="/arusha-tanzania-city-skyline-with-mount-meru-backg.jpg"
+            src="/arusha-tanzania-city.jpeg"
             alt="Arusha, Tanzania - Safari Capital"
             className="w-full h-full object-cover"
           />

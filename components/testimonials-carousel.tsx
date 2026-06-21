@@ -120,17 +120,17 @@ export function TestimonialsCarousel() {
   }
 
   return (
-    <section ref={ref} className="py-24 px-4 bg-muted/30">
+    <section ref={ref} className="py-16 px-4 bg-muted/30">
       <div className="max-w-4xl mx-auto">
         <div
-          className={`text-center mb-16 transition-all duration-1000 ${isVisible ? "fade-in-up" : "opacity-0 translate-y-10"}`}
+          className={`text-center mb-12 transition-all duration-1000 ${isVisible ? "fade-in-up" : "opacity-0 translate-y-10"}`}
         >
           <div className="mb-4">
             <GoogleVerifiedBadge />
           </div>
 
-          <h2 className="text-responsive-lg font-luxury text-primary mb-6">What Our Travelers Say</h2>
-          <p className="text-responsive-md text-muted-foreground text-pretty font-light font-serif">
+          <h2 className="text-3xl md:text-4xl font-luxury text-primary mb-4">What Our Travelers Say</h2>
+          <p className="text-base md:text-lg text-muted-foreground text-pretty font-light font-serif">
             Real experiences from adventurers who've explored Tanzania with us
           </p>
 

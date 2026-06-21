@@ -133,13 +133,13 @@ export function SafariEssentials() {
   ]
 
   return (
-    <section ref={ref} className="py-24 px-4 bg-muted/30 safari-pattern">
+    <section ref={ref} className="py-16 px-4 bg-muted/30 safari-pattern">
       <div className="max-w-7xl mx-auto">
         <div
-          className={`text-center mb-16 transition-all duration-1000 ${isVisible ? "fade-in-up" : "opacity-0 translate-y-10"}`}
+          className={`text-center mb-12 transition-all duration-1000 ${isVisible ? "fade-in-up" : "opacity-0 translate-y-10"}`}
         >
-          <h2 className="text-responsive-lg font-luxury text-primary mb-6">Safari Essentials</h2>
-          <p className="text-responsive-md text-muted-foreground max-w-3xl mx-auto text-pretty">
+          <h2 className="text-3xl md:text-4xl font-luxury text-primary mb-4">Safari Essentials</h2>
+          <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto text-pretty">
             Everything you need to know before embarking on your African adventure. We believe informed travelers have
             the most meaningful experiences.
           </p>

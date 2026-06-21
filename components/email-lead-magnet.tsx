@@ -21,19 +21,19 @@ export function EmailLeadMagnet() {
   }
 
   return (
-    <section className="py-20 px-4">
+    <section className="py-16 px-4">
       <div className="max-w-4xl mx-auto">
         <Card className="bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
-          <CardHeader className="text-center pb-6">
-            <div className="flex justify-center mb-4">
-              <div className="p-4 bg-primary/20 rounded-full">
-                <Download className="h-8 w-8 text-primary" />
+          <CardHeader className="text-center pb-4">
+            <div className="flex justify-center mb-3">
+              <div className="p-3 bg-primary/20 rounded-full">
+                <Download className="h-6 w-6 text-primary" />
               </div>
             </div>
-            <CardTitle className="text-3xl md:text-4xl font-luxury text-primary mb-4">
+            <CardTitle className="text-2xl md:text-3xl font-luxury text-primary mb-3">
               Free Safari Planning Guide
             </CardTitle>
-            <p className="text-lg text-muted-foreground text-pretty max-w-2xl mx-auto font-serif">
+            <p className="text-base md:text-lg text-muted-foreground text-pretty max-w-2xl mx-auto font-serif">
               Get our comprehensive 25-page guide with insider tips, packing lists, best times to visit, and exclusive
               safari secrets from our expert guides.
             </p>

@@ -84,19 +84,19 @@ export function FeaturedTours() {
   ]
 
   return (
-    <section ref={ref} className="py-24 px-4">
+    <section ref={ref} className="py-16 px-4">
       <div className="max-w-7xl mx-auto">
         <div
-          className={`text-center mb-16 transition-all duration-1000 ${isVisible ? "fade-in-up" : "opacity-0 translate-y-10"}`}
+          className={`text-center mb-12 transition-all duration-1000 ${isVisible ? "fade-in-up" : "opacity-0 translate-y-10"}`}
         >
-          <h2 className="text-responsive-lg font-luxury text-primary mb-6">Journeys We've Perfected</h2>
-          <p className="text-responsive-md text-muted-foreground max-w-3xl mx-auto text-pretty font-serif">
+          <h2 className="text-3xl md:text-4xl font-luxury text-primary mb-4">Journeys We've Perfected</h2>
+          <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto text-pretty font-serif">
             Each route has been walked, refined, and lived by our guides over decades. These aren't just tours—they're
             chapters in your life story waiting to be written.
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
           {tours.map((tour, index) => (
             <Card
               key={index}

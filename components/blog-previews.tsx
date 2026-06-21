@@ -39,17 +39,17 @@ export function BlogPreviews() {
   ]
 
   return (
-    <section className="py-20 px-4 bg-muted/30">
+    <section className="py-16 px-4 bg-muted/30">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-luxury text-primary mb-6">Wisdom from the Wild</h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty font-serif">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-luxury text-primary mb-4">Wisdom from the Wild</h2>
+          <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto text-pretty font-serif">
             Stories, insights, and hard-won knowledge from guides who've spent decades reading the rhythms of Africa.
             This is the intelligence that transforms tourists into travelers.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {blogPosts.map((post, index) => (
             <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
               <div className="relative">
@@ -57,11 +57,11 @@ export function BlogPreviews() {
                 <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground">{post.category}</Badge>
               </div>
 
-              <CardHeader className="pb-3">
-                <CardTitle className="text-xl text-card-foreground text-balance line-clamp-2 font-serif">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg text-card-foreground text-balance line-clamp-2 font-serif">
                   {post.title}
                 </CardTitle>
-                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                <div className="flex items-center space-x-3 text-xs text-muted-foreground mt-2">
                   <div className="flex items-center space-x-1">
                     <Calendar className="h-4 w-4" />
                     <span>{post.date}</span>
@@ -71,9 +71,9 @@ export function BlogPreviews() {
               </CardHeader>
 
               <CardContent className="pt-0">
-                <p className="text-muted-foreground mb-4 text-pretty line-clamp-3 font-serif">{post.excerpt}</p>
+                <p className="text-sm text-muted-foreground mb-3 text-pretty line-clamp-3 font-serif">{post.excerpt}</p>
 
-                <Button asChild variant="ghost" className="p-0 h-auto font-semibold text-primary hover:text-primary/80">
+                <Button asChild variant="ghost" className="p-0 h-auto text-sm font-semibold text-primary hover:text-primary/80">
                   <Link href={`/blog/${post.slug}`}>
                     Read More
                     <ArrowRight className="h-4 w-4 ml-1" />

@@ -180,7 +180,7 @@ export function TourBookingForm({ tour }: TourBookingFormProps) {
 
         {/* Send Inquiry Button */}
         <Button onClick={handleSendInquiry} className="w-full text-sm" disabled={!startDate}>
-          Enquiry
+          Send Enquiry
         </Button>
       </CardContent>
     </Card>

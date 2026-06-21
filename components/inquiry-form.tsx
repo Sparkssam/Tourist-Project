@@ -201,7 +201,7 @@ export function InquiryForm() {
                 ) : (
                   <>
                     <Send className="h-5 w-5 mr-2" />
-                    Enquiry
+                    Send Enquiry
                   </>
                 )}
               </Button>

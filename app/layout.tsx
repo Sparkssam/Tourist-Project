@@ -1,5 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
+import { Inter, JetBrains_Mono, Dancing_Script, Libre_Baskerville, IBM_Plex_Mono, Lora } from 'next/font/google'
 
 import { Navigation } from "@/components/navigation"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
@@ -10,6 +11,7 @@ import { CookieConsent } from "@/components/cookie-consent"
 import { BackToTop } from "@/components/back-to-top"
 import "./globals.css"
 
+// Initialize fonts
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
@@ -28,13 +30,26 @@ const dancingScript = Dancing_Script({
   variable: "--font-dancing-script",
 })
 
-import { Inter, JetBrains_Mono, Dancing_Script, Libre_Baskerville as V0_Font_Libre_Baskerville, IBM_Plex_Mono as V0_Font_IBM_Plex_Mono, Lora as V0_Font_Lora } from 'next/font/google'
+const libreBaskerville = Libre_Baskerville({
+  subsets: ['latin'],
+  weight: ["400","700"],
+  display: "swap",
+  variable: '--font-libre-baskerville'
+})
 
-// Initialize fonts
-const _libreBaskerville = V0_Font_Libre_Baskerville({ subsets: ['latin'], weight: ["400","700"], variable: '--v0-font-libre-baskerville' })
-const _ibmPlexMono = V0_Font_IBM_Plex_Mono({ subsets: ['latin'], weight: ["100","200","300","400","500","600","700"], variable: '--v0-font-ibm-plex-mono' })
-const _lora = V0_Font_Lora({ subsets: ['latin'], weight: ["400","500","600","700"], variable: '--v0-font-lora' })
-const _v0_fontVariables = `${_libreBaskerville.variable} ${_ibmPlexMono.variable} ${_lora.variable}`
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ["100","200","300","400","500","600","700"],
+  display: "swap",
+  variable: '--font-ibm-plex-mono'
+})
+
+const lora = Lora({
+  subsets: ['latin'],
+  weight: ["400","500","600","700"],
+  display: "swap",
+  variable: '--font-lora'
+})
 
 export const metadata: Metadata = {
   title: "KEKEOsafari's - Your Adventure of a Lifetime Awaits in Tanzania",
@@ -77,7 +92,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`font-serif ${inter.variable} ${jetbrainsMono.variable} ${dancingScript.variable} kijiji-pattern antialiased ${_v0_fontVariables}`}
+        className={`font-serif ${inter.variable} ${jetbrainsMono.variable} ${dancingScript.variable} ${libreBaskerville.variable} ${ibmPlexMono.variable} ${lora.variable} antialiased`}
       >
         <ThemeProvider>
           <Navigation />

@@ -135,7 +135,7 @@ export function TourInquiryForm({ tourName }: TourInquiryFormProps) {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button type="submit" className="flex-1">
                   <Mail className="h-4 w-4 mr-2" />
-                  Enquiry
+                  Send Enquiry
                 </Button>
                 <Button type="button" variant="outline" className="flex-1 bg-transparent">
                   <Phone className="h-4 w-4 mr-2" />

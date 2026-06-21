@@ -32,10 +32,10 @@ export default function ToursPage() {
     <div className="min-h-screen">
       <main>
         {/* Hero Section */}
-        <section className="relative py-20 px-4 bg-gradient-to-r from-primary/10 to-secondary/10">
+        <section className="relative py-16 px-4 bg-gradient-to-r from-primary/10 to-secondary/10">
           <div className="max-w-7xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-luxury text-primary mb-6">Safari Adventures</h1>
-            <p className="text-muted-foreground max-w-3xl mx-auto text-pretty font-serif text-2xl">
+            <h1 className="text-4xl md:text-5xl font-luxury text-primary mb-4">Safari Adventures</h1>
+            <p className="text-muted-foreground max-w-3xl mx-auto text-pretty font-serif text-base md:text-lg">
               Discover Tanzania's incredible wildlife, breathtaking landscapes, and rich cultural heritage through our
               expertly crafted safari experiences.
             </p>

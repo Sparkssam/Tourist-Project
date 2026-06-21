@@ -149,7 +149,7 @@ export function EnquiryBanner() {
               </div>
 
               <Button asChild size="lg" className="bg-background text-foreground hover:bg-background/90 shadow-lg">
-                <Link href="/inquiry">Enquiry</Link>
+                <Link href="/inquiry">Send Enquiry</Link>
               </Button>
             </div>
           </div>

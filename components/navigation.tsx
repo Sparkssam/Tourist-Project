@@ -56,36 +56,37 @@ export function Navigation() {
       aria-label="Main navigation"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`flex justify-between items-center transition-all duration-300 ${scrolled ? "h-16" : "h-20"}`}>
-          <Link href="/" className="flex items-center space-x-2 group" aria-label="KEKEOsafari's home page">
-            <div className="font-luxury text-primary font-extrabold text-3xl md:text-4xl transition-all duration-300 group-hover:scale-105">
+        <div className={`flex items-center transition-all duration-300 ${scrolled ? "h-14" : "h-16"}`}>
+          <Link href="/" className="flex items-center space-x-2 group flex-shrink-0" aria-label="KEKEOsafari's home page">
+            <div className="font-luxury text-primary font-extrabold text-2xl md:text-3xl transition-all duration-300 group-hover:scale-105">
               KEKEOsafari's
             </div>
           </Link>
 
-          <div className="hidden md:flex items-center space-x-6 lg:space-x-8" role="navigation">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="text-foreground hover:text-primary transition-colors duration-300 font-medium link-underline relative"
-                aria-label={`Navigate to ${item.label}`}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
+          <div className="ml-auto flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-3 lg:gap-4" role="navigation">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-sm text-foreground hover:text-primary transition-colors duration-300 font-medium link-underline relative whitespace-nowrap"
+                  aria-label={`Navigate to ${item.label}`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
 
-          <div className="flex items-center space-x-4">
             <ThemeToggle />
+
             <Button
               asChild
               className="hidden sm:flex button-press hover:scale-105 transition-transform duration-300"
               aria-label="Send an enquiry"
             >
-              <Link href="/inquiries" className="flex items-center space-x-2">
+              <Link href="/inquiry" className="flex items-center space-x-2">
                 <SendIcon />
-                <span>Enquiry</span>
+                <span>Send Enquiry</span>
               </Link>
             </Button>
 
@@ -103,28 +104,28 @@ export function Navigation() {
         </div>
 
         {isOpen && (
-          <div className="md:hidden pb-4 slide-in-up" role="navigation" aria-label="Mobile navigation">
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-card rounded-lg mt-2 border border-border shadow-lg">
+          <div className="md:hidden pb-3 slide-in-up" role="navigation" aria-label="Mobile navigation">
+            <div className="px-2 py-2 space-y-1 bg-card rounded-lg mt-2 border border-border shadow-lg">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="block px-3 py-3 text-card-foreground hover:text-primary hover:bg-muted/50 rounded-md transition-all duration-300"
+                  className="block px-3 py-2 text-sm text-card-foreground hover:text-primary hover:bg-muted/50 rounded-md transition-all duration-300"
                   onClick={() => setIsOpen(false)}
                   aria-label={`Navigate to ${item.label}`}
                 >
                   {item.label}
                 </Link>
               ))}
-              <div className="px-3 py-2 flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Theme</span>
+              <div className="px-3 py-2 flex items-center justify-between border-t border-border mt-2">
+                <span className="text-xs text-muted-foreground">Theme</span>
                 <ThemeToggle />
               </div>
               <div className="px-3 py-2">
-                <Button asChild className="w-full button-press" aria-label="Send an enquiry">
-                  <Link href="/inquiries" className="flex items-center justify-center space-x-2">
+                <Button asChild className="w-full button-press text-sm" aria-label="Send an enquiry">
+                  <Link href="/inquiry" className="flex items-center justify-center gap-2">
                     <SendIcon />
-                    <span>Enquiry</span>
+                    <span>Send Enquiry</span>
                   </Link>
                 </Button>
               </div>
