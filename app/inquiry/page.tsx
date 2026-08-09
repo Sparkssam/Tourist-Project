@@ -89,9 +89,13 @@ export default function InquiryPage() {
     }
   }, [searchParams.get("tour")])
 
+  const [errorMessage, setErrorMessage] = useState("")
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setSubmitStatus("idle")
+    setErrorMessage("")
 
     try {
       const response = await fetch("/api/contact", {
@@ -99,6 +103,8 @@ export default function InquiryPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       })
+
+      const data = await response.json()
 
       if (response.ok) {
         setSubmitStatus("success")
@@ -131,9 +137,13 @@ export default function InquiryPage() {
         })
       } else {
         setSubmitStatus("error")
+        setErrorMessage(data?.error || data?.details || "Failed to submit enquiry. Please try again.")
+        console.error("Submission error:", data)
       }
-    } catch (error) {
+    } catch (error: any) {
       setSubmitStatus("error")
+      setErrorMessage(error?.message || "Network error. Please check your connection and try again.")
+      console.error("Submission error:", error)
     } finally {
       setIsSubmitting(false)
     }
@@ -478,9 +488,10 @@ export default function InquiryPage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="message">Tell Us More About Your Dream Safari</Label>
+                    <Label htmlFor="message">Tell Us More About Your Dream Safari *</Label>
                     <Textarea
                       id="message"
+                      required
                       rows={5}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
@@ -505,9 +516,7 @@ export default function InquiryPage() {
               {submitStatus === "error" && (
                 <div className="p-6 bg-red-50 border-2 border-red-200 rounded-lg text-red-800">
                   <h3 className="font-semibold text-lg mb-2">Something Went Wrong</h3>
-                  <p>
-                    We couldn't submit your enquiry. Please try again or contact us directly at info@kekoosafaris.com
-                  </p>
+                  <p>{errorMessage || "We couldn't submit your enquiry. Please try again or contact us directly at info@kekoosafaris.com"}</p>
                 </div>
               )}
 

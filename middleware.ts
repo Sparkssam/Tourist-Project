@@ -287,13 +287,16 @@ export const config = {
      * - /staff and all subroutes
      * - /tourist and all subroutes
      * - /dashboard (exact match)
-     * - /api routes for session management
+     * - /api routes for session management (excluding public APIs)
      * Exclude: _next/static, _next/image, favicon.ico, and other static files
      */
     '/admin/:path*',
     '/staff/:path*',
     '/tourist/:path*',
     '/dashboard',
-    '/api/:path*',
+    // Only protect auth-related API routes, not public ones like contact/inquiry
+    '/api/auth/:path*',
+    '/api/login/:path*',
+    '/api/register/:path*',
   ],
 }

@@ -1,4 +1,4 @@
-import type React from "react"
+import type { ReactNode } from "react"
 import type { Metadata } from "next"
 import { Inter, JetBrains_Mono, Dancing_Script, Libre_Baskerville, IBM_Plex_Mono, Lora } from 'next/font/google'
 
@@ -9,7 +9,7 @@ import { EnquiryBanner } from "@/components/enquiry-banner"
 import { ThemeProvider } from "@/components/theme-provider"
 import { CookieConsent } from "@/components/cookie-consent"
 import { BackToTop } from "@/components/back-to-top"
-import "./globals.css"
+import "./globals.css";
 
 // Initialize fonts
 const inter = Inter({
@@ -87,7 +87,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: ReactNode
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>

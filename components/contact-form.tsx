@@ -27,10 +27,18 @@ export function ContactForm() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Here you would send the form data to samsuya999@gmail.com
-    // For now, we'll simulate the submission
     try {
-      console.log("Contact form submitted:", formData)
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data?.message || res.statusText || "Failed to send message")
+      }
+
       alert("Thank you for your message! We'll get back to you within 24 hours.")
       setFormData({
         name: "",
@@ -41,8 +49,8 @@ export function ContactForm() {
         message: "",
         preferredContact: "",
       })
-    } catch (error) {
-      alert("There was an error sending your message. Please try again.")
+    } catch (error: any) {
+      alert(error?.message || "There was an error sending your message. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
