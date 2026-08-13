@@ -1,107 +1,105 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+"use client"
+
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { Clock, Users, MapPin, ArrowRight } from "lucide-react"
 
 interface ToursGridProps {
   activeFilter: string
 }
 
-const ClockIcon = () => (
-  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <circle cx="12" cy="12" r="10" />
-    <polyline points="12,6 12,12 16,14" />
-  </svg>
-)
-
-const UsersIcon = () => (
-  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-    <circle cx="9" cy="7" r="4" />
-    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-  </svg>
-)
-
-const MapPinIcon = () => (
-  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-    <circle cx="12" cy="10" r="3" />
-  </svg>
-)
-
-const StarIcon = () => (
-  <svg className="h-4 w-4 fill-yellow-400 text-yellow-400" viewBox="0 0 24 24">
-    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-  </svg>
-)
-
 export function ToursGrid({ activeFilter }: ToursGridProps) {
   const tours = getAllTours()
-
-  const filteredTours = activeFilter === "All" ? tours : tours.filter((tour) => tour.category === activeFilter)
+  const filteredTours = activeFilter === "All" ? tours : tours.filter((t) => t.category === activeFilter)
 
   return (
-  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
       {filteredTours.length === 0 && (
-        <div className="col-span-full text-center py-12">
-          <p className="text-muted-foreground text-lg">No routes found for the selected category.</p>
+        <div className="col-span-full text-center py-16">
+          <p className="text-muted-foreground text-lg font-serif">No itineraries found for the selected category.</p>
         </div>
       )}
 
       {filteredTours.map((tour, index) => (
-        <Card
+        <article
           key={tour.id}
-          className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02] bg-card group"
+          className="group relative bg-card rounded-2xl overflow-hidden border border-border shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col"
           style={{
             animationName: "fadeInUp",
             animationDuration: "0.6s",
             animationTimingFunction: "ease-out",
             animationFillMode: "forwards",
-            animationDelay: `${index * 100}ms`,
+            animationDelay: `${index * 80}ms`,
           }}
         >
-          <div className="relative overflow-hidden">
+          {/* Image */}
+          <div className="relative overflow-hidden h-60 flex-shrink-0">
             <img
               src={tour.image || "/placeholder.svg"}
               alt={tour.title}
-              className="w-full h-56 md:h-72 object-cover transition-transform duration-500 group-hover:scale-110"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-            <Badge className="absolute top-6 left-6 bg-primary text-primary-foreground text-base px-4 py-2 shadow-lg">
-              {tour.duration}
-            </Badge>
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+            {/* Top badges */}
+            <div className="absolute top-4 left-4 right-4 flex items-start justify-between">
+              <Badge className="bg-primary/90 backdrop-blur-sm text-primary-foreground font-semibold text-sm px-3 py-1 shadow-lg border-0">
+                {tour.duration}
+              </Badge>
+              <Badge variant="secondary" className="bg-black/50 backdrop-blur-sm text-white border-0 text-xs font-medium">
+                {tour.category}
+              </Badge>
+            </div>
+
+            {/* Bottom overlay — location */}
+            <div className="absolute bottom-4 left-4 right-4 flex items-center gap-1.5 text-white/90">
+              <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
+              <p className="text-xs font-medium truncate">{tour.itineraries}</p>
+            </div>
           </div>
 
-          <CardHeader className="pb-3 space-y-2">
-            <h3 className="text-xl md:text-2xl font-semibold text-card-foreground text-balance leading-tight">{tour.title}</h3>
-
-            <p className="text-muted-foreground text-sm md:text-base leading-relaxed text-pretty">{tour.highlight}</p>
-          </CardHeader>
-          <CardContent className="pt-0 space-y-5">
-            <div className="flex items-start space-x-2 text-sm text-muted-foreground">
-              <MapPinIcon />
-              <span className="leading-relaxed">{tour.itineraries}</span>
+          {/* Content */}
+          <div className="flex flex-col flex-1 p-5 gap-3">
+            <div>
+              <h3 className="text-xl font-bold text-card-foreground leading-snug mb-1.5 group-hover:text-primary transition-colors duration-300">
+                {tour.title}
+              </h3>
+              <p className="text-muted-foreground text-sm font-serif leading-relaxed line-clamp-2">
+                {tour.highlight}
+              </p>
             </div>
 
-            <div className="flex items-baseline justify-between pt-2 border-t border-border">
+            {/* Divider */}
+            <div className="border-t border-border pt-3 mt-auto flex items-end justify-between">
               <div>
                 {tour.priceOnEnquiry ? (
-                  <p className="text-lg font-medium text-primary">Price on Enquiry</p>
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Price</p>
+                    <p className="text-base font-bold text-primary">On Enquiry</p>
+                  </div>
                 ) : (
-                  <>
-                    <p className="text-sm text-muted-foreground">Starting from</p>
-                    <p className="text-2xl font-bold text-primary">${tour.startingPrice}</p>
-                  </>
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Starting from</p>
+                    <p className="text-2xl font-extrabold text-primary">${tour.startingPrice?.toLocaleString()}</p>
+                  </div>
                 )}
               </div>
-            </div>
 
-            <Button asChild className="w-full" size="lg">
-              <Link href={`/inquiry?tour=${tour.id}`}>Send Enquiry</Link>
-            </Button>
-          </CardContent>
-        </Card>
+              <Button
+                asChild
+                size="sm"
+                className="rounded-xl gap-1.5 font-semibold hover:gap-2.5 transition-all duration-300"
+              >
+                <Link href={`/inquiry?tour=${tour.id}`}>
+                  Enquire
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </article>
       ))}
     </div>
   )
@@ -114,8 +112,8 @@ export function getAllTours() {
       title: "Serengeti & Ngorongoro Safari",
       image: "/serengeti-lions-and-wildebeest-migration.jpeg",
       duration: "5 Days",
-      itineraries: "Serengeti • Ngorongoro Crater • Lake Manyara",
-      highlight: "Witness the Great Migration and explore Africa's wildlife paradise",
+      itineraries: "Serengeti · Ngorongoro Crater · Lake Manyara",
+      highlight: "Witness the Great Migration and explore Africa's most iconic wildlife paradise.",
       startingPrice: 1200,
       priceOnEnquiry: false,
       category: "Wildlife",
@@ -125,8 +123,8 @@ export function getAllTours() {
       title: "Kilimanjaro Summit Experience",
       image: "/mount-kilimanjaro-snow-peak-with-hikers.jpeg",
       duration: "7 Days",
-      itineraries: "Mount Kilimanjaro • Machame Route • Rainforest Zones",
-      highlight: "Conquer Africa's highest peak with expert mountain guides",
+      itineraries: "Mount Kilimanjaro · Machame Route · Rainforest Zones",
+      highlight: "Conquer Africa's highest peak with expert mountain guides by your side.",
       startingPrice: 1800,
       priceOnEnquiry: false,
       category: "Adventure",
@@ -136,8 +134,8 @@ export function getAllTours() {
       title: "Cultural Maasai Immersion",
       image: "/maasai-warriors-in-traditional-dress-with-village.jpeg",
       duration: "3 Days",
-      itineraries: "Maasai Villages • Ngorongoro Highlands • Cultural Sites",
-      highlight: "Live alongside Maasai communities in authentic cultural exchange",
+      itineraries: "Maasai Villages · Ngorongoro Highlands · Cultural Sites",
+      highlight: "Live alongside Maasai communities in an authentic and respectful cultural exchange.",
       startingPrice: 600,
       priceOnEnquiry: false,
       category: "Culture",
@@ -147,8 +145,8 @@ export function getAllTours() {
       title: "Zanzibar Island Escape",
       image: "/zanzibar-white-sand-beach-with-dhow-boats.jpeg",
       duration: "4 Days",
-      itineraries: "Stone Town • Spice Plantations • Pristine Beaches",
-      highlight: "Unwind on powder-white sands after your safari adventure",
+      itineraries: "Stone Town · Spice Plantations · Pristine Beaches",
+      highlight: "Unwind on powder-white sands after your safari — where the ocean heals everything.",
       startingPrice: 800,
       priceOnEnquiry: false,
       category: "Beach",
@@ -158,8 +156,8 @@ export function getAllTours() {
       title: "Tarangire & Lake Manyara Journey",
       image: "/tarangire-elephants-baobab-trees.png",
       duration: "4 Days",
-      itineraries: "Tarangire National Park • Lake Manyara • Rift Valley",
-      highlight: "Discover elephant herds beneath ancient baobab trees",
+      itineraries: "Tarangire National Park · Lake Manyara · Rift Valley",
+      highlight: "Discover elephant herds beneath ancient baobab trees in Tanzania's hidden gem.",
       startingPrice: 950,
       priceOnEnquiry: false,
       category: "Wildlife",
@@ -169,8 +167,8 @@ export function getAllTours() {
       title: "Remote Wilderness Explorer",
       image: "/ruaha-wild-dogs-hunting.png",
       duration: "6 Days",
-      itineraries: "Ruaha National Park • Selous Game Reserve • Wild Landscapes",
-      highlight: "Experience untouched wilderness far from tourist trails",
+      itineraries: "Ruaha National Park · Selous Game Reserve · Wild Landscapes",
+      highlight: "Experience untouched wilderness far from tourist trails — raw Africa at its finest.",
       startingPrice: 1500,
       priceOnEnquiry: false,
       category: "Wildlife",
@@ -180,8 +178,8 @@ export function getAllTours() {
       title: "Arusha National Park Discovery",
       image: "/arusha-tanzania-city.jpeg",
       duration: "1 Day",
-      itineraries: "Arusha National Park • Mount Meru • Momella Lakes",
-      highlight: "Perfect introduction to Tanzania's diverse ecosystems",
+      itineraries: "Arusha National Park · Mount Meru · Momella Lakes",
+      highlight: "A perfect introduction to Tanzania's diverse ecosystems, just outside the city.",
       startingPrice: 180,
       priceOnEnquiry: false,
       category: "Wildlife",
@@ -191,8 +189,8 @@ export function getAllTours() {
       title: "Lake Natron Flamingo Spectacle",
       image: "/lake-natron-flamingos-tanzania.jpg",
       duration: "3 Days",
-      itineraries: "Lake Natron • Oldonyo Lengai Volcano • Flamingo Colonies",
-      highlight: "Witness millions of flamingos at their only breeding ground",
+      itineraries: "Lake Natron · Oldonyo Lengai Volcano · Flamingo Colonies",
+      highlight: "Witness millions of flamingos at their only breeding ground on earth.",
       startingPrice: 750,
       priceOnEnquiry: false,
       category: "Wildlife",
@@ -202,8 +200,8 @@ export function getAllTours() {
       title: "Mikumi Wildlife Encounter",
       image: "/mikumi-national-park-elephants-tanzania.jpg",
       duration: "3 Days",
-      itineraries: "Mikumi National Park • Uluguru Mountains • Baobab Plains",
-      highlight: "Explore Tanzania's accessible wildlife haven near Dar es Salaam",
+      itineraries: "Mikumi National Park · Uluguru Mountains · Baobab Plains",
+      highlight: "Explore Tanzania's accessible wildlife haven, ideal for a first-time safari.",
       startingPrice: 680,
       priceOnEnquiry: false,
       category: "Wildlife",
@@ -213,8 +211,8 @@ export function getAllTours() {
       title: "Grand Northern Circuit",
       image: "/tanzania-safari-leopard-tree.jpg",
       duration: "10 Days",
-      itineraries: "Serengeti • Ngorongoro • Tarangire • Lake Manyara",
-      highlight: "The ultimate Tanzania safari covering all iconic parks",
+      itineraries: "Serengeti · Ngorongoro · Tarangire · Lake Manyara",
+      highlight: "The ultimate Tanzania safari — all iconic parks, one unforgettable journey.",
       priceOnEnquiry: true,
       category: "Wildlife",
     },
@@ -223,8 +221,8 @@ export function getAllTours() {
       title: "Mafia Island Marine Safari",
       image: "/mafia-island-diving-whale-shark-tanzania.jpg",
       duration: "5 Days",
-      itineraries: "Mafia Island Marine Park • Coral Reefs • Whale Shark Sites",
-      highlight: "Swim with whale sharks in pristine underwater paradise",
+      itineraries: "Mafia Island Marine Park · Coral Reefs · Whale Shark Sites",
+      highlight: "Swim with whale sharks in one of the world's most pristine underwater paradises.",
       startingPrice: 1100,
       priceOnEnquiry: false,
       category: "Beach",
@@ -234,8 +232,8 @@ export function getAllTours() {
       title: "Usambara Mountains Trek",
       image: "/usambara-mountains-hiking-tanzania-villages.jpg",
       duration: "4 Days",
-      itineraries: "Usambara Mountains • Traditional Villages • Cloud Forests",
-      highlight: "Trek through misty highlands and connect with local communities",
+      itineraries: "Usambara Mountains · Traditional Villages · Cloud Forests",
+      highlight: "Trek through misty highlands and connect with mountain communities off the beaten path.",
       startingPrice: 590,
       priceOnEnquiry: false,
       category: "Adventure",
