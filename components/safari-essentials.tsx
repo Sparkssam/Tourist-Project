@@ -127,7 +127,7 @@ export function SafariEssentials() {
       icon: <PhoneIcon />,
       title: "24/7 Emergency Support",
       description:
-        "Round-the-clock emergency line (+255 XXX XXX XXX), comprehensive travel insurance partnerships, direct links to medical facilities, embassy contacts, and an experienced crisis management team ready to assist anytime, anywhere.",
+        "Round-the-clock emergency line (+255 766 860 273), comprehensive travel insurance partnerships, direct links to medical facilities, embassy contacts, and an experienced crisis management team ready to assist anytime, anywhere.",
       badge: "Always Available",
     },
   ]

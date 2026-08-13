@@ -206,7 +206,7 @@ export function PesapalPaymentModal({ isOpen, onClose }: PesapalPaymentModalProp
                 name="customerPhone"
                 value={formData.customerPhone}
                 onChange={handleInputChange}
-                placeholder="+255 XXX XXX XXX"
+                placeholder="+255 766 860 273"
                 className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 required
               />

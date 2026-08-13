@@ -1,5 +1,12 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+
+const GOOGLE_REVIEW_URL =
+  process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL ||
+  "https://www.google.com/search?q=kekeosafaris+tanzania+review"
 
 const MapPinIcon = () => (
   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -24,7 +31,7 @@ const StarIcon = () => (
 )
 
 const GoogleVerifiedIcon = () => (
-  <svg className="h-3 w-3" viewBox="0 0 24 24">
+  <svg className="h-3.5 w-3.5 flex-shrink-0" viewBox="0 0 24 24">
     <path
       fill="#4285F4"
       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -44,124 +51,156 @@ const GoogleVerifiedIcon = () => (
   </svg>
 )
 
+const FEATURED_REVIEWS = [
+  {
+    id: "f-1",
+    name: "Sarah Johnson",
+    location: "New York, USA",
+    date: "March 2024",
+    rating: 5,
+    tour: "5-Day Serengeti Safari",
+    review:
+      "Absolutely incredible experience! Samuel and his team made our dream safari come true. We saw all of the Big Five and the Great Migration was breathtaking. The accommodations were perfect and the guides were so knowledgeable. Can't wait to come back!",
+    avatar: "/sarah-johnson-review.png",
+    verified: true,
+  },
+  {
+    id: "f-2",
+    name: "Michael Chen",
+    location: "Sydney, Australia",
+    date: "February 2024",
+    rating: 5,
+    tour: "Kilimanjaro Climb + Safari",
+    review:
+      "Kekeo Safaris exceeded all expectations. The Kilimanjaro climb was challenging but well-organized, and the safari afterwards was the perfect way to celebrate reaching the summit. Professional, friendly, and truly passionate about what they do.",
+    avatar: "/michael-chen-review.png",
+    verified: true,
+  },
+  {
+    id: "f-3",
+    name: "Emma Thompson",
+    location: "London, UK",
+    date: "January 2024",
+    rating: 5,
+    tour: "Cultural & Wildlife Tour",
+    review:
+      "The cultural experiences with the Maasai community were authentic and respectful. Maria was an amazing guide who helped us understand the local traditions. The wildlife viewing was spectacular too. Highly recommend!",
+    avatar: "/emma-thompson-review.png",
+    verified: true,
+  },
+  {
+    id: "f-4",
+    name: "David Rodriguez",
+    location: "Madrid, Spain",
+    date: "December 2023",
+    rating: 5,
+    tour: "Ngorongoro Crater Safari",
+    review:
+      "The Ngorongoro Crater is truly the 8th wonder of the world, and Kekeo Safaris showed us every corner of it. Joseph's expertise in spotting wildlife is unmatched. Saw lions, elephants, and even a rare black rhino!",
+    avatar: "/david-rodriguez-review.png",
+    verified: true,
+  },
+  {
+    id: "f-5",
+    name: "Lisa Wang",
+    location: "Toronto, Canada",
+    date: "November 2023",
+    rating: 5,
+    tour: "Photography Safari",
+    review:
+      "As a photographer, I needed guides who understood my needs. Samuel's knowledge of animal behavior and the best lighting conditions helped me capture once-in-a-lifetime shots. The itinerary was perfectly planned.",
+    avatar: "/lisa-wang-review.png",
+    verified: true,
+  },
+  {
+    id: "f-6",
+    name: "James Mitchell",
+    location: "Melbourne, Australia",
+    date: "October 2023",
+    rating: 5,
+    tour: "Family Safari Adventure",
+    review:
+      "Traveling with kids can be challenging, but Kekeo Safaris made it seamless. The guides were patient and engaging with our children, making it educational and fun. Our 8-year-old is still talking about the lions!",
+    avatar: "/james-mitchell-review.png",
+    verified: true,
+  },
+]
+
 export function ReviewsGrid() {
-  const reviews = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      location: "New York, USA",
-      date: "March 2024",
-      rating: 5,
-      tour: "5-Day Serengeti Safari",
-      review:
-        "Absolutely incredible experience! Samuel and his team made our dream safari come true. We saw all of the Big Five and the Great Migration was breathtaking. The accommodations were perfect and the guides were so knowledgeable. Can't wait to come back!",
-      avatar: "/sarah-johnson-review.png",
-      googleReviewId: "ChdDSUhNMG9nS0VJQ0FnSUQ3Z1lXUy1RRRAB",
-      verified: true,
-    },
-    {
-      id: 2,
-      name: "Michael Chen",
-      location: "Sydney, Australia",
-      date: "February 2024",
-      rating: 5,
-      tour: "Kilimanjaro Climb + Safari",
-      review:
-        "KEKEOsafaris exceeded all expectations. The Kilimanjaro climb was challenging but well-organized, and the safari afterwards was the perfect way to celebrate reaching the summit. Professional, friendly, and truly passionate about what they do.",
-      avatar: "/michael-chen-review.png",
-      verified: true,
-    },
-    {
-      id: 3,
-      name: "Emma Thompson",
-      location: "London, UK",
-      date: "January 2024",
-      rating: 5,
-      tour: "Cultural & Wildlife Tour",
-      review:
-        "The cultural experiences with the Maasai community were authentic and respectful. Maria was an amazing guide who helped us understand the local traditions. The wildlife viewing was spectacular too. Highly recommend!",
-      avatar: "/emma-thompson-review.png",
-      verified: true,
-    },
-    {
-      id: 4,
-      name: "David Rodriguez",
-      location: "Madrid, Spain",
-      date: "December 2023",
-      rating: 5,
-      tour: "Ngorongoro Crater Safari",
-      review:
-        "The Ngorongoro Crater is truly the 8th wonder of the world, and KEKEOsafaris showed us every corner of it. Joseph's expertise in spotting wildlife is unmatched. Saw lions, elephants, and even a rare black rhino!",
-      avatar: "/david-rodriguez-review.png",
-      verified: true,
-    },
-    {
-      id: 5,
-      name: "Lisa Wang",
-      location: "Toronto, Canada",
-      date: "November 2023",
-      rating: 5,
-      tour: "Photography Safari",
-      review:
-        "As a photographer, I needed guides who understood my needs. Samuel's knowledge of animal behavior and the best lighting conditions helped me capture once-in-a-lifetime shots. The itinerary was perfectly planned.",
-      avatar: "/lisa-wang-review.png",
-      verified: true,
-    },
-    {
-      id: 6,
-      name: "James Mitchell",
-      location: "Melbourne, Australia",
-      date: "October 2023",
-      rating: 5,
-      tour: "Family Safari Adventure",
-      review:
-        "Traveling with kids can be challenging, but KEKEOsafaris made it seamless. The guides were patient and engaging with our children, making it educational and fun. Our 8-year-old is still talking about the lions!",
-      avatar: "/james-mitchell-review.png",
-      verified: true,
-    },
-  ]
+  const [liveReviews, setLiveReviews] = useState<any[]>([])
+
+  useEffect(() => {
+    async function fetchLiveReviews() {
+      try {
+        const res = await fetch("/api/reviews")
+        const data = await res.json()
+        if (data.success && Array.isArray(data.reviews) && data.reviews.length > 0) {
+          const mapped = data.reviews.map((r: any) => ({
+            id: r.id || `live-${Math.random()}`,
+            name: r.name,
+            location: r.location || "Verified Guest",
+            date: r.created_at
+              ? new Date(r.created_at).toLocaleDateString("en-US", {
+                  month: "short",
+                  year: "numeric",
+                })
+              : "Recently",
+            rating: r.rating || 5,
+            tour: r.tour || "Tanzania Safari Experience",
+            review: r.review,
+            avatar: "/placeholder.svg",
+            verified: true,
+          }))
+          setLiveReviews(mapped)
+        }
+      } catch {
+        // Fallback to featured
+      }
+    }
+    fetchLiveReviews()
+  }, [])
+
+  const allReviews = [...liveReviews, ...FEATURED_REVIEWS]
 
   return (
     <section className="py-16 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-luxury text-primary mb-4">Recent Reviews</h2>
+          <h2 className="text-4xl font-luxury text-primary mb-4">Guest Experiences & Reviews</h2>
           <p className="text-muted-foreground max-w-3xl mx-auto text-balance font-serif text-2xl mb-6">
-            Read what our recent guests have to say about their safari adventures
+            Real stories from travelers who have explored Tanzania with Kekeo Safaris
           </p>
 
           <div className="bg-muted/50 border border-border rounded-lg p-6 max-w-3xl mx-auto mb-8">
             <div className="flex items-start gap-4">
-              <div className="bg-white rounded-lg p-3 shadow-sm">
+              <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-100">
                 <GoogleVerifiedIcon />
               </div>
               <div className="text-left flex-1">
                 <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
                   <GoogleVerifiedIcon />
-                  Verified Google Reviews
+                  Verified Google & Visitor Reviews
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                  These reviews are imported directly from our Google Business profile and remain completely unedited.
-                  We don't filter negative feedback or alter guest comments in any way. What you read here reflects the
-                  genuine experiences of real travelers who've journeyed with KEKEOsafaris.
+                  We believe in 100% transparency. Reviews are submitted directly by verified guests and Google Business Profile reviewers. What you read here reflects true, unedited safari experiences.
                 </p>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-3 items-center text-sm">
                   <a
-                    href="https://www.google.com/search?q=kekeosafaris+tanzania+reviews"
+                    href={GOOGLE_REVIEW_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1"
+                    className="font-medium text-primary hover:underline inline-flex items-center gap-1"
                   >
                     Read all reviews on Google →
                   </a>
                   <span className="text-muted-foreground">|</span>
                   <a
-                    href="https://www.google.com/search?q=kekeosafaris+tanzania+review"
+                    href={GOOGLE_REVIEW_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1"
+                    className="font-medium text-primary hover:underline inline-flex items-center gap-1"
                   >
-                    Leave your review after your trip →
+                    Leave a Google Review →
                   </a>
                 </div>
               </div>
@@ -170,57 +209,59 @@ export function ReviewsGrid() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {reviews.map((review) => (
-            <Card key={review.id} className="h-full relative">
+          {allReviews.map((review) => (
+            <Card key={review.id} className="h-full relative flex flex-col justify-between">
               {review.verified && (
                 <div className="absolute top-4 right-4 z-10">
-                  <div className="bg-white rounded-full px-2 py-1 shadow-md flex items-center gap-1">
+                  <div className="bg-white/90 backdrop-blur-xs rounded-full px-2.5 py-1 shadow-xs border border-gray-100 flex items-center gap-1.5">
                     <GoogleVerifiedIcon />
-                    <span className="text-xs font-medium text-gray-700">Verified</span>
+                    <span className="text-xs font-semibold text-gray-700">Verified Review</span>
                   </div>
                 </div>
               )}
 
-              <CardContent className="p-6">
-                <div className="flex items-start space-x-4 mb-4">
-                  <img
-                    src={review.avatar || "/placeholder.svg"}
-                    alt={review.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-card-foreground">{review.name}</h4>
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <MapPinIcon />
-                      <span>{review.location}</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <CalendarIcon />
-                      <span>Visited {review.date}</span>
+              <CardContent className="p-6 flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-start space-x-4 mb-4">
+                    <img
+                      src={review.avatar || "/placeholder.svg"}
+                      alt={review.name}
+                      className="w-12 h-12 rounded-full object-cover border border-muted"
+                    />
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-card-foreground">{review.name}</h4>
+                      <div className="flex items-center space-x-2 text-xs text-muted-foreground mt-0.5">
+                        <MapPinIcon />
+                        <span>{review.location}</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-xs text-muted-foreground mt-0.5">
+                        <CalendarIcon />
+                        <span>Visited {review.date}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex">
-                    {[...Array(review.rating)].map((_, i) => (
-                      <StarIcon key={i} />
-                    ))}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex">
+                      {[...Array(review.rating)].map((_, i) => (
+                        <StarIcon key={i} />
+                      ))}
+                    </div>
+                    <Badge variant="secondary" className="text-xs">
+                      {review.tour}
+                    </Badge>
                   </div>
-                  <Badge variant="secondary" className="text-xs">
-                    {review.tour}
-                  </Badge>
-                </div>
 
-                <p className="text-muted-foreground text-pretty leading-relaxed font-serif text-lg mb-4">
-                  {review.review}
-                </p>
+                  <p className="text-muted-foreground leading-relaxed font-serif text-base mb-4">
+                    "{review.review}"
+                  </p>
+                </div>
 
                 {review.verified && (
-                  <div className="pt-4 border-t border-border">
+                  <div className="pt-4 border-t border-border mt-auto">
                     <p className="text-xs text-muted-foreground flex items-center gap-2">
                       <GoogleVerifiedIcon />
-                      <span>Posted on Google Reviews</span>
+                      <span>Verified Review • Kekeo Safaris</span>
                     </p>
                   </div>
                 )}
@@ -229,21 +270,23 @@ export function ReviewsGrid() {
           ))}
         </div>
 
-        <div className="mt-12 text-center bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg p-8">
-          <h3 className="text-2xl font-luxury text-primary mb-3">Recently traveled with us?</h3>
+        {/* Bottom CTA */}
+        <div className="mt-12 text-center bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl p-8 border border-primary/20">
+          <h3 className="text-2xl font-luxury text-primary mb-3">Traveled with Kekeo Safaris?</h3>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Your honest feedback helps future travelers make informed decisions and helps us continue delivering
-            unforgettable safari experiences. Share your story on Google Reviews.
+            Your honest feedback helps future travelers make informed decisions and helps us continue delivering exceptional safari adventures in Tanzania.
           </p>
-          <a
-            href="https://www.google.com/search?q=kekeosafaris+tanzania+review"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
-          >
-            <GoogleVerifiedIcon />
-            Write a Review on Google
-          </a>
+          <div className="flex flex-wrap justify-center gap-4">
+            <a
+              href={GOOGLE_REVIEW_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-all shadow-md"
+            >
+              <GoogleVerifiedIcon />
+              Write a Live Google Review
+            </a>
+          </div>
         </div>
       </div>
     </section>

@@ -244,17 +244,17 @@ export function Footer() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <PhoneIcon />
-                  <Link href="tel:+255760309999" className="text-muted-foreground hover:text-primary transition-colors">
-                    +255 760 309 999
+                  <Link href="tel:+255766860273" className="text-muted-foreground hover:text-primary transition-colors">
+                    +255 766 860 273
                   </Link>
                 </div>
                 <div className="flex items-center space-x-3">
                   <MailIcon />
                   <Link
-                    href="mailto:samsuya999@gmail.com"
+                    href="mailto:doubleebariki@gmail.com"
                     className="text-muted-foreground hover:text-primary transition-colors"
                   >
-                    samsuya999@gmail.com
+                    doubleebariki@gmail.com
                   </Link>
                 </div>
               </div>

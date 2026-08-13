@@ -15,7 +15,9 @@ export function ContactInfo() {
             <Phone className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
             <div>
               <p className="font-medium">Phone</p>
-              <p className="text-muted-foreground">+255 760 309 999</p>
+              <a href="tel:+255766860273" className="text-muted-foreground hover:text-primary transition-colors">
+                +255 766 860 273
+              </a>
               <p className="text-sm text-muted-foreground">Available 24/7 for emergencies</p>
             </div>
           </div>
@@ -24,7 +26,9 @@ export function ContactInfo() {
             <Mail className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
             <div>
               <p className="font-medium">Email</p>
-              <p className="text-muted-foreground">samsuya999@gmail.com</p>
+              <a href="mailto:doubleebariki@gmail.com" className="text-muted-foreground hover:text-primary transition-colors">
+                doubleebariki@gmail.com
+              </a>
               <p className="text-sm text-muted-foreground">We respond within 24 hours</p>
             </div>
           </div>
@@ -51,17 +55,23 @@ export function ContactInfo() {
         <div className="pt-4 border-t space-y-3">
           <h4 className="font-medium">Quick Contact</h4>
           <div className="flex flex-col space-y-2">
-            <Button className="w-full justify-start bg-transparent" variant="outline">
-              <Phone className="h-4 w-4 mr-2" />
-              Call +255760309999
+            <Button asChild className="w-full justify-start bg-transparent" variant="outline">
+              <a href="tel:+255766860273">
+                <Phone className="h-4 w-4 mr-2" />
+                Call +255 766 860 273
+              </a>
             </Button>
-            <Button className="w-full justify-start bg-transparent" variant="outline">
-              <MessageSquare className="h-4 w-4 mr-2" />
-              WhatsApp Chat
+            <Button asChild className="w-full justify-start bg-transparent" variant="outline">
+              <a href="https://wa.me/255766860273" target="_blank" rel="noopener noreferrer">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                WhatsApp Chat
+              </a>
             </Button>
-            <Button className="w-full justify-start bg-transparent" variant="outline">
-              <Mail className="h-4 w-4 mr-2" />
-              Email Us
+            <Button asChild className="w-full justify-start bg-transparent" variant="outline">
+              <a href="mailto:doubleebariki@gmail.com">
+                <Mail className="h-4 w-4 mr-2" />
+                Email Us
+              </a>
             </Button>
           </div>
         </div>

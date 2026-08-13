@@ -167,7 +167,7 @@ export async function POST(request: Request) {
             <p style="margin: 0 0 4px 0; font-weight: 700; color: #1a3d2b; font-size: 14px;">KEKEO SAFARIS TANZANIA</p>
             <p style="margin: 0 0 12px 0;">Official Tour Operator • License No. TALA/2026/0491 • Arusha, Tanzania</p>
             <p style="margin: 0 0 12px 0;">
-              Telephone: +255 760 309 999 • Email: info@kekeosafaris.com • Website: kekeosafaris.com
+              Telephone: +255 766 860 273 • Email: doubleebariki@gmail.com • Website: kekeosafaris.com
             </p>
             <p style="margin: 0; font-size: 11px; color: #a0aec0;">
               This official guide was requested via kekeosafaris.com. All content is protected by international copyright laws.

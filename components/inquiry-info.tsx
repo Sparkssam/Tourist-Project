@@ -20,8 +20,8 @@ export function InquiryInfo() {
               </div>
               <h3 className="font-semibold text-foreground mb-2">Call Us</h3>
               <p className="text-sm text-muted-foreground mb-3">Speak directly with our safari experts</p>
-              <a href="tel:+255760309999" className="text-primary hover:text-primary/80 font-medium">
-                +255 760 309 999
+              <a href="tel:+255766860273" className="text-primary hover:text-primary/80 font-medium">
+                +255 766 860 273
               </a>
             </CardContent>
           </Card>
@@ -33,8 +33,8 @@ export function InquiryInfo() {
               </div>
               <h3 className="font-semibold text-foreground mb-2">Email Us</h3>
               <p className="text-sm text-muted-foreground mb-3">Send us detailed inquiries</p>
-              <a href="mailto:info@kekeosafaris.com" className="text-primary hover:text-primary/80 font-medium">
-                info@kekeosafaris.com
+              <a href="mailto:doubleebariki@gmail.com" className="text-primary hover:text-primary/80 font-medium">
+                doubleebariki@gmail.com
               </a>
             </CardContent>
           </Card>
@@ -47,12 +47,12 @@ export function InquiryInfo() {
               <h3 className="font-semibold text-foreground mb-2">WhatsApp</h3>
               <p className="text-sm text-muted-foreground mb-3">Chat with us instantly</p>
               <a
-                href="https://wa.me/255760309999"
+                href="https://wa.me/255766860273"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:text-primary/80 font-medium"
               >
-                +255 760 309 999
+                +255 766 860 273
               </a>
             </CardContent>
           </Card>

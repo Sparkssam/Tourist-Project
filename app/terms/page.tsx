@@ -131,8 +131,8 @@ export default function TermsPage() {
               <h2 className="text-2xl font-bold text-foreground mb-4">Contact</h2>
               <p className="text-muted-foreground leading-relaxed mb-4">For questions about these terms, contact:</p>
               <div className="bg-accent/30 p-6 rounded-xl">
-                <p className="text-foreground font-medium">Email: info@kekeosafaris.com</p>
-                <p className="text-foreground font-medium">Phone: +255 XXX XXX XXX</p>
+                <p className="text-foreground font-medium">Email: doubleebariki@gmail.com</p>
+                <p className="text-foreground font-medium">Phone: +255 766 860 273</p>
               </div>
             </section>
           </div>

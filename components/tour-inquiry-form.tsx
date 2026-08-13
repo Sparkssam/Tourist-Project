@@ -172,13 +172,17 @@ export function TourInquiryForm({ tourName }: TourInquiryFormProps) {
                     </>
                   )}
                 </Button>
-                <Button type="button" variant="outline" className="flex-1 bg-transparent">
-                  <Phone className="h-4 w-4 mr-2" />
-                  Call +255760309999
+                <Button asChild type="button" variant="outline" className="flex-1 bg-transparent">
+                  <a href="tel:+255766860273">
+                    <Phone className="h-4 w-4 mr-2" />
+                    Call +255 766 860 273
+                  </a>
                 </Button>
-                <Button type="button" variant="outline" className="flex-1 bg-transparent">
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  WhatsApp
+                <Button asChild type="button" variant="outline" className="flex-1 bg-transparent">
+                  <a href="https://wa.me/255766860273" target="_blank" rel="noopener noreferrer">
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    WhatsApp Chat
+                  </a>
                 </Button>
               </div>
             </form>

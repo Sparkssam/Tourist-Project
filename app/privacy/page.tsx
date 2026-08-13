@@ -99,8 +99,8 @@ export default function PrivacyPage() {
                 For privacy-related questions or to exercise your rights, contact us at:
               </p>
               <div className="bg-accent/30 p-6 rounded-xl">
-                <p className="text-foreground font-medium">Email: privacy@kekeosafaris.com</p>
-                <p className="text-foreground font-medium">Phone: +255 XXX XXX XXX</p>
+                <p className="text-foreground font-medium">Email: doubleebariki@gmail.com</p>
+                <p className="text-foreground font-medium">Phone: +255 766 860 273</p>
                 <p className="text-muted-foreground mt-2">We respond to all requests within 30 days.</p>
               </div>
             </section>
