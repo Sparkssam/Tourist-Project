@@ -8,10 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Star, Send, CheckCircle2, ExternalLink } from "lucide-react"
-
-const GOOGLE_REVIEW_URL =
-  process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL ||
-  "https://www.google.com/search?q=kekeosafaris+tanzania+review"
+import { GOOGLE_REVIEW_URL } from "@/lib/constants"
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">

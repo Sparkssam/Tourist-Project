@@ -3,10 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-
-const GOOGLE_REVIEW_URL =
-  process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL ||
-  "https://www.google.com/search?q=kekeosafaris+tanzania+review"
+import { GOOGLE_REVIEW_URL } from "@/lib/constants"
 
 const MapPinIcon = () => (
   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
