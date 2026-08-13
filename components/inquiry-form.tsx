@@ -1,7 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Send, User, Mail, Phone, Globe, MapPin, Users, Calendar, Tent, Star, Heart, Camera, Bird, Mountain, Waves, Leaf, Baby, Utensils, ChevronDown, CheckCircle2, Loader2, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -123,9 +124,17 @@ function FieldHint({ children }: { children: React.ReactNode }) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export function InquiryForm() {
+  const searchParams = useSearchParams()
   const [form, setForm] = useState<FormData>(INITIAL)
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle")
   const [errorMsg, setErrorMsg] = useState("")
+
+  useEffect(() => {
+    const tourParam = searchParams.get("tour")
+    if (tourParam) {
+      setForm(prev => ({ ...prev, specificTour: tourParam }))
+    }
+  }, [searchParams])
 
   const set = useCallback(<K extends keyof FormData>(key: K, val: FormData[K]) => {
     setForm(prev => ({ ...prev, [key]: val }))

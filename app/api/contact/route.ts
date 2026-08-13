@@ -323,133 +323,52 @@ export async function POST(request: Request) {
     const emailHtml = `
       <!DOCTYPE html>
       <html>
-      <body
-        style="
-          font-family: Arial, sans-serif;
-          max-width: 600px;
-          margin: 0 auto;
-          padding: 20px;
-        "
-      >
+      <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 650px; margin: 0 auto; padding: 24px; color: #333; background-color: #f8f9fa;">
+        <div style="background: linear-gradient(135deg, #1a3d2b, #2d6a4f); padding: 24px; border-radius: 12px 12px 0 0; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px;">🦁 New Safari Enquiry</h1>
+          <p style="color: #d4c8aa; margin: 6px 0 0 0; font-size: 14px;">Kekeo Safaris Booking Request</p>
+        </div>
 
-        <h2
-          style="
-            color: #2d6a4f;
-            border-bottom: 2px solid #2d6a4f;
-            padding-bottom: 10px;
-          "
-        >
-          📬 New Enquiry — Kekeo Safaris
-        </h2>
+        <div style="background: #ffffff; padding: 28px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e9ecef; border-top: none;">
 
-        <table
-          style="
-            width: 100%;
-            border-collapse: collapse;
-          "
-        >
+          <h3 style="color: #2d6a4f; border-bottom: 2px solid #e2d8c3; padding-bottom: 8px; margin-top: 0;">👤 Personal Details</h3>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+            <tr><td style="padding: 10px; font-weight: 600; color: #555; width: 35%; border-bottom: 1px solid #eee;">Full Name:</td><td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: 700; color: #1a3d2b;">${name}</td></tr>
+            <tr><td style="padding: 10px; font-weight: 600; color: #555; border-bottom: 1px solid #eee;">Email Address:</td><td style="padding: 10px; border-bottom: 1px solid #eee;"><a href="mailto:${email}" style="color: #2d6a4f; text-decoration: none; font-weight: 600;">${email}</a></td></tr>
+            <tr><td style="padding: 10px; font-weight: 600; color: #555; border-bottom: 1px solid #eee;">Phone / WhatsApp:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${body.phone || 'Not specified'}</td></tr>
+            <tr><td style="padding: 10px; font-weight: 600; color: #555; border-bottom: 1px solid #eee;">Country of Residence:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${body.country || 'Not specified'}</td></tr>
+            <tr><td style="padding: 10px; font-weight: 600; color: #555; border-bottom: 1px solid #eee;">Nationality:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${body.nationality || 'Not specified'}</td></tr>
+          </table>
 
-          <tr>
-            <td style="padding: 8px; font-weight: bold; color: #555;">
-              Name
-            </td>
-            <td style="padding: 8px;">
-              ${name}
-            </td>
-          </tr>
+          <h3 style="color: #2d6a4f; border-bottom: 2px solid #e2d8c3; padding-bottom: 8px; margin-top: 20px;">🌍 Safari & Travel Specifications</h3>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+            <tr><td style="padding: 10px; font-weight: 600; color: #555; width: 35%; border-bottom: 1px solid #eee;">Safari / Tour Type:</td><td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: 600; color: #a67c52;">${body.selectedTour || body.tourTypes || body.tourName || 'General Enquiry'}</td></tr>
+            <tr><td style="padding: 10px; font-weight: 600; color: #555; border-bottom: 1px solid #eee;">Exact Dates / Range:</td><td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: 600;">${body.travelDates || (body.travelDateFrom ? `${body.travelDateFrom} to ${body.travelDateTo || 'Open'}` : 'Not specified')}</td></tr>
+            <tr><td style="padding: 10px; font-weight: 600; color: #555; border-bottom: 1px solid #eee;">Date Flexibility:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${body.flexibility || 'Flexible'}</td></tr>
+            <tr><td style="padding: 10px; font-weight: 600; color: #555; border-bottom: 1px solid #eee;">Group Size:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${body.groupSize || (body.adults ? `${body.adults} Adults, ${body.children || 0} Children` : 'Not specified')}</td></tr>
+            ${body.childrenAges ? `<tr><td style="padding: 10px; font-weight: 600; color: #555; border-bottom: 1px solid #eee;">Children Ages:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${body.childrenAges}</td></tr>` : ''}
+            <tr><td style="padding: 10px; font-weight: 600; color: #555; border-bottom: 1px solid #eee;">Accommodation Tier:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${body.accommodation || body.accommodationStyle || 'Not specified'}</td></tr>
+            <tr><td style="padding: 10px; font-weight: 600; color: #555; border-bottom: 1px solid #eee;">Budget Range:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${body.budget || 'Flexible'}</td></tr>
+            ${body.interests ? `<tr><td style="padding: 10px; font-weight: 600; color: #555; border-bottom: 1px solid #eee;">Special Interests:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${body.interests}</td></tr>` : ''}
+          </table>
 
-          <tr style="background:#f9f9f9;">
-            <td style="padding: 8px; font-weight: bold; color: #555;">
-              Email
-            </td>
-            <td style="padding: 8px;">
-              <a href="mailto:${email}">
-                ${email}
-              </a>
-            </td>
-          </tr>
+          ${(body.dietary || body.specialOccasion) ? `
+          <h3 style="color: #2d6a4f; border-bottom: 2px solid #e2d8c3; padding-bottom: 8px; margin-top: 20px;">✨ Special Requirements</h3>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+            ${body.dietary ? `<tr><td style="padding: 10px; font-weight: 600; color: #555; width: 35%; border-bottom: 1px solid #eee;">Dietary Requirements:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${body.dietary}</td></tr>` : ''}
+            ${body.specialOccasion ? `<tr><td style="padding: 10px; font-weight: 600; color: #555; border-bottom: 1px solid #eee;">Special Occasion:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${body.specialOccasion}</td></tr>` : ''}
+          </table>
+          ` : ''}
 
-          <tr>
-            <td style="padding: 8px; font-weight: bold; color: #555;">
-              Phone
-            </td>
-            <td style="padding: 8px;">
-              ${body.phone || 'N/A'}
-            </td>
-          </tr>
+          <h3 style="color: #2d6a4f; border-bottom: 2px solid #e2d8c3; padding-bottom: 8px; margin-top: 20px;">💬 Message / Additional Notes</h3>
+          <div style="background: #f4f6f5; padding: 16px; border-radius: 8px; border-left: 4px solid #2d6a4f; font-size: 14px; line-height: 1.6; color: #2d3748;">
+            ${message.replace(/\n/g, '<br/>')}
+          </div>
 
-          <tr style="background:#f9f9f9;">
-            <td style="padding: 8px; font-weight: bold; color: #555;">
-              Subject
-            </td>
-            <td style="padding: 8px;">
-              ${body.subject || 'N/A'}
-            </td>
-          </tr>
-
-          <tr>
-            <td style="padding: 8px; font-weight: bold; color: #555;">
-              Tour
-            </td>
-            <td style="padding: 8px;">
-              ${body.selectedTour || body.tourName || 'N/A'}
-            </td>
-          </tr>
-
-          <tr style="background:#f9f9f9;">
-            <td style="padding: 8px; font-weight: bold; color: #555;">
-              Travel Dates
-            </td>
-            <td style="padding: 8px;">
-              ${body.travelDates || body.dates || 'N/A'}
-            </td>
-          </tr>
-
-          <tr>
-            <td style="padding: 8px; font-weight: bold; color: #555;">
-              Group Size
-            </td>
-            <td style="padding: 8px;">
-              ${body.groupSize || body.travelers || 'N/A'}
-            </td>
-          </tr>
-
-        </table>
-
-        <h3
-          style="
-            color: #2d6a4f;
-            margin-top: 20px;
-          "
-        >
-          Message
-        </h3>
-
-        <p
-          style="
-            background: #f0f7f4;
-            padding: 15px;
-            border-radius: 6px;
-            border-left: 4px solid #2d6a4f;
-          "
-        >
-          ${message.replace(/\n/g, '<br/>')}
-        </p>
-
-        <p
-          style="
-            color: #999;
-            font-size: 12px;
-            margin-top: 30px;
-          "
-        >
-          Sent via Kekeo Safaris contact form —
-          ${new Date().toLocaleString('en-GB', {
-            timeZone: 'Africa/Nairobi',
-          })}
-          EAT
-        </p>
-
+          <div style="margin-top: 30px; padding-top: 16px; border-top: 1px solid #eee; text-align: center; color: #888; font-size: 12px;">
+            Sent automatically via Kekeo Safaris Enquiry Engine — ${new Date().toLocaleString('en-GB', { timeZone: 'Africa/Nairobi' })} EAT
+          </div>
+        </div>
       </body>
       </html>
     `
