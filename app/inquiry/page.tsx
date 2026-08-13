@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
+import { InquiryHero } from "@/components/inquiry-hero"
 import { Footer } from "@/components/footer"
 import { useState, useEffect, Suspense } from "react"
 
@@ -530,17 +531,9 @@ function InquiryFormContent() {
 export default function InquiryPage() {
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors">
+      <InquiryHero />
       <div className="py-16 px-4">
         <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance text-foreground font-luxury">
-              Begin Your Safari Journey
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-              Share your travel vision with us. Every safari is unique, crafted around your interests, pace, and dreams.
-            </p>
-          </div>
-
           <Suspense
             fallback={
               <Card className="p-12 text-center bg-card text-card-foreground">
