@@ -8,7 +8,7 @@ import { ScrollToTop } from "@/components/scroll-to-top"
 import { EnquiryBanner } from "@/components/enquiry-banner"
 import { ThemeProvider } from "@/components/theme-provider"
 import { CookieConsent } from "@/components/cookie-consent"
-import { BackToTop } from "@/components/back-to-top"
+
 import "./globals.css";
 
 // Initialize fonts
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   title: "KEKEOsafari's - Your Adventure of a Lifetime Awaits in Tanzania",
   description:
     "Experience authentic African safaris with KEKEOsafari's. Discover Tanzania's wildlife, culture, and breathtaking landscapes with our expert guides.",
-  generator: "v0.app",
+  generator: "Next.js",
   keywords: "Tanzania safari, African wildlife, cultural tours, adventure travel, Serengeti, Ngorongoro, Kilimanjaro",
   authors: [{ name: "KEKEOsafari's" }],
   openGraph: {
@@ -101,7 +101,7 @@ export default function RootLayout({
           <ScrollToTop />
           <EnquiryBanner />
           <CookieConsent />
-          <BackToTop />
+
         </ThemeProvider>
       </body>
     </html>

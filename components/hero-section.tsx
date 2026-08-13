@@ -77,17 +77,18 @@ export function HeroSection() {
         </div>
 
         <div className="mt-8 fade-in-up" style={{ animationDelay: "0.6s" }}>
-          <Button
-            variant="ghost"
-            size="lg"
-            className="text-white hover:bg-white/20 rounded-full p-4 transition-all duration-300 hover:scale-110 button-press"
-            onClick={() => {
-              alert("Video modal would open here - feature coming soon!")
-            }}
+          <a
+            href="https://youtube.com/@kekeosafaris"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex flex-col items-center gap-2 text-white hover:text-white/80 transition-colors duration-300 group"
+            aria-label="Watch our safari videos on YouTube"
           >
-            <PlayIcon />
-          </Button>
-          <p className="text-sm mt-2 opacity-75">See Africa Through Our Eyes</p>
+            <div className="bg-white/20 hover:bg-white/30 rounded-full p-4 transition-all duration-300 hover:scale-110 group">
+              <PlayIcon />
+            </div>
+            <p className="text-sm opacity-75 group-hover:opacity-100 transition-opacity">Watch Our Story</p>
+          </a>
         </div>
       </div>
 
