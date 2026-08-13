@@ -16,9 +16,9 @@ export function WhatsAppFloat() {
   }, [])
 
   const quickMessages = [
-    { text: "🦒 Inquire about Serengeti Safari", msg: "Hello Elibariki, I would like to inquire about a Serengeti & Ngorongoro safari." },
-    { text: "🏔️ Kilimanjaro Climb question", msg: "Hello! I am planning to climb Mount Kilimanjaro and have questions about routes and preparation." },
-    { text: "✨ Custom Tailor-Made Trip", msg: "Hi Elibariki, I want to design a custom Tanzania safari for our group. Can you help?" },
+    { text: "Inquire about Serengeti Safari", msg: "Hello Elibariki, I would like to inquire about a Serengeti & Ngorongoro safari." },
+    { text: "Kilimanjaro Climb Guidance", msg: "Hello! I am planning to climb Mount Kilimanjaro and have questions about routes and preparation." },
+    { text: "Custom Tailor-Made Itinerary", msg: "Hi Elibariki, I want to design a custom Tanzania safari for our group. Can you help?" },
   ]
 
   const sendWhatsApp = (customMsg?: string) => {
@@ -63,14 +63,14 @@ export function WhatsAppFloat() {
           <div className="p-4 bg-muted/20 space-y-3">
             <div className="bg-card p-3 rounded-xl border border-border text-xs leading-relaxed text-card-foreground shadow-xs">
               <p className="font-serif">
-                Jambo! 🌿 How can I help you plan your dream Tanzania safari or Kilimanjaro expedition today?
+                Jambo! How can I help you plan your Tanzania safari or Kilimanjaro expedition today?
               </p>
               <span className="text-[10px] text-muted-foreground block text-right mt-1">Direct via WhatsApp</span>
             </div>
 
             <div className="space-y-1.5 pt-1">
               <p className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground px-1">
-                Quick Options:
+                Quick Inquiries:
               </p>
               {quickMessages.map((q, idx) => (
                 <button

@@ -1,24 +1,84 @@
 "use client"
 
 import { useState, useId } from "react"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Calculator, Users, Calendar, MapPin, Sparkles, Send, ArrowRight, ShieldCheck } from "lucide-react"
+import {
+  Calculator,
+  Users,
+  Calendar,
+  MapPin,
+  Sparkles,
+  Send,
+  ArrowRight,
+  ShieldCheck,
+  Compass,
+  Mountain,
+  Palmtree,
+  Trees,
+  Footprints,
+  CheckCircle2,
+} from "lucide-react"
 import Link from "next/link"
 
 const DESTINATIONS = [
-  { id: "serengeti-ngorongoro", name: "Serengeti & Ngorongoro Crater", baseDayRate: 340, icon: "🦁", tag: "Most Popular" },
-  { id: "kilimanjaro-climb", name: "Kilimanjaro Summit Trek", baseDayRate: 280, icon: "🏔️", tag: "Adventure" },
-  { id: "tarangire-manyara", name: "Tarangire & Lake Manyara", baseDayRate: 260, icon: "🐘", tag: "Elephants & Baobabs" },
-  { id: "bush-to-beach", name: "Serengeti + Zanzibar Beach", baseDayRate: 390, icon: "🏝️", tag: "Bush & Beach" },
-  { id: "cultural-maasai", name: "Maasai Immersion & Wildlife", baseDayRate: 220, icon: "🛖", tag: "Cultural" },
+  {
+    id: "serengeti-ngorongoro",
+    name: "Serengeti & Ngorongoro Crater",
+    baseDayRate: 340,
+    icon: Compass,
+    tag: "Most Popular",
+  },
+  {
+    id: "kilimanjaro-climb",
+    name: "Kilimanjaro Summit Trek",
+    baseDayRate: 280,
+    icon: Mountain,
+    tag: "Alpine Trekking",
+  },
+  {
+    id: "tarangire-manyara",
+    name: "Tarangire & Lake Manyara",
+    baseDayRate: 260,
+    icon: Trees,
+    tag: "Wildlife & Baobabs",
+  },
+  {
+    id: "bush-to-beach",
+    name: "Serengeti + Zanzibar Beach",
+    baseDayRate: 390,
+    icon: Palmtree,
+    tag: "Bush to Coast",
+  },
+  {
+    id: "cultural-maasai",
+    name: "Maasai Immersion & Wildlife",
+    baseDayRate: 220,
+    icon: Footprints,
+    tag: "Heritage & Wildlife",
+  },
 ]
 
 const TIERS = [
-  { id: "comfort", name: "Classic Mid-Range", multiplier: 1.0, desc: "Handpicked safari lodges & comfortable tented camps with en-suite amenities" },
-  { id: "luxury", name: "Luxury Wilderness", multiplier: 1.6, desc: "Exclusive five-star tented suites, private plunge pools & gourmet bush dining" },
-  { id: "budget", name: "Adventure & Camping", multiplier: 0.75, desc: "Authentic dome camping inside national parks with full cook crew" },
+  {
+    id: "comfort",
+    name: "Classic Mid-Range",
+    multiplier: 1.0,
+    desc: "Handpicked safari lodges & comfortable tented camps with en-suite amenities",
+  },
+  {
+    id: "luxury",
+    name: "Luxury Wilderness",
+    multiplier: 1.6,
+    desc: "Exclusive five-star tented suites, private plunge pools & gourmet bush dining",
+  },
+  {
+    id: "budget",
+    name: "Adventure & Camping",
+    multiplier: 0.75,
+    desc: "Authentic dome camping inside national parks with full professional cook crew",
+  },
 ]
 
 export function SafariCostEstimator() {
@@ -40,7 +100,7 @@ export function SafariCostEstimator() {
   const estimatedTotal = estimatedPerPerson * travelers
 
   const generateWhatsAppMessage = () => {
-    const msg = `Hi Elibariki! I used the Kekeo Safaris Trip Builder:\n- Destination: ${destObj.name}\n- Style: ${tierObj.name}\n- Duration: ${days} Days\n- Travelers: ${travelers} Guests\n- Estimated Total: ~$${estimatedTotal.toLocaleString()} ($${estimatedPerPerson.toLocaleString()}/person)\n\nCan you prepare a detailed itinerary and quote for us?`
+    const msg = `Hello Elibariki, I used the Kekeo Safaris Trip Estimator on your website:\n- Destination: ${destObj.name}\n- Accommodation Tier: ${tierObj.name}\n- Duration: ${days} Days\n- Group Size: ${travelers} Guests\n- Estimated Total: $${estimatedTotal.toLocaleString()} USD ($${estimatedPerPerson.toLocaleString()} per person)\n\nCould you please provide a customized itinerary proposal for our trip?`
     return encodeURIComponent(msg)
   }
 
@@ -51,13 +111,13 @@ export function SafariCostEstimator() {
         <div className="text-center space-y-3 mb-10 sm:mb-12">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary border border-primary/20 rounded-full px-3.5 py-1 text-xs font-bold uppercase tracking-wider">
             <Calculator className="w-3.5 h-3.5" />
-            <span>Interactive Trip Estimator</span>
+            <span>Trip Estimator</span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-luxury text-primary">
             Build Your Tailor-Made Safari
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto font-serif leading-relaxed">
-            Customize destinations, comfort levels, and duration for real-time pricing with zero hidden fees.
+            Customize destinations, comfort tiers, and duration for transparent real-time pricing.
           </p>
         </div>
 
@@ -73,23 +133,35 @@ export function SafariCostEstimator() {
                   <span>1. Choose Safari Focus</span>
                 </label>
                 <div className="grid sm:grid-cols-2 gap-2.5">
-                  {DESTINATIONS.map((d) => (
-                    <button
-                      key={d.id}
-                      onClick={() => setSelectedDest(d.id)}
-                      className={`p-3 rounded-xl border text-left transition-all flex items-start gap-2.5 ${
-                        selectedDest === d.id
-                          ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/40"
-                          : "border-border hover:border-primary/30 bg-background"
-                      }`}
-                    >
-                      <span className="text-xl flex-shrink-0">{d.icon}</span>
-                      <div className="min-w-0">
-                        <div className="text-xs font-bold text-card-foreground leading-tight truncate">{d.name}</div>
-                        <span className="text-[10px] text-muted-foreground font-medium">{d.tag}</span>
-                      </div>
-                    </button>
-                  ))}
+                  {DESTINATIONS.map((d) => {
+                    const DestIcon = d.icon
+                    const isSelected = selectedDest === d.id
+                    return (
+                      <button
+                        key={d.id}
+                        onClick={() => setSelectedDest(d.id)}
+                        className={`p-3 rounded-xl border text-left transition-all flex items-start gap-3 ${
+                          isSelected
+                            ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/40"
+                            : "border-border hover:border-primary/30 bg-background"
+                        }`}
+                      >
+                        <div
+                          className={`p-2 rounded-lg flex-shrink-0 transition-colors ${
+                            isSelected ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                          }`}
+                        >
+                          <DestIcon className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-xs font-bold text-card-foreground leading-tight truncate">
+                            {d.name}
+                          </div>
+                          <span className="text-[10px] text-muted-foreground font-medium">{d.tag}</span>
+                        </div>
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
 
@@ -100,20 +172,28 @@ export function SafariCostEstimator() {
                   <span>2. Accommodation Style</span>
                 </label>
                 <div className="grid sm:grid-cols-3 gap-2.5">
-                  {TIERS.map((t) => (
-                    <button
-                      key={t.id}
-                      onClick={() => setSelectedTier(t.id)}
-                      className={`p-3 rounded-xl border text-left transition-all ${
-                        selectedTier === t.id
-                          ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/40"
-                          : "border-border hover:border-primary/30 bg-background"
-                      }`}
-                    >
-                      <div className="text-xs font-bold text-card-foreground">{t.name}</div>
-                      <p className="text-[10px] text-muted-foreground leading-tight mt-1 line-clamp-2">{t.desc}</p>
-                    </button>
-                  ))}
+                  {TIERS.map((t) => {
+                    const isSelected = selectedTier === t.id
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => setSelectedTier(t.id)}
+                        className={`p-3 rounded-xl border text-left transition-all ${
+                          isSelected
+                            ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/40"
+                            : "border-border hover:border-primary/30 bg-background"
+                        }`}
+                      >
+                        <div className="text-xs font-bold text-card-foreground flex items-center justify-between">
+                          <span>{t.name}</span>
+                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-primary" />}
+                        </div>
+                        <p className="text-[10px] text-muted-foreground leading-tight mt-1 line-clamp-2">
+                          {t.desc}
+                        </p>
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
 
@@ -122,7 +202,10 @@ export function SafariCostEstimator() {
                 {/* Duration */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label htmlFor={daysSliderId} className="text-xs font-bold text-card-foreground flex items-center gap-1.5 cursor-pointer">
+                    <label
+                      htmlFor={daysSliderId}
+                      className="text-xs font-bold text-card-foreground flex items-center gap-1.5 cursor-pointer"
+                    >
                       <Calendar className="w-3.5 h-3.5 text-primary" />
                       Duration:
                     </label>
@@ -149,7 +232,10 @@ export function SafariCostEstimator() {
                 {/* Travelers */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label htmlFor={travelersSliderId} className="text-xs font-bold text-card-foreground flex items-center gap-1.5 cursor-pointer">
+                    <label
+                      htmlFor={travelersSliderId}
+                      className="text-xs font-bold text-card-foreground flex items-center gap-1.5 cursor-pointer"
+                    >
                       <Users className="w-3.5 h-3.5 text-primary" />
                       Travelers:
                     </label>
@@ -179,8 +265,13 @@ export function SafariCostEstimator() {
             <div className="lg:col-span-5 p-6 sm:p-8 bg-muted/30 flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-border pb-3">
-                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Estimated Quote</span>
-                  <Badge variant="outline" className="text-[10px] border-emerald-500/40 text-emerald-600 dark:text-emerald-400">
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Estimated Quote
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] border-emerald-500/40 text-emerald-600 dark:text-emerald-400"
+                  >
                     All Park Fees & 4x4 Included
                   </Badge>
                 </div>
@@ -195,7 +286,9 @@ export function SafariCostEstimator() {
                   </div>
                   <div className="text-xs text-muted-foreground font-medium">
                     Total for {travelers} {travelers === 1 ? "traveler" : "travelers"}:{" "}
-                    <span className="font-bold text-foreground">${estimatedTotal.toLocaleString()} USD</span>
+                    <span className="font-bold text-foreground">
+                      ${estimatedTotal.toLocaleString()} USD
+                    </span>
                   </div>
                 </div>
 
@@ -236,7 +329,9 @@ export function SafariCostEstimator() {
                 </a>
 
                 <Button asChild variant="outline" className="w-full text-xs font-semibold rounded-xl gap-2">
-                  <Link href={`/inquiry?tour=${destObj.id}&days=${days}&guests=${travelers}&tier=${tierObj.id}`}>
+                  <Link
+                    href={`/inquiry?tour=${destObj.id}&days=${days}&guests=${travelers}&tier=${tierObj.id}`}
+                  >
                     <span>Lock In Detailed Proposal</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
