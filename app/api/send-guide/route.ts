@@ -15,76 +15,162 @@ export async function POST(request: Request) {
       )
     }
 
-    const userName = name || 'Safari Adventurer'
+    const userName = name || 'Valued Guest'
 
-    // 1️⃣ Generate the Safari Guide HTML Letter for the user
+    // ─── Professional Safari Planning Guidebook HTML ─────────────────────────
     const guideHtml = `
       <!DOCTYPE html>
-      <html>
+      <html lang="en">
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Your Free Safari Planning Guide</title>
+        <title>Tanzania Safari Planning Guide — Kekeo Safaris</title>
       </head>
-      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.7; color: #333333; background-color: #f4f1ea; margin: 0; padding: 20px;">
-        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #e0d7c6;">
+      <body style="font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.7; color: #2d3748; background-color: #f4f6f8; margin: 0; padding: 24px;">
+        <div style="max-width: 680px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
           
-          <!-- Header Banner -->
-          <div style="background: linear-gradient(135deg, #1a3d2b 0%, #2d6a4f 100%); padding: 36px 24px; text-align: center; color: #ffffff;">
-            <div style="font-size: 42px; margin-bottom: 8px;">🦁</div>
-            <h1 style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: 0.5px; color: #ffffff;">Your Free Safari Planning Guide</h1>
-            <p style="margin: 6px 0 0 0; color: #d4c8aa; font-size: 14px; font-weight: 500;">Kekeo Safaris • Authentic Tanzanian Experience</p>
+          <!-- Corporate Header -->
+          <div style="background-color: #1a3d2b; padding: 40px 32px; text-align: center; border-bottom: 4px solid #a67c52;">
+            <div style="color: #a67c52; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;">Official Destination Guide</div>
+            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: 0.5px;">TANZANIA SAFARI PLANNING GUIDE</h1>
+            <div style="color: #e2d8c3; font-size: 14px; font-weight: 500; margin-top: 6px;">Kekeo Safaris • Arusha, Tanzania</div>
           </div>
 
-          <!-- Content -->
-          <div style="padding: 32px 28px;">
-            <p style="font-size: 17px; font-weight: 600; color: #1a3d2b; margin-top: 0;">
-              Jambo ${userName}! 👋
+          <!-- Introduction -->
+          <div style="padding: 36px 32px 24px 32px;">
+            <p style="font-size: 16px; font-weight: 600; color: #1a3d2b; margin-top: 0;">
+              Dear ${userName},
+            </p>
+            <p style="font-size: 15px; color: #4a5568; margin-bottom: 24px; text-align: justify;">
+              Thank you for requesting the official <strong>Tanzania Safari Planning Guidebook</strong> from Kekeo Safaris. Whether you are planning a wildlife expedition across the Serengeti, an ascent up Mount Kilimanjaro, or a tropical retreat to Zanzibar, this guide provides essential logistical, seasonal, and practical information prepared by our senior wildlife specialists.
+            </p>
+          </div>
+
+          <!-- Section 1: Seasonality & Migration Calendar -->
+          <div style="padding: 0 32px 28px 32px;">
+            <h2 style="font-size: 18px; font-weight: 700; color: #1a3d2b; border-bottom: 2px solid #a67c52; padding-bottom: 6px; margin-top: 0; text-transform: uppercase; letter-spacing: 0.5px;">
+              1. Seasonality & Wildlife Calendar
+            </h2>
+            <p style="font-size: 14px; color: #4a5568; margin-bottom: 16px;">
+              Tanzania offers exceptional game viewing year-round. Use this seasonal breakdown to align your travel dates with your preferred wildlife phenomena:
             </p>
 
-            <p style="font-size: 15px; color: #555555; margin-bottom: 24px;">
-              Thank you for downloading our official <strong>Tanzania Safari Planning Guide</strong>! We're thrilled to help you prepare for the adventure of a lifetime in East Africa.
-            </p>
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+              <thead>
+                <tr style="background-color: #1a3d2b; color: #ffffff; text-align: left;">
+                  <th style="padding: 10px 12px; font-weight: 600; border-bottom: 1px solid #cbd5e0;">Period</th>
+                  <th style="padding: 10px 12px; font-weight: 600; border-bottom: 1px solid #cbd5e0;">Season Highlight</th>
+                  <th style="padding: 10px 12px; font-weight: 600; border-bottom: 1px solid #cbd5e0;">Key Regions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background-color: #ffffff;">
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #edf2f7; font-weight: 600; color: #1a3d2b;">Jan – Mar</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #edf2f7;">Wildebeest Calving Season & High Predator Activity</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #edf2f7;">Southern Serengeti (Ndutu)</td>
+                </tr>
+                <tr style="background-color: #f8fafc;">
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #edf2f7; font-weight: 600; color: #1a3d2b;">Apr – May</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #edf2f7;">Green Season, Emerald Landscapes & Low Tourist Density</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #edf2f7;">Central Serengeti & Lake Manyara</td>
+                </tr>
+                <tr style="background-color: #ffffff;">
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #edf2f7; font-weight: 600; color: #1a3d2b;">Jun – Oct</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #edf2f7;">Peak Dry Season & Mara River Crossings</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #edf2f7;">Northern Serengeti & Tarangire</td>
+                </tr>
+                <tr style="background-color: #f8fafc;">
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #edf2f7; font-weight: 600; color: #1a3d2b;">Nov – Dec</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #edf2f7;">Short Rains, Migratory Bird Arrival & Fresh Pastures</td>
+                  <td style="padding: 10px 12px; border-bottom: 1px solid #edf2f7;">Ngorongoro Crater & Central Parks</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-            <!-- Guide Highlights Box -->
-            <div style="background-color: #fcf9f2; border-left: 4px solid #a67c52; border-radius: 6px; padding: 20px; margin: 24px 0;">
-              <h2 style="margin-top: 0; color: #a67c52; font-size: 18px; font-weight: 700;">📚 What's Inside Your Guidebook:</h2>
-              <ul style="margin: 12px 0 0 0; padding-left: 20px; color: #444444; font-size: 14px; line-height: 1.8;">
-                <li style="margin-bottom: 8px;"><strong>🗓️ Best Times to Visit:</strong> High season (June-Oct) for the Great Migration & Dry Season game viewing.</li>
-                <li style="margin-bottom: 8px;"><strong>🎒 Essential Packing List:</strong> Neutral clothing, high-zoom camera gear, sun protection, and comfortable boots.</li>
-                <li style="margin-bottom: 8px;"><strong>🦁 The Big Five Map:</strong> Where to spot Lion, Leopard, Elephant, Rhino, and Buffalo in Serengeti & Ngorongoro.</li>
-                <li style="margin-bottom: 8px;"><strong>🏔️ Kilimanjaro Routes:</strong> Overview of Machame, Lemosho, and Marangu trekking trails.</li>
-                <li style="margin-bottom: 8px;"><strong>🏖️ Zanzibar Beach Extension:</strong> Combining wildlife safaris with tropical island relaxation.</li>
-                <li style="margin-bottom: 8px;"><strong>💡 Insider Travel Tips:</strong> Visa guidelines, health recommendations, and local Maasai etiquette.</li>
+          <!-- Section 2: National Park Overview -->
+          <div style="padding: 0 32px 28px 32px;">
+            <h2 style="font-size: 18px; font-weight: 700; color: #1a3d2b; border-bottom: 2px solid #a67c52; padding-bottom: 6px; margin-top: 0; text-transform: uppercase; letter-spacing: 0.5px;">
+              2. Key National Parks & Destinations
+            </h2>
+            
+            <div style="margin-bottom: 16px;">
+              <h3 style="font-size: 15px; color: #a67c52; font-weight: 700; margin: 0 0 4px 0;">Serengeti National Park</h3>
+              <p style="font-size: 13px; color: #4a5568; margin: 0; line-height: 1.6;">
+                A UNESCO World Heritage site featuring nearly 15,000 square kilometers of savanna. Renowned for holding the highest concentration of large mammals on Earth, including big cats, cheetahs, and the Great Migration herds.
+              </p>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+              <h3 style="font-size: 15px; color: #a67c52; font-weight: 700; margin: 0 0 4px 0;">Ngorongoro Conservation Area</h3>
+              <p style="font-size: 13px; color: #4a5568; margin: 0; line-height: 1.6;">
+                The world's largest intact volcanic caldera. Often referred to as the "Eighth Wonder of the World," the 600-meter-deep crater harbors over 25,000 large animals, including rare black rhinos.
+              </p>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+              <h3 style="font-size: 15px; color: #a67c52; font-weight: 700; margin: 0 0 4px 0;">Tarangire National Park</h3>
+              <p style="font-size: 13px; color: #4a5568; margin: 0; line-height: 1.6;">
+                Famous for its massive elephant herds (up to 300 individuals per group) and iconic ancient baobab trees along the Tarangire River.
+              </p>
+            </div>
+
+            <div>
+              <h3 style="font-size: 15px; color: #a67c52; font-weight: 700; margin: 0 0 4px 0;">Zanzibar Archipelago</h3>
+              <p style="font-size: 13px; color: #4a5568; margin: 0; line-height: 1.6;">
+                An ideal post-safari coastal extension featuring turquoise waters, historic Stone Town architecture, spice plantations, and coral reef diving.
+              </p>
+            </div>
+          </div>
+
+          <!-- Section 3: Essential Packing List -->
+          <div style="padding: 0 32px 28px 32px;">
+            <h2 style="font-size: 18px; font-weight: 700; color: #1a3d2b; border-bottom: 2px solid #a67c52; padding-bottom: 6px; margin-top: 0; text-transform: uppercase; letter-spacing: 0.5px;">
+              3. Comprehensive Safari Packing Checklist
+            </h2>
+            <div style="background-color: #fcfaf7; border-left: 4px solid #1a3d2b; padding: 18px 20px; border-radius: 4px;">
+              <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #4a5568; line-height: 1.8;">
+                <li><strong>Clothing:</strong> Lightweight neutral clothing (khaki, beige, olive green). Avoid dark blue or black clothing (attracts tsetse flies). Pack a warm fleece for early morning game drives.</li>
+                <li><strong>Footwear:</strong> Comfortable walking shoes or sturdy trail sneakers. Flip-flops for lodge relaxations.</li>
+                <li><strong>Optical & Camera Gear:</strong> Quality 8x42 or 10x42 binoculars per person, camera with a telephoto lens (200mm – 500mm), extra memory cards, and dust-protective camera bag.</li>
+                <li><strong>Sun Protection:</strong> Wide-brimmed sun hat, polarized sunglasses, and broad-spectrum SPF 50+ sunscreen.</li>
+                <li><strong>Health & Hygiene:</strong> Insect repellent containing DEET, personal prescription medications, hand sanitizer, and lip balm.</li>
               </ul>
             </div>
-
-            <!-- Call To Action -->
-            <div style="text-align: center; margin: 32px 0 24px 0;">
-              <a href="https://kekeosafaris.com/tours" style="display: inline-block; background: linear-gradient(135deg, #a67c52, #c49a6c); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 15px; box-shadow: 0 4px 12px rgba(166,124,82,0.3);">
-                🌍 Explore Tanzania Safari Packages
-              </a>
-            </div>
-
-            <div style="background-color: #f0f7f4; border: 1px solid #c8e6c9; border-radius: 8px; padding: 18px; text-align: center; margin-top: 24px;">
-              <p style="margin: 0; font-size: 14px; color: #2d6a4f; font-weight: 600;">
-                Ready to plan your custom safari?
-              </p>
-              <p style="margin: 4px 0 0 0; font-size: 13px; color: #4a5568;">
-                Our expert guides tailor every trip around your dates, pace, and preferences.
-              </p>
-              <a href="https://kekeosafaris.com/inquiry" style="display: inline-block; margin-top: 10px; color: #1a3d2b; font-weight: 700; font-size: 13px; text-decoration: underline;">
-                Request Your Personal Custom Itinerary →
-              </a>
-            </div>
           </div>
 
-          <!-- Footer -->
-          <div style="background-color: #f9f6f0; padding: 24px; text-align: center; font-size: 12px; color: #777777; border-top: 1px solid #e0d7c6;">
-            <p style="margin: 0 0 6px 0; font-weight: 700; color: #1a3d2b; font-size: 13px;">Kekeo Safaris</p>
-            <p style="margin: 0 0 12px 0;">Arusha, Tanzania • info@kekeosafaris.com</p>
-            <p style="margin: 0; font-size: 11px; color: #999999;">
-              You received this email because you requested the Free Safari Planning Guide from kekeosafaris.com.
+          <!-- Section 4: Logistics & Travel Advisory -->
+          <div style="padding: 0 32px 28px 32px;">
+            <h2 style="font-size: 18px; font-weight: 700; color: #1a3d2b; border-bottom: 2px solid #a67c52; padding-bottom: 6px; margin-top: 0; text-transform: uppercase; letter-spacing: 0.5px;">
+              4. Visa, Health & Currency Guidelines
+            </h2>
+            <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #4a5568; line-height: 1.8;">
+              <li><strong>Entry Visas:</strong> Most travelers require a tourist visa ($50 USD for most passport holders, $100 USD for US citizens). Visas can be obtained online via the official Tanzania Immigration e-Visa portal.</li>
+              <li><strong>Health Requirements:</strong> Yellow Fever vaccination certificate is mandatory if arriving from endemic countries. Consult your physician regarding Malaria prophylaxis.</li>
+              <li><strong>Currency:</strong> US Dollars printed in 2013 or later are accepted everywhere in Tanzania. ATMs dispensing Tanzanian Shillings (TZS) are available in major hubs like Arusha and Stone Town.</li>
+            </ul>
+          </div>
+
+          <!-- Call to Action Section -->
+          <div style="background-color: #1a3d2b; padding: 32px; text-align: center; color: #ffffff;">
+            <h3 style="margin: 0 0 8px 0; font-size: 20px; font-weight: 700; color: #ffffff;">READY TO BUILD YOUR CUSTOM ITINERARY?</h3>
+            <p style="margin: 0 0 20px 0; font-size: 14px; color: #e2d8c3; max-w: 480px; margin-left: auto; margin-right: auto;">
+              Our senior safari planners will design a bespoke safari tailored to your exact dates, travel party, and accommodation preferences.
+            </p>
+            <a href="https://kekeosafaris.com/inquiry" style="display: inline-block; background-color: #a67c52; color: #ffffff; text-decoration: none; padding: 14px 36px; border-radius: 6px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">
+              Request Custom Itinerary Proposal
+            </a>
+          </div>
+
+          <!-- Corporate Footer -->
+          <div style="background-color: #f8fafc; padding: 28px 32px; text-align: center; font-size: 12px; color: #718096; border-top: 1px solid #e2e8f0;">
+            <p style="margin: 0 0 4px 0; font-weight: 700; color: #1a3d2b; font-size: 14px;">KEKEO SAFARIS TANZANIA</p>
+            <p style="margin: 0 0 12px 0;">Official Tour Operator • License No. TALA/2026/0491 • Arusha, Tanzania</p>
+            <p style="margin: 0 0 12px 0;">
+              Telephone: +255 760 309 999 • Email: info@kekeosafaris.com • Website: kekeosafaris.com
+            </p>
+            <p style="margin: 0; font-size: 11px; color: #a0aec0;">
+              This official guide was requested via kekeosafaris.com. All content is protected by international copyright laws.
             </p>
           </div>
 
@@ -93,25 +179,36 @@ export async function POST(request: Request) {
       </html>
     `
 
-    // 2️⃣ Send the guide directly to the user's email
+    // 2️⃣ Send the professional guide directly to the user's email
     const userEmailResult = await sendEmail(
       email,
-      '🦁 Your Free Safari Planning Guide — Kekeo Safaris',
+      'Tanzania Safari Planning Guidebook — Kekeo Safaris',
       guideHtml
     )
 
-    // 3️⃣ Send notification to admin so they know a new lead requested the guide
+    // 3️⃣ Send notification to admin
     const adminRecipient = process.env.ENQUIRY_RECIPIENT || 'doubleebariki@gmail.com'
     const adminNotificationHtml = `
-      <h3>📬 New Lead: Free Safari Planning Guide Requested</h3>
-      <p><strong>Subscriber Email:</strong> <a href="mailto:${email}">${email}</a></p>
-      ${name ? `<p><strong>Name:</strong> ${name}</p>` : ''}
-      <p><strong>Timestamp:</strong> ${new Date().toLocaleString('en-GB', { timeZone: 'Africa/Nairobi' })} EAT</p>
-      <p><em>The Safari Planning Guide letter has been automatically dispatched to the user.</em></p>
+      <!DOCTYPE html>
+      <html>
+      <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+        <h2 style="color: #1a3d2b; border-bottom: 2px solid #a67c52; padding-bottom: 8px;">
+          New Lead Magnet Subscriber
+        </h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 16px;">
+          <tr><td style="padding: 8px; font-weight: bold; width: 30%;">Subscriber Email:</td><td style="padding: 8px;"><a href="mailto:${email}">${email}</a></td></tr>
+          ${name ? `<tr><td style="padding: 8px; font-weight: bold;">Subscriber Name:</td><td style="padding: 8px;">${name}</td></tr>` : ''}
+          <tr><td style="padding: 8px; font-weight: bold;">Requested At:</td><td style="padding: 8px;">${new Date().toLocaleString('en-GB', { timeZone: 'Africa/Nairobi' })} EAT</td></tr>
+        </table>
+        <p style="margin-top: 20px; font-size: 13px; color: #666; background: #f9f9f9; padding: 12px; border-radius: 6px;">
+          The professional Tanzania Safari Planning Guidebook has been automatically emailed to the subscriber.
+        </p>
+      </body>
+      </html>
     `
     await sendEmail(
       adminRecipient,
-      `New Lead Magnet Download: ${email}`,
+      `New Guidebook Subscriber: ${email}`,
       adminNotificationHtml
     )
 
@@ -127,7 +224,7 @@ export async function POST(request: Request) {
       success: true,
       emailSent: userEmailResult.sent,
       provider: userEmailResult.provider,
-      message: 'Safari Planning Guide sent successfully to ' + email,
+      message: 'Professional Safari Planning Guidebook sent successfully to ' + email,
     })
   } catch (err: any) {
     console.error('POST /api/send-guide error:', err?.message)
