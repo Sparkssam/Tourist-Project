@@ -530,7 +530,7 @@ function InquiryFormContent() {
 
 export default function InquiryPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors">
+    <div className="min-h-screen bg-background bg-safari-pattern text-foreground transition-colors">
       <InquiryHero />
       <div className="py-16 px-4">
         <div className="container mx-auto max-w-4xl">
