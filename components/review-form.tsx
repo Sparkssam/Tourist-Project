@@ -77,41 +77,15 @@ export function ReviewForm() {
 
   return (
     <section className="py-16 px-4 bg-muted/30">
-      <div className="max-w-4xl mx-auto space-y-8">
-        
-        {/* Banner for Google Review */}
-        <div className="bg-card border border-primary/20 rounded-xl p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-white rounded-full shadow-inner border border-gray-100">
-              <GoogleIcon />
-            </div>
-            <div>
-              <h3 className="font-semibold text-foreground text-lg">Prefer to review directly on Google?</h3>
-              <p className="text-sm text-muted-foreground">
-                Your Google review helps safari travelers worldwide discover Kekeo Safaris.
-              </p>
-            </div>
-          </div>
-          <a
-            href={GOOGLE_REVIEW_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 font-semibold px-5 py-2.5 rounded-lg shadow-xs transition-all flex-shrink-0 text-sm"
-          >
-            <GoogleIcon />
-            <span>Write a Google Review</span>
-            <ExternalLink className="w-4 h-4 ml-1 text-gray-500" />
-          </a>
-        </div>
-
-        <Card>
-          <CardHeader className="text-center">
+      <div className="max-w-4xl mx-auto">
+        <Card className="shadow-lg border-primary/10">
+          <CardHeader className="text-center pb-2">
             <CardTitle className="text-3xl font-luxury text-primary">Share Your Safari Experience</CardTitle>
             <p className="text-muted-foreground">
-              Help other travelers by sharing your safari adventure with Kekeo Safaris
+              Help future travelers by leaving your honest review for Kekeo Safaris
             </p>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             {submitted ? (
               <div className="p-8 text-center space-y-6 bg-green-500/10 border border-green-500/30 rounded-xl">
                 <div className="w-16 h-16 bg-green-500/20 text-green-600 rounded-full flex items-center justify-center mx-auto">
@@ -124,7 +98,7 @@ export function ReviewForm() {
                   </p>
                 </div>
 
-                {/* Google Review Prompt */}
+                {/* Optional Google Review Redirect */}
                 <div className="pt-4 border-t border-green-500/20 max-w-md mx-auto space-y-3">
                   <p className="text-sm font-medium text-foreground">
                     Would you also like to post this review directly on our Google Business profile?
@@ -246,26 +220,16 @@ export function ReviewForm() {
                   />
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                <div className="pt-2">
                   <Button
                     type="submit"
-                    className="flex-1"
+                    className="w-full"
                     size="lg"
                     disabled={isSubmitting || formData.rating === 0}
                   >
                     <Send className="h-4 w-4 mr-2" />
-                    {isSubmitting ? "Submitting Review..." : "Submit Review"}
+                    {isSubmitting ? "Submitting Review..." : "Submit Review to Kekeo Safaris"}
                   </Button>
-
-                  <a
-                    href={GOOGLE_REVIEW_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 font-semibold px-4 py-2.5 rounded-md shadow-xs transition-colors text-sm"
-                  >
-                    <GoogleIcon />
-                    <span>Review on Google</span>
-                  </a>
                 </div>
               </form>
             )}

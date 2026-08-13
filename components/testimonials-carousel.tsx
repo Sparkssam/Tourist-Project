@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { useScrollAnimation } from "@/hooks/use-scroll-animation"
+import { GOOGLE_REVIEW_URL } from "@/lib/constants"
 
 const StarIcon = () => (
   <svg className="h-6 w-6 fill-yellow-400 text-yellow-400" viewBox="0 0 24 24">
@@ -25,8 +26,8 @@ const ChevronRightIcon = () => (
 )
 
 const GoogleVerifiedBadge = () => (
-  <div className="inline-flex items-center gap-1 bg-white/95 rounded-full px-3 py-1 shadow-sm">
-    <svg className="h-3 w-3" viewBox="0 0 24 24">
+  <div className="inline-flex items-center gap-1.5 bg-white/95 rounded-full px-3.5 py-1.5 shadow-sm border border-gray-100">
+    <svg className="h-4 w-4" viewBox="0 0 24 24">
       <path
         fill="#4285F4"
         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -44,7 +45,7 @@ const GoogleVerifiedBadge = () => (
         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
       />
     </svg>
-    <span className="text-xs font-medium text-gray-700">Google Verified</span>
+    <span className="text-xs font-semibold text-gray-700">Google Verified</span>
   </div>
 )
 
@@ -58,7 +59,7 @@ export function TestimonialsCarousel() {
       name: "Sarah Johnson",
       location: "New York, USA",
       rating: 5,
-      text: "KEKEOsafari's provided the most incredible safari experience! Our guide was knowledgeable and we saw all the Big Five. The accommodations were perfect and the cultural visit was truly authentic.",
+      text: "Kekeo Safaris provided the most incredible safari experience! Our guide was knowledgeable and we saw all the Big Five. The accommodations were perfect and the cultural visit was truly authentic.",
       avatar: "/woman-smiling-safari-hat.png",
       verified: true,
       visitDate: "March 2024",
@@ -135,8 +136,7 @@ export function TestimonialsCarousel() {
           </p>
 
           <p className="text-sm text-muted-foreground mt-4 max-w-2xl mx-auto">
-            These reviews are sourced directly from Google and reflect genuine guest experiences, unedited and
-            transparent.
+            These reviews are sourced directly from Google Reviews and reflect genuine guest experiences.
           </p>
         </div>
 
@@ -183,10 +183,10 @@ export function TestimonialsCarousel() {
                 </div>
 
                 <a
-                  href="https://www.google.com/search?q=kekeosafaris+tanzania+reviews"
+                  href={GOOGLE_REVIEW_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+                  className="text-sm font-semibold text-primary hover:underline inline-flex items-center gap-1"
                 >
                   View on Google Reviews →
                 </a>
@@ -237,12 +237,12 @@ export function TestimonialsCarousel() {
             Traveled with us recently? Your honest feedback helps future adventurers.
           </p>
           <a
-            href="https://www.google.com/search?q=kekeosafaris+tanzania+review"
+            href={GOOGLE_REVIEW_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 button-press hover:scale-105 transition-all duration-300"
+            className="inline-block bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 button-press hover:scale-105 transition-all duration-300 shadow-md"
           >
-            Leave a Review on Google
+            Write a Review on Google
           </a>
         </div>
       </div>

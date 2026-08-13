@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { GOOGLE_REVIEW_URL } from "@/lib/constants"
+import { ExternalLink } from "lucide-react"
 
 const MapPinIcon = () => (
   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -163,56 +164,20 @@ export function ReviewsGrid() {
     <section className="py-16 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-luxury text-primary mb-4">Guest Experiences & Reviews</h2>
-          <p className="text-muted-foreground max-w-3xl mx-auto text-balance font-serif text-2xl mb-6">
-            Real stories from travelers who have explored Tanzania with Kekeo Safaris
+          <h2 className="text-4xl font-luxury text-primary mb-3">Guest Experiences & Reviews</h2>
+          <p className="text-muted-foreground max-w-3xl mx-auto text-balance font-serif text-xl">
+            Read unedited stories from travelers who have explored Tanzania with Kekeo Safaris
           </p>
-
-          <div className="bg-muted/50 border border-border rounded-lg p-6 max-w-3xl mx-auto mb-8">
-            <div className="flex items-start gap-4">
-              <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-100">
-                <GoogleVerifiedIcon />
-              </div>
-              <div className="text-left flex-1">
-                <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
-                  <GoogleVerifiedIcon />
-                  Verified Google & Visitor Reviews
-                </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                  We believe in 100% transparency. Reviews are submitted directly by verified guests and Google Business Profile reviewers. What you read here reflects true, unedited safari experiences.
-                </p>
-                <div className="flex flex-wrap gap-3 items-center text-sm">
-                  <a
-                    href={GOOGLE_REVIEW_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-primary hover:underline inline-flex items-center gap-1"
-                  >
-                    Read all reviews on Google →
-                  </a>
-                  <span className="text-muted-foreground">|</span>
-                  <a
-                    href={GOOGLE_REVIEW_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-primary hover:underline inline-flex items-center gap-1"
-                  >
-                    Leave a Google Review →
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {allReviews.map((review) => (
-            <Card key={review.id} className="h-full relative flex flex-col justify-between">
+            <Card key={review.id} className="h-full relative flex flex-col justify-between hover:shadow-lg transition-shadow">
               {review.verified && (
                 <div className="absolute top-4 right-4 z-10">
-                  <div className="bg-white/90 backdrop-blur-xs rounded-full px-2.5 py-1 shadow-xs border border-gray-100 flex items-center gap-1.5">
+                  <div className="bg-white/95 rounded-full px-2.5 py-1 shadow-xs border border-gray-100 flex items-center gap-1.5">
                     <GoogleVerifiedIcon />
-                    <span className="text-xs font-semibold text-gray-700">Verified Review</span>
+                    <span className="text-xs font-semibold text-gray-700">Verified</span>
                   </div>
                 </div>
               )}
@@ -267,21 +232,25 @@ export function ReviewsGrid() {
           ))}
         </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-12 text-center bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl p-8 border border-primary/20">
-          <h3 className="text-2xl font-luxury text-primary mb-3">Traveled with Kekeo Safaris?</h3>
-          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Your honest feedback helps future travelers make informed decisions and helps us continue delivering exceptional safari adventures in Tanzania.
+        {/* Clean Google Review CTA Section */}
+        <div className="mt-16 text-center bg-card border border-primary/20 rounded-2xl p-8 shadow-sm max-w-3xl mx-auto space-y-4">
+          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+            <GoogleVerifiedIcon />
+          </div>
+          <h3 className="text-2xl font-luxury text-primary">Have You Traveled With Kekeo Safaris?</h3>
+          <p className="text-muted-foreground max-w-xl mx-auto text-sm leading-relaxed">
+            Your honest feedback helps future adventurers plan their dream Tanzanian safari. Tap below to leave a review on Google Reviews.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="pt-2">
             <a
               href={GOOGLE_REVIEW_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-all shadow-md"
+              className="inline-flex items-center gap-2.5 bg-primary text-primary-foreground px-7 py-3.5 rounded-xl font-bold hover:bg-primary/90 transition-all shadow-md hover:shadow-lg"
             >
               <GoogleVerifiedIcon />
-              Write a Live Google Review
+              <span>Write a Review on Google</span>
+              <ExternalLink className="w-4 h-4 ml-1" />
             </a>
           </div>
         </div>
