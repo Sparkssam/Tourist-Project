@@ -10,8 +10,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Footer } from "@/components/footer"
 import { useState, useEffect, Suspense } from "react"
-import { Calendar, Users, Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react"
 
 function InquiryFormContent() {
   const searchParams = useSearchParams()
@@ -153,9 +153,6 @@ function InquiryFormContent() {
   if (submitStatus === "success") {
     return (
       <div className="py-12 text-center max-w-xl mx-auto">
-        <div className="w-16 h-16 bg-primary/20 text-primary rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle2 className="h-10 w-10 text-primary" />
-        </div>
         <h2 className="text-3xl font-bold text-foreground mb-4">Enquiry Received!</h2>
         <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
           Thank you for reaching out to Kekeo Safaris. Our team will review your travel details and send you a custom itinerary within <strong>24 hours</strong>.
@@ -174,9 +171,7 @@ function InquiryFormContent() {
           
           {/* Personal Information Section */}
           <div>
-            <h2 className="text-2xl font-semibold mb-6 text-primary flex items-center gap-2">
-              <span>👤</span> Your Details
-            </h2>
+            <h2 className="text-2xl font-semibold mb-6 text-primary">Your Details</h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="name">Full Name *</Label>
@@ -237,9 +232,7 @@ function InquiryFormContent() {
 
           {/* Tour Selection Section */}
           <div className="border-t border-border pt-10">
-            <h2 className="text-2xl font-semibold mb-6 text-primary flex items-center gap-2">
-              <span>🦁</span> Safari / Tour Route
-            </h2>
+            <h2 className="text-2xl font-semibold mb-6 text-primary">Safari / Tour Route</h2>
             <div className="space-y-4">
               <div>
                 <Label htmlFor="selectedTour">Preferred Safari Route *</Label>
@@ -264,9 +257,7 @@ function InquiryFormContent() {
 
           {/* Exact Travel Dates & Range Section */}
           <div className="border-t border-border pt-10">
-            <h2 className="text-2xl font-semibold mb-6 text-primary flex items-center gap-2">
-              <Calendar className="h-6 w-6" /> Travel Dates & Duration
-            </h2>
+            <h2 className="text-2xl font-semibold mb-6 text-primary">Travel Dates & Duration</h2>
             <div className="grid md:grid-cols-3 gap-6">
               <div>
                 <Label htmlFor="travelDateFrom">Arrival Date</Label>
@@ -321,8 +312,7 @@ function InquiryFormContent() {
 
             {/* Trip duration indicator */}
             {tripDays > 0 && (
-              <div className="mt-4 p-3 bg-primary/10 border border-primary/20 rounded-lg flex items-center gap-3">
-                <span className="text-xl">📅</span>
+              <div className="mt-4 p-3 bg-primary/10 border border-primary/20 rounded-lg">
                 <span className="text-sm font-medium text-foreground">
                   Estimated Trip Duration: <strong>{tripDays} days</strong>
                 </span>
@@ -332,9 +322,7 @@ function InquiryFormContent() {
 
           {/* Group Details Section */}
           <div className="border-t border-border pt-10">
-            <h2 className="text-2xl font-semibold mb-6 text-primary flex items-center gap-2">
-              <Users className="h-6 w-6" /> Who's Traveling?
-            </h2>
+            <h2 className="text-2xl font-semibold mb-6 text-primary">Who's Traveling?</h2>
             <div className="grid md:grid-cols-3 gap-6">
               <div>
                 <Label htmlFor="adults">Number of Adults *</Label>
@@ -389,9 +377,7 @@ function InquiryFormContent() {
 
           {/* Accommodation Preference Section */}
           <div className="border-t border-border pt-10">
-            <h2 className="text-2xl font-semibold mb-6 text-primary flex items-center gap-2">
-              <span>🏕️</span> Accommodation Preference
-            </h2>
+            <h2 className="text-2xl font-semibold mb-6 text-primary">Accommodation Preference</h2>
             <RadioGroup
               value={formData.accommodationStyle}
               onValueChange={(value) => setFormData({ ...formData, accommodationStyle: value })}
@@ -429,9 +415,7 @@ function InquiryFormContent() {
 
           {/* Special Interests Section */}
           <div className="border-t border-border pt-10">
-            <h2 className="text-2xl font-semibold mb-6 text-primary flex items-center gap-2">
-              <span>📷</span> Safari Interests
-            </h2>
+            <h2 className="text-2xl font-semibold mb-6 text-primary">Safari Interests</h2>
             <div className="grid md:grid-cols-2 gap-4">
               {Object.entries({
                 wildlife: "Wildlife & Big Five Viewing",
@@ -465,9 +449,7 @@ function InquiryFormContent() {
 
           {/* Additional Details Section */}
           <div className="border-t border-border pt-10">
-            <h2 className="text-2xl font-semibold mb-6 text-primary flex items-center gap-2">
-              <span>📝</span> Additional Details & Preferences
-            </h2>
+            <h2 className="text-2xl font-semibold mb-6 text-primary">Additional Details & Preferences</h2>
             <div className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
@@ -520,9 +502,8 @@ function InquiryFormContent() {
 
           {/* Error Message */}
           {submitStatus === "error" && (
-            <div className="p-4 bg-destructive/10 border border-destructive rounded-lg text-destructive text-sm flex items-center gap-3">
-              <AlertCircle className="h-5 w-5 shrink-0" />
-              <div>{errorMessage || "We couldn't submit your enquiry. Please try again or email us directly."}</div>
+            <div className="p-4 bg-destructive/10 border border-destructive rounded-lg text-destructive text-sm">
+              {errorMessage || "We couldn't submit your enquiry. Please try again or email us directly."}
             </div>
           )}
 
@@ -534,20 +515,10 @@ function InquiryFormContent() {
               className="w-full md:w-auto px-12 text-lg font-semibold"
               disabled={isSubmitting}
             >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin mr-3" />
-                  Sending Your Enquiry...
-                </>
-              ) : (
-                <>
-                  <Send className="h-5 w-5 mr-3" />
-                  Submit Safari Enquiry
-                </>
-              )}
+              {isSubmitting ? "Sending Your Enquiry..." : "Submit Safari Enquiry"}
             </Button>
             <p className="text-sm text-muted-foreground mt-4">
-              🔒 By submitting, your information is sent directly to our safari team. We respect your privacy.
+              By submitting, your information is sent directly to our safari team. We respect your privacy.
             </p>
           </div>
         </form>
@@ -558,28 +529,30 @@ function InquiryFormContent() {
 
 export default function InquiryPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground py-16 transition-colors">
-      <div className="container mx-auto px-4 max-w-4xl">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance text-foreground">
-            Begin Your Safari Journey
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-            Share your travel vision with us. Every safari is unique, crafted around your interests, pace, and dreams.
-          </p>
-        </div>
+    <div className="min-h-screen bg-background text-foreground transition-colors">
+      <div className="py-16 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance text-foreground font-luxury">
+              Begin Your Safari Journey
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
+              Share your travel vision with us. Every safari is unique, crafted around your interests, pace, and dreams.
+            </p>
+          </div>
 
-        <Suspense
-          fallback={
-            <Card className="p-12 text-center bg-card text-card-foreground">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-              <p className="text-muted-foreground">Loading Enquiry Form...</p>
-            </Card>
-          }
-        >
-          <InquiryFormContent />
-        </Suspense>
+          <Suspense
+            fallback={
+              <Card className="p-12 text-center bg-card text-card-foreground">
+                <p className="text-muted-foreground">Loading Enquiry Form...</p>
+              </Card>
+            }
+          >
+            <InquiryFormContent />
+          </Suspense>
+        </div>
       </div>
+      <Footer />
     </div>
   )
 }
