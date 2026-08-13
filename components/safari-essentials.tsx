@@ -22,7 +22,6 @@ export function SafariEssentials() {
       description:
         "All our 4x4 Land Cruisers are GPS-tracked, equipped with wilderness first aid kits, and linked via satellite radio to ground rescue networks.",
       badge: "Certified Safety",
-      accent: "text-emerald-600 bg-emerald-500/10",
     },
     {
       icon: Sun,
@@ -30,7 +29,6 @@ export function SafariEssentials() {
       description:
         "Dry Season (June–October) offers premier predator viewing. Green Season (November–May) brings lush plains, newborn calves, and great photography.",
       badge: "Timing & Weather",
-      accent: "text-amber-600 bg-amber-500/10",
     },
     {
       icon: Briefcase,
@@ -38,7 +36,6 @@ export function SafariEssentials() {
       description:
         "Pack soft-sided duffel bags under 15kg for light bush flights. Wear neutral khaki and olive layers, wide-brim hat, and high-SPF sun protection.",
       badge: "Packing Rules",
-      accent: "text-sky-600 bg-sky-500/10",
     },
     {
       icon: Binoculars,
@@ -46,7 +43,6 @@ export function SafariEssentials() {
       description:
         "We maintain a strict 20m animal buffer, keep voices low, avoid flash photography, and adhere strictly to TANAPA national park conservation bylaws.",
       badge: "Ethical Guiding",
-      accent: "text-indigo-600 bg-indigo-500/10",
     },
     {
       icon: HeartPulse,
@@ -54,7 +50,6 @@ export function SafariEssentials() {
       description:
         "Every Kekeo Safaris traveler is automatically enrolled in AMREF Flying Doctors emergency medical air evacuation across East Africa.",
       badge: "Medical Insurance",
-      accent: "text-rose-600 bg-rose-500/10",
     },
     {
       icon: Headset,
@@ -62,7 +57,6 @@ export function SafariEssentials() {
       description:
         "Round-the-clock ground assistance (+255 766 860 273) with native operations specialists in Arusha ready to support your trip at every milestone.",
       badge: "Direct Support",
-      accent: "text-teal-600 bg-teal-500/10",
     },
   ]
 
@@ -86,24 +80,24 @@ export function SafariEssentials() {
           </p>
         </div>
 
-        {/* Balanced 6-Card Grid */}
+        {/* Balanced 6-Card Grid with Website Primary Theme Icons */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
           {essentials.map((item, index) => {
             const Icon = item.icon
             return (
               <Card
                 key={index}
-                className={`group bg-card border border-border/80 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 rounded-2xl overflow-hidden flex flex-col justify-between ${
+                className={`group bg-card border border-border/80 shadow-sm hover:shadow-xl hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 rounded-2xl overflow-hidden flex flex-col justify-between ${
                   isVisible ? "zoom-in" : "opacity-0 scale-95"
                 }`}
                 style={{ animationDelay: `${index * 0.08}s` }}
               >
                 <CardHeader className="p-6 pb-3 space-y-4">
                   <div className="flex items-center justify-between">
-                    <div className={`p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 ${item.accent}`}>
+                    <div className="p-3 rounded-xl bg-primary/10 text-primary border border-primary/20 transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-105 shadow-xs">
                       <Icon className="w-5 h-5" />
                     </div>
-                    <Badge variant="outline" className="text-[11px] font-semibold">
+                    <Badge variant="outline" className="text-[11px] font-semibold border-primary/20 text-primary bg-primary/5">
                       {item.badge}
                     </Badge>
                   </div>
