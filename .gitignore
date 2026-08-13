@@ -18,9 +18,17 @@ yarn-error.log*
 
 # env files
 .env*
+!.env.example
 
 # vercel
 .vercel
+
+# test files (may contain sensitive data)
+test-*.js
+test-*.mjs
+test-*.ts
+debug-*
+*-test.*
 
 # typescript
 *.tsbuildinfo

@@ -97,6 +97,8 @@ export default function InquiryPage() {
     setSubmitStatus("idle")
     setErrorMessage("")
 
+    console.log("Submitting form data:", formData)
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -104,7 +106,10 @@ export default function InquiryPage() {
         body: JSON.stringify(formData),
       })
 
+      console.log("Response status:", response.status, response.statusText)
+
       const data = await response.json()
+      console.log("Response data:", data)
 
       if (response.ok) {
         setSubmitStatus("success")
@@ -137,13 +142,17 @@ export default function InquiryPage() {
         })
       } else {
         setSubmitStatus("error")
-        setErrorMessage(data?.error || data?.details || "Failed to submit enquiry. Please try again.")
+        const errorMsg = data?.error || data?.details || data?.message || "Failed to submit enquiry. Please try again."
+        setErrorMessage(errorMsg)
         console.error("Submission error:", data)
+        alert("Error: " + errorMsg) // Also show as alert for immediate feedback
       }
     } catch (error: any) {
       setSubmitStatus("error")
-      setErrorMessage(error?.message || "Network error. Please check your connection and try again.")
+      const errorMsg = error?.message || "Network error. Please check your connection and try again."
+      setErrorMessage(errorMsg)
       console.error("Submission error:", error)
+      alert("Error: " + errorMsg) // Also show as alert for immediate feedback
     } finally {
       setIsSubmitting(false)
     }
