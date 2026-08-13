@@ -162,7 +162,7 @@ export function WhyChooseUs() {
               rel="noopener noreferrer"
               className="group bg-card hover:bg-amber-600 hover:text-white border border-border hover:border-amber-600 px-5 py-3 rounded-xl shadow-xs transition-all duration-300 flex items-center gap-3 text-sm font-bold text-foreground"
             >
-              <span className="text-lg">🦁</span>
+              <span className="text-lg"></span>
               <span>African Wildlife Foundation</span>
               <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-white transition-colors ml-1" />
             </a>
