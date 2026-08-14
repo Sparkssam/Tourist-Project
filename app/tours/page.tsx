@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { ToursHero } from "@/components/tours-hero"
 import { ToursGrid, getAllTours } from "@/components/tours-grid"
 import { TourFilters } from "@/components/tour-filters"
 import { SafariCostEstimator } from "@/components/safari-cost-estimator"
@@ -34,15 +35,8 @@ export default function ToursPage() {
   return (
     <div className="min-h-screen bg-background">
       <main>
-        {/* Hero Section */}
-        <section className="relative py-16 sm:py-20 px-4 bg-muted/30 border-b border-border">
-          <div className="max-w-4xl mx-auto text-center space-y-3">
-            <h1 className="text-4xl sm:text-5xl font-luxury text-primary">Handcrafted Safari Itineraries</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-pretty font-serif text-sm sm:text-base leading-relaxed">
-              From the great wildebeest migration across the Serengeti to reaching the snowy peak of Mount Kilimanjaro, discover Tanzania with native guides.
-            </p>
-          </div>
-        </section>
+        {/* Full-width Photo Hero */}
+        <ToursHero />
 
         {/* Filters and Tours Grid */}
         <section className="py-12 sm:py-16 px-4">
