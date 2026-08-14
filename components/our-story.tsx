@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useScrollAnimation } from "@/hooks/use-scroll-animation"
-import { ShieldCheck, Eye, Heart, Compass, MapPin } from "lucide-react"
+import { ShieldCheck, Eye, Heart, MapPin } from "lucide-react"
 
 export function OurStory() {
   const { ref, isVisible } = useScrollAnimation()
@@ -22,7 +22,6 @@ export function OurStory() {
       description:
         "To provide exceptional, authentic safari experiences while supporting local Tanzanian communities and wildlife conservation efforts across the Serengeti and Kilimanjaro.",
       badge: "Purpose-Driven",
-      color: "text-emerald-600 bg-emerald-500/10",
     },
     {
       icon: Eye,
@@ -30,7 +29,6 @@ export function OurStory() {
       description:
         "To be East Africa's leading sustainable tourism operator, creating positive, lasting impact for wildlife habitats, local indigenous communities, and global travelers alike.",
       badge: "Sustainable Future",
-      color: "text-amber-600 bg-amber-500/10",
     },
     {
       icon: Heart,
@@ -38,7 +36,6 @@ export function OurStory() {
       description:
         "Authenticity, ecological responsibility, respect for Maasai cultures, and an unwavering commitment to creating extraordinary, life-changing journey memories.",
       badge: "Core Beliefs",
-      color: "text-rose-600 bg-rose-500/10",
     },
   ]
 
@@ -129,24 +126,24 @@ export function OurStory() {
           </div>
         </div>
 
-        {/* Mission, Vision, Values Cards with Hover Effects */}
+        {/* Mission, Vision, Values Cards with Primary Theme */}
         <div className="grid md:grid-cols-3 gap-6 pt-6">
           {pillars.map((pillar, index) => {
             const IconComp = pillar.icon
             return (
               <Card
                 key={index}
-                className={`card-hover border border-primary/10 transition-all duration-700 ${
+                className={`card-hover border border-primary/10 hover:border-primary/40 transition-all duration-700 ${
                   isVisible ? "scale-up opacity-100" : "opacity-0 scale-90"
                 }`}
                 style={{ animationDelay: `${index * 0.2}s` }}
               >
                 <CardContent className="p-8 space-y-4">
                   <div className="flex items-center justify-between">
-                    <div className={`p-4 rounded-2xl ${pillar.color}`}>
+                    <div className="p-4 rounded-2xl bg-primary/10 text-primary border border-primary/20">
                       <IconComp className="w-7 h-7" />
                     </div>
-                    <Badge variant="secondary" className="text-xs font-semibold">
+                    <Badge variant="outline" className="text-xs font-semibold border-primary/20 text-primary bg-primary/5">
                       {pillar.badge}
                     </Badge>
                   </div>
